@@ -1,0 +1,14 @@
+{
+  "name": "crystal-ai",
+  "owner": {
+    "name": "Austin VanAlstyne"
+  },
+  "plugins": [
+    {
+      "name": "crystal-ai",
+      "source": "./",
+      "description": "CrystalAI — Personal AI assistant plugin. The secretary to the notebook.",
+      "version": "1.0.0"
+    }
+  ]
+}

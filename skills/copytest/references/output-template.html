@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copytest Results</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface-2: #242424;
+    --border: #333;
+    --text: #e0e0e0;
+    --text-muted: #888;
+    --accent: #6c9fff;
+    --accent-glow: rgba(108, 159, 255, 0.15);
+    --gold: #ffd700;
+    --silver: #c0c0c0;
+    --bronze: #cd7f32;
+    --green: #4caf50;
+    --red: #ef5350;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    color: white;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .config-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: var(--surface);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .config-tag {
+    background: var(--surface-2);
+    padding: 0.35rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .config-tag strong {
+    color: var(--text);
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+    margin: 2rem 0 1rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .phase-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  .phase-1-badge { background: rgba(108, 159, 255, 0.2); color: var(--accent); }
+  .phase-2-badge { background: rgba(255, 215, 0, 0.2); color: var(--gold); }
+
+  /* Finalist Cards */
+  .finalists-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .finalist-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+
+  .finalist-card:hover { border-color: var(--accent); }
+
+  .finalist-card.rank-1 { border-color: var(--gold); }
+  .finalist-card.rank-2 { border-color: var(--silver); }
+  .finalist-card.rank-3 { border-color: var(--bronze); }
+
+  .rank-indicator {
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--bg);
+  }
+
+  .rank-1 .rank-indicator { background: var(--gold); }
+  .rank-2 .rank-indicator { background: var(--silver); }
+  .rank-3 .rank-indicator { background: var(--bronze); }
+
+  .writer-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    color: white;
+  }
+
+  .writer-persona {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    font-style: italic;
+  }
+
+  .copy-block {
+    background: var(--surface-2);
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--accent);
+  }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--surface-2);
+  }
+
+  .score-row:last-child { border-bottom: none; }
+
+  .score-label { color: var(--text-muted); }
+
+  .score-value { font-weight: 600; }
+
+  .total-score {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    border-top: 2px solid var(--border);
+  }
+
+  /* Winner Section */
+  .winner-card {
+    background: var(--surface);
+    border: 2px solid var(--gold);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.08);
+  }
+
+  .winner-label {
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--gold);
+    color: var(--bg);
+    padding: 0.2rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Collapsible Rounds */
+  .rounds-section { margin-top: 2rem; }
+
+  .round-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .round-header:hover { background: var(--surface-2); }
+
+  .round-header .round-label {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .round-header .round-winner {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .chevron {
+    transition: transform 0.2s;
+    color: var(--text-muted);
+  }
+
+  .round-header.open .chevron { transform: rotate(90deg); }
+
+  .round-body {
+    display: none;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    margin-top: -0.5rem;
+  }
+
+  .round-body.open { display: block; }
+
+  .round-submission {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .round-submission:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .rationale {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: var(--surface-2);
+    border-radius: 4px;
+  }
+
+  .rationale strong { color: var(--text); }
+
+  .score-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.15rem 0;
+  }
+
+  .score-bar-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    width: 120px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .score-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+    transition: width 0.3s;
+  }
+
+  .score-bar-value {
+    font-size: 0.8rem;
+    font-weight: 600;
+    width: 30px;
+    text-align: right;
+  }
+
+  .no-consensus-badge {
+    background: rgba(239, 83, 80, 0.15);
+    color: var(--red);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+  }
+
+  .early-termination {
+    text-align: center;
+    padding: 1rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* Audience Panel */
+  .audience-panel {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .audience-chip {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  .audience-chip strong { color: var(--text); display: block; }
+  .audience-chip span { color: var(--text-muted); }
+</style>
+</head>
+<body>
+
+<h1>Copytest Results</h1>
+<p class="subtitle" id="subtitle"></p>
+
+<div class="config-bar" id="configBar"></div>
+
+<div id="audiencePanel"></div>
+
+<h2 class="section-title">
+  Phase 1 Finalists
+  <span class="phase-badge phase-1-badge">Differentiation</span>
+</h2>
+<div class="finalists-grid" id="finalistsGrid"></div>
+
+<h2 class="section-title">
+  Phase 2 Winner
+  <span class="phase-badge phase-2-badge">Convergence</span>
+</h2>
+<div id="winnerSection"></div>
+
+<h2 class="section-title">Round-by-Round History</h2>
+<div class="rounds-section" id="roundsSection"></div>
+
+<script>
+// __TOURNAMENT_DATA_PLACEHOLDER__
+
+function render() {
+  const d = TOURNAMENT_DATA;
+
+  document.getElementById('subtitle').textContent =
+    `${d.config.platform} | Goal: ${d.config.goal} | ${d.config.totalRounds} rounds (${d.config.phase1Rounds} + ${d.config.phase2Rounds})`;
+
+  // Config bar
+  const configBar = document.getElementById('configBar');
+  const tags = [
+    { label: 'Platform', value: d.config.platform },
+    { label: 'Goal', value: d.config.goal },
+    { label: 'Criteria', value: d.config.criteria.join(', ') },
+    { label: 'Demographic', value: d.config.demographic },
+    { label: 'Writers', value: d.writers.length },
+    { label: 'Audience', value: d.audience.length },
+  ];
+  configBar.innerHTML = tags.map(t =>
+    `<div class="config-tag"><strong>${t.label}:</strong> ${t.value}</div>`
+  ).join('');
+
+  // Audience panel
+  const audiencePanel = document.getElementById('audiencePanel');
+  audiencePanel.innerHTML = '<div class="audience-panel">' +
+    d.audience.map(a =>
+      `<div class="audience-chip"><strong>${a.name}</strong><span>${a.persona}</span></div>`
+    ).join('') + '</div>';
+
+  // Max possible score for bars
+  const maxPerCriterion = d.audience.length * 5;
+
+  // Phase 1 finalists
+  const grid = document.getElementById('finalistsGrid');
+  const sorted = [...d.phase1Finalists].sort((a, b) => a.rank - b.rank);
+  grid.innerHTML = sorted.map(f => {
+    const rankClass = f.rank <= 3 ? `rank-${f.rank}` : '';
+    const writer = d.writers.find(w => w.name === f.writer);
+    const scores = Object.entries(f.scores);
+    return `
+      <div class="finalist-card ${rankClass}">
+        ${f.rank <= 3 ? `<div class="rank-indicator">${f.rank}</div>` : ''}
+        <div class="writer-name">${f.writer}</div>
+        <div class="writer-persona">${writer ? writer.philosophy : ''}</div>
+        <div class="copy-block">${escapeHtml(f.copy)}</div>
+        ${scores.map(([k, v]) => `
+          <div class="score-bar-container">
+            <div class="score-bar-label">${k}</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:${(v/maxPerCriterion)*100}%"></div></div>
+            <div class="score-bar-value">${v}</div>
+          </div>
+        `).join('')}
+        <div class="total-score">
+          <span>Total</span>
+          <span>${f.totalScore}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Phase 2 winner
+  const winnerSection = document.getElementById('winnerSection');
+  if (d.phase2Winner) {
+    const w = d.phase2Winner;
+    const writer = d.writers.find(wr => wr.name === w.writer);
+    const scores = Object.entries(w.scores);
+    winnerSection.innerHTML = `
+      <div class="winner-card">
+        <div class="winner-label">Final Winner</div>
+        <div class="writer-name" style="margin-top:0.5rem">${w.writer}</div>
+        <div class="writer-persona">${writer ? writer.philosophy : ''}</div>
+        <div class="copy-block" style="border-left-color: var(--gold)">${escapeHtml(w.copy)}</div>
+        ${scores.map(([k, v]) => `
+          <div class="score-bar-container">
+            <div class="score-bar-label">${k}</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:${(v/maxPerCriterion)*100}%;background:var(--gold)"></div></div>
+            <div class="score-bar-value">${v}</div>
+          </div>
+        `).join('')}
+        <div class="total-score">
+          <span>Total</span>
+          <span>${w.totalScore}</span>
+        </div>
+      </div>
+    `;
+  } else {
+    winnerSection.innerHTML = '<div class="early-termination">Tournament ended early — no convergence phase completed.</div>';
+  }
+
+  // Rounds
+  const roundsSection = document.getElementById('roundsSection');
+  roundsSection.innerHTML = d.rounds.map(r => {
+    const phaseLabel = r.phase === 1 ? 'Phase 1' : 'Phase 2';
+    const phaseBadge = r.phase === 1 ? 'phase-1-badge' : 'phase-2-badge';
+    const winnerText = r.winner ? `Winner: ${r.winner}` :
+      '<span class="no-consensus-badge">No consensus</span>';
+
+    const body = r.submissions.map(s => {
+      const scores = Object.entries(s.scores);
+      return `
+        <div class="round-submission">
+          <div class="writer-name">${s.writer}</div>
+          <div class="copy-block">${escapeHtml(s.copy)}</div>
+          ${scores.map(([k, v]) => `
+            <div class="score-bar-container">
+              <div class="score-bar-label">${k}</div>
+              <div class="score-bar-track"><div class="score-bar-fill" style="width:${(v/maxPerCriterion)*100}%"></div></div>
+              <div class="score-bar-value">${v}</div>
+            </div>
+          `).join('')}
+          <div class="total-score"><span>Total</span><span>${s.totalScore}</span></div>
+          ${s.rationale ? s.rationale.map(rat =>
+            `<div class="rationale"><strong>${rat.audience}:</strong> ${escapeHtml(rat.text)}</div>`
+          ).join('') : ''}
+        </div>
+      `;
+    }).join('');
+
+    return `
+      <div class="round-header" onclick="toggleRound(this)">
+        <div class="round-label">
+          Round ${r.number}
+          <span class="phase-badge ${phaseBadge}">${phaseLabel}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0.75rem">
+          <span class="round-winner">${winnerText}</span>
+          <span class="chevron">&#9654;</span>
+        </div>
+      </div>
+      <div class="round-body">${body}</div>
+    `;
+  }).join('');
+}
+
+function toggleRound(header) {
+  header.classList.toggle('open');
+  header.nextElementSibling.classList.toggle('open');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+[
+  {
+    "query": "grill me on my plan to set up a monitoring stack on Proxmox. I'm thinking LXC with Grafana and Prometheus, all on one container.",
+    "should_trigger": true
+  },
+  {
+    "query": "stress test my SpectrumVOIP migration plan before I sign the contract — the plan is basically sign, port the numbers, swap hardware, done",
+    "should_trigger": true
+  },
+  {
+    "query": "i want to be interviewed about this n8n onboarding workflow before I start building — I need to make sure I've actually thought it through",
+    "should_trigger": true
+  },
+  {
+    "query": "poke holes in my idea to automate GIS staff onboarding through HR emails and n8n. go hard",
+    "should_trigger": true
+  },
+  {
+    "query": "ask me the hard questions about moving GIS file storage to Google Shared Drives — I want to know what i'm missing before i commit",
+    "should_trigger": true
+  },
+  {
+    "query": "I've got a design for the guardian-to-educlimber sync and I want to be interrogated on it before I start writing code",
+    "should_trigger": true
+  },
+  {
+    "query": "pitching a k8s cluster on proxmox to jesse next week — 3 nodes, shared storage on truenas, everything containerized. stress test this before i go in there",
+    "should_trigger": true
+  },
+  {
+    "query": "I have a rough plan for the new GIS student device policy — 1:1 chromebooks for 3rd grade and up, shared iPads for k-2. challenge my thinking on whether this actually makes sense",
+    "should_trigger": true
+  },
+  {
+    "query": "ok so my plan is to consolidate the gis and sja networks onto one proxmox cluster. grill me on whether this is actually a good idea before i commit",
+    "should_trigger": true
+  },
+  {
+    "query": "want to make sure I haven't missed anything critical on this firewall redesign. vlan for IoT, staff, students, guest wifi isolated. come at me",
+    "should_trigger": true
+  },
+  {
+    "query": "help me build an n8n workflow that watches for HR emails and automatically creates google workspace accounts for new hires",
+    "should_trigger": false
+  },
+  {
+    "query": "what are the main risks I should think about when migrating a school phone system to VOIP?",
+    "should_trigger": false
+  },
+  {
+    "query": "can you review my python script for parsing prometheus alert payloads? I think there's a bug in the label extraction",
+    "should_trigger": false
+  },
+  {
+    "query": "I need to write a proposal for replacing our Spectrum phone system — can you help me draft something for Elizabeth to approve?",
+    "should_trigger": false
+  },
+  {
+    "query": "what questions should I be asking the SpectrumVOIP sales rep before I sign the contract?",
+    "should_trigger": false
+  },
+  {
+    "query": "help me think through the tradeoffs between LXC and VMs for running Grafana on Proxmox — which one makes more sense?",
+    "should_trigger": false
+  },
+  {
+    "query": "had a call with SpectrumVOIP yesterday and I took notes — can you help me update the project file with the key details?",
+    "should_trigger": false
+  },
+  {
+    "query": "explain how number porting works when switching VOIP providers — trying to understand what the timeline looks like",
+    "should_trigger": false
+  },
+  {
+    "query": "I wrote up an architecture doc for the GIS network redesign. can you read it and give me feedback on what I missed?",
+    "should_trigger": false
+  },
+  {
+    "query": "can you help me put together a migration checklist for the VOIP cutover? I want something I can use on the day of",
+    "should_trigger": false
+  }
+]

@@ -1,0 +1,17 @@
+To: mtorres@germanschool-mn.org
+From: avanalstyne@germanschool-mn.org
+Subject: Re: Promethean board won't connect to internet — Room 214
+
+---
+
+Hey Michael,
+
+The remote power cycle unfortunately doesn't do a full reset on these — you need to unplug it from the wall. Try this:
+
+Unplug the power cord directly from the wall outlet, wait 30–60 seconds, then plug it back in and power it on normally. Give it a minute or two to reconnect.
+
+While you're at it, take a look at the two small antenna stubs on the side panel of the board. They look like short little nubs — make sure both are there and tight. Kids have loosened or broken them before and it kills the WiFi.
+
+Let me know if that gets it back online. If not, can you grab the serial number off the label on the back of the board and send it my way? I'll open a ticket with Promethean.
+
+Austin

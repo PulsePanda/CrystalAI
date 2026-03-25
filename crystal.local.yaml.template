@@ -1,0 +1,51 @@
+# CrystalAI Environment Configuration
+# Copy to crystal.local.yaml and fill in your values
+# This file is gitignored — your personal config stays local
+
+# --- Paths ---
+vault_path: "/path/to/your/obsidian/vault"
+scripts_path: "${CRYSTAL_ROOT}/scripts"
+
+# --- Identity ---
+user:
+  name: "Your Name"
+  primary_email: "you@example.com"
+
+# --- Email Accounts ---
+# Add your email accounts. Each needs: address, context, archive_mailbox
+email_accounts:
+  primary:
+    address: "you@example.com"
+    context: "Primary email"
+    archive_mailbox: "All Mail"  # or "Archive" depending on provider
+
+# --- Environments (servers) ---
+# Define remote environments the agent connects to
+environments:
+  workstation:
+    type: "workstation"
+    gws_wrapper: "${CRYSTAL_ROOT}/scripts/gws-mac.sh"
+
+# --- Calendars ---
+calendars:
+  include: []
+    # - name: "Work"
+    #   account: "primary"
+    #   id: "primary"
+  exclude: []
+    # - "Resource calendars"
+
+# --- Integrations (non-secret identifiers) ---
+integrations: {}
+  # ynab:
+  #   budget_id: "your-budget-id"
+  # buffer:
+  #   channels: {}
+
+# --- School-specific (optional) ---
+# schools: {}
+
+# --- Email triage (optional) ---
+# email_triage:
+#   protected_domains: []
+#   protected_senders: []

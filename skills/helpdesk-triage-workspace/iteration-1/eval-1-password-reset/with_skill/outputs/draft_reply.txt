@@ -1,0 +1,22 @@
+DRAFT REPLY
+===========
+To: aferber@germanschool-mn.org
+From: avanalstyne@germanschool-mn.org
+Subject: Re: Password Reset
+
+Hey Amanda,
+
+Got you sorted. Your password has been reset — you can log in at gmail.com with your school email and the temporary password: German1234!
+
+Once you're in, go ahead and change it to something new. Let me know if you run into any trouble.
+
+— Austin
+
+
+===========
+INTERNAL NOTE
+===========
+Diagnosis: Staff password locked out — standard Google Workspace password reset. Reset to GIS default (German1234!).
+Admin actions needed: Reset performed in Google Admin console (Austin). No additional actions unless user reports continued login failure after reset.
+Confidence: High
+Follow-up: If login still fails after reset, check whether account is suspended or disabled in Admin console — would require escalation to Workspace admin (Austin). Also try password without the `!` and with — KB notes this is the most common failure point.

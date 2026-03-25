@@ -1,0 +1,15 @@
+TO: khackett@germanschool-mn.org
+FROM: avanalstyne@germanschool-mn.org
+SUBJECT: Re: Staff Can't Access Shared Google Drive Folder
+
+Hey Kim,
+
+Thanks for flagging this. A few things could be causing the "access denied" even when the folder appears shared — most likely it comes down to how the folder is being shared vs. how Google expects it to work.
+
+Can you send me the link to the folder (or the name of it)? That'll let me see exactly how it's set up. The fix is usually quick once I can look at the sharing settings directly in the admin console.
+
+In the meantime, do you know if it's a folder inside a "Shared Drive" (the ones with the little people icon in the left sidebar), or a regular folder from someone's personal Drive? That distinction matters a lot for how permissions work — Shared Drives have different rules than regular folders.
+
+I'll get this sorted out.
+
+Austin

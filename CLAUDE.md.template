@@ -1,0 +1,33 @@
+# CrystalAI — Master Context
+
+This file is generated during setup. Copy from CLAUDE.md.template and customize.
+
+## Plugin Paths
+- **Plugin root:** ~/Documents/GitHub/CrystalAI/
+- **Vault:** [set in crystal.local.yaml]
+- **Config:** crystal.local.yaml (personal) + crystal.secrets.yaml (credential paths)
+
+## Quick Start
+1. Copy template files: `cp crystal.local.yaml.template crystal.local.yaml && cp crystal.secrets.yaml.template crystal.secrets.yaml`
+2. Fill in your config values
+3. Install: `claude plugin install --scope user ~/Documents/GitHub/CrystalAI`
+4. Run `crystal:setup` to validate
+
+## State Hierarchy
+All agent state lives in `state/`:
+- `environments/` — execution environments (servers, workstations)
+- `integrations/` — external service references
+- `entities/` — orgs, schools, people
+- `behavioral/` — domain-grouped rules
+- `patterns/` — copy-paste execution references
+- `memory/` — general reference
+- `operational/` — live state (logs, queues, manifests)
+- `sessions/` — session logs
+- `feedback/` — correction inbox (processed by /weekly into behavioral/)
+- `glossary.md` — abbreviation decoder ring
+
+## Skills
+All skills are namespaced `crystal:*`. See skill directories for details.
+
+## Architecture
+See ARCHITECTURE.md for the full agent self-model, decision trees, and growth protocols.

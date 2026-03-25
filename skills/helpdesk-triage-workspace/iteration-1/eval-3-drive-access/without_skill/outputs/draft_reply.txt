@@ -1,0 +1,18 @@
+TO: Kim Hackett <khackett@germanschool-mn.org>
+FROM: austin@umbrellasystems.net
+SUBJECT: Re: Staff Can't Access Google Drive Folder
+
+Hi Kim,
+
+Thanks for flagging this. Access denied errors like this are usually a permissions configuration issue — definitely something we can sort out.
+
+To get to the bottom of it quickly, can you send me a couple things:
+
+1. The name or link of the specific Drive folder (or Shared Drive) they're trying to access
+2. The names/emails of the staff who are affected
+
+One thing worth having them try in the meantime: open an Incognito window, go to drive.google.com, sign in with their GIS account specifically, and try accessing the folder from there. If that works, the issue is that they're signed into the wrong Google account in their regular browser.
+
+Once I have the folder link I can check the permissions setup on the admin side and get this fixed.
+
+Austin

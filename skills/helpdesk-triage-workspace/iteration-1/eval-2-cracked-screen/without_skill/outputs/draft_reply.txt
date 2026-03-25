@@ -1,0 +1,16 @@
+Subject: Re: Cracked Chromebook Screen — 2nd Grade Student
+
+Hi,
+
+Thanks for reaching out. Here's what to do:
+
+First, swap the student to a spare Chromebook so they're not stuck waiting — their Google account will sync right up on the new device since everything's in the cloud.
+
+Set the broken Chromebook aside for now. Before we decide on repair or replacement, can you grab the serial number off the back of the device? That'll let us check whether it's covered under accidental damage protection (ADP) — a lot of school Chromebook purchases include it, and if it's active, we can file a claim instead of paying out of pocket.
+
+Once we have the serial, we'll check the admin console and ADP status and go from there. Also worth checking your student device damage policy to see if there's a co-pay or family notification step required on your end.
+
+Let me know the serial number when you have it and we'll take it from there.
+
+Thanks,
+[Tech Support]

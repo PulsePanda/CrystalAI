@@ -1,0 +1,30 @@
+--- EMAIL DRAFT ---
+
+To: [Front office contact, GIS]
+From: avanalstyne@germanschool-mn.org
+Subject: Re: Cracked Chromebook Screen
+
+Hey,
+
+Go ahead and have the student borrow a loaner from your front office stock for now — that should keep them going in class.
+
+Set the broken one aside and I'll grab it when I'm on-site. I'll either get the screen repaired or swap it out with a working unit and get it back to you.
+
+Let me know if you don't have a loaner available and we can figure something else out.
+
+Austin
+
+--- END DRAFT ---
+
+
+--- INTERNAL NOTE ---
+
+Diagnosis: Accidental drop damage to student Chromebook screen. Device powers on but display is compromised. Standard physical damage case — no indicators of intentional damage.
+
+Admin actions needed: None remote. On-site visit required to collect broken unit and repair/swap. Verify spare loaner stock is available at front office before relying on that step.
+
+Confidence: High
+
+Follow-up: Collect unit on next on-site visit. If loaner stock is low, may need to prioritize getting a spare to GIS sooner. Worth noting as a potential pattern if 2nd grade devices are seeing repeated drops — could flag for teacher awareness around device handling.
+
+--- END INTERNAL NOTE ---

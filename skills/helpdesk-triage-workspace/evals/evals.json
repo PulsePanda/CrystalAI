@@ -1,0 +1,172 @@
+{
+  "skill_name": "helpdesk-triage",
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "password-reset",
+      "prompt": "Hey Austin — quick one, Amanda Ferber forgot her password and can't get into her email. Can you reset it? She's a 4th grade teacher at GIS.",
+      "expected_output": "Triage table (Staff, account-auth, Medium or High priority), diagnosis referencing KB password reset playbook (default GIS password German1234!), draft reply in Austin's voice, internal note.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "has-triage-table",
+          "description": "Output contains a triage table with Submitter, Category, User type, Priority, and Tags fields"
+        },
+        {
+          "id": "school-identified-as-gis",
+          "description": "GIS is correctly identified as the school (not SJA or unknown)"
+        },
+        {
+          "id": "user-type-staff",
+          "description": "Amanda Ferber is tagged as Staff, not Student"
+        },
+        {
+          "id": "mentions-default-password",
+          "description": "The diagnosis or reply references the GIS default password (German1234!) — shows KB was actually consulted"
+        },
+        {
+          "id": "has-internal-note",
+          "description": "An internal note section is present with diagnosis and admin actions"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "cracked-screen",
+      "prompt": "Hi, this is the front office at GIS. One of our 2nd grade student Chromebooks has a cracked screen — the kid dropped it. It still turns on but the display is messed up. What do we do?",
+      "expected_output": "Triage table (Student, chromebook-issues, Medium priority), diagnosis from KB, draft reply with actionable next steps, internal note with repair/loaner path.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "has-triage-table",
+          "description": "Output contains a triage table with all required fields"
+        },
+        {
+          "id": "user-type-student",
+          "description": "Affected user is correctly tagged as Student, not Staff"
+        },
+        {
+          "id": "category-chromebook-or-hardware",
+          "description": "Category references Chromebook, hardware, or physical damage"
+        },
+        {
+          "id": "reply-addresses-next-steps",
+          "description": "Draft reply gives concrete next steps (not just 'we'll look into it') — e.g., bring it in, loaner, repair process"
+        },
+        {
+          "id": "has-internal-note",
+          "description": "Internal note is present with diagnosis and any escalation or admin actions needed"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "drive-access-denied",
+      "prompt": "Austin — a few of our staff can't access files in our shared Google Drive. They keep getting 'access denied' even after the folder is shared with them. They're all using their GIS accounts. This has been happening for about a week. — Kim Hackett",
+      "expected_output": "Triage table with Kim Hackett as submitter, account-auth/Drive access category, escalation flagged, multiple root causes considered (group membership, sharing settings, permissions level), draft reply asking clarifying questions or explaining diagnosis, internal note with admin actions.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "has-triage-table",
+          "description": "Output contains a triage table with all required fields"
+        },
+        {
+          "id": "kim-hackett-as-submitter",
+          "description": "Kim Hackett is correctly identified as the submitter"
+        },
+        {
+          "id": "escalation-flagged",
+          "description": "Escalation field is set to Yes — Drive/group access issues require Workspace admin"
+        },
+        {
+          "id": "multiple-root-causes-considered",
+          "description": "Diagnosis considers more than one possible root cause (e.g., group membership, sharing permissions, Google Group vs individual share, viewer vs editor permissions)"
+        },
+        {
+          "id": "has-internal-note",
+          "description": "Internal note is present and mentions specific admin actions needed (e.g., check group membership, verify sharing settings)"
+        }
+      ]
+    }
+  ,
+    {
+      "id": 4,
+      "eval_name": "color-print-limit",
+      "prompt": "Hey — I got a message saying my color printing is limited or something? I tried to print a worksheet for my class and it just came back with an error about 'limit.' — Heidi Schroeder, GIS teacher",
+      "expected_output": "Triage table (Staff, printer-issues, Low-Medium), diagnosis explaining color quota (50 pages/month), note that B&W must be explicitly selected to avoid counting as color, mention of monthly auto-reset on the 1st, draft reply in Austin's voice, internal note.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "has-triage-table",
+          "description": "Output contains a triage table with all required fields"
+        },
+        {
+          "id": "user-type-staff",
+          "description": "Heidi Schroeder correctly tagged as Staff"
+        },
+        {
+          "id": "category-printer",
+          "description": "Category references printer or printing issues"
+        },
+        {
+          "id": "mentions-color-quota-detail",
+          "description": "Reply or diagnosis references specific KB detail: monthly limit (50 pages), OR explicit B&W selection requirement, OR auto-reset on the 1st of the month — not just generic 'you hit a limit'"
+        },
+        {
+          "id": "has-internal-note",
+          "description": "Internal note is present with diagnosis and any admin actions needed"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "eval_name": "ixl-grade-restriction",
+      "prompt": "Hi Austin, my 3rd grade students are trying to use IXL but it won't let them log in. It just says they don't have access. They had it last year in 2nd grade. Can you fix this? — Sara Meyerhoff, 3rd grade teacher at GIS",
+      "expected_output": "Triage table (Staff + Students, software-apps, Low-Medium), diagnosis stating IXL is licensed for 4th and 5th grade only (not a fix attempt), draft reply explaining the grade restriction policy and pointing to Esther for policy questions, internal note flagging this is a policy issue not a technical one.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "has-triage-table",
+          "description": "Output contains a triage table with all required fields"
+        },
+        {
+          "id": "mentions-grade-restriction-4th-5th",
+          "description": "Diagnosis or reply explicitly states IXL is licensed for 4th and 5th grade only — not a generic 'check licensing' or 'contact support' answer"
+        },
+        {
+          "id": "does-not-promise-to-fix-access",
+          "description": "Reply does NOT promise to restore access or frame this as a fixable technical issue — correctly treats it as a licensing policy decision"
+        },
+        {
+          "id": "has-internal-note",
+          "description": "Internal note is present and correctly identifies this as a policy issue, not a technical one"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "eval_name": "promethean-board-offline",
+      "prompt": "Austin, my Promethean board won't connect to the internet. The internet light is off and none of my lessons are loading. I've tried turning it off and on with the remote but it didn't help. Room 214. — Michael Torres, GIS",
+      "expected_output": "Triage table (Staff, av-displays, High priority — classroom blocked), diagnosis starting with wall power cycle (not remote power), draft reply instructing full wall unplug for 30-60 seconds, internal note with next steps if power cycle doesn't work (serial number, Promethean support ticket).",
+      "files": [],
+      "assertions": [
+        {
+          "id": "has-triage-table",
+          "description": "Output contains a triage table with all required fields"
+        },
+        {
+          "id": "priority-high-or-urgent",
+          "description": "Priority is High or Urgent — classroom is actively blocked"
+        },
+        {
+          "id": "mentions-wall-unplug-not-remote",
+          "description": "First troubleshooting step is unplugging from wall power (not the remote power button, which the teacher already tried) — KB specifically says unplug from wall for 30-60 seconds"
+        },
+        {
+          "id": "has-internal-note",
+          "description": "Internal note is present and mentions fallback if power cycle fails (serial number, Promethean support ticket)"
+        }
+      ]
+    }
+  ]
+}

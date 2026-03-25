@@ -1,0 +1,16 @@
+Hi Heidi,
+
+Thanks for reaching out. It sounds like you've hit your color printing quota for the current period — the "limit" error is the print system's way of saying your color page allowance is used up.
+
+Here's what we're going to do:
+
+1. We'll check your current quota balance and see where you're at.
+2. If you're over the limit and need to print something for class today, let us know and we can either top up your quota or print it for you on our end.
+3. Quotas typically reset on a monthly cycle, so if you're close to the reset date it may just be a matter of timing.
+
+In the meantime, if the worksheet can work in black and white, that should go through without any issues — just change the print settings to B&W before sending the job.
+
+Can you let me know what printer you were sending to (the name shown in your print dialog)? That'll help us pull up the right settings.
+
+Thanks,
+GIS Help Desk

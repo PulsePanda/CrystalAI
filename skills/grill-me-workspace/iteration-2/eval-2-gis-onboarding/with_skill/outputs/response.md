@@ -1,0 +1,1 @@
+Before anything else: what's the trigger for this workflow — is it a specific email format HR already uses (a consistent subject line, a form submission forwarded as email, something structured), or are you parsing freeform prose?

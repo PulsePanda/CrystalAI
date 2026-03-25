@@ -1,0 +1,32 @@
+# Personal config (not secret, but user-specific)
+crystal.local.yaml
+crystal.secrets.yaml
+
+# Master context (personalized per user)
+CLAUDE.md
+
+# Runtime state (all gitignored except schemas)
+state/environments/
+state/integrations/
+state/entities/
+state/behavioral/
+state/patterns/
+state/memory/
+state/operational/
+state/sessions/
+state/feedback/
+state/glossary.md
+!state/_schemas/
+
+# Environment-specific
+scripts/
+!scripts/.gitkeep
+agents/
+!agents/.gitkeep
+
+# OS
+.DS_Store
+
+# Syncthing
+.stfolder/
+.stignore
