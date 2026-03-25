@@ -41,7 +41,7 @@ Is it a meeting capture?
          Is it a project idea?
          ├─ Yes → Project Idea
          │  └─ Create project file from template
-         │     └─ Move to _System/Projects/
+         │     └─ Move to Projects/
          │        └─ Delete inbox file
          │
          └─ Default → Work Note
@@ -290,7 +290,7 @@ Subcategories:
 - Research/ - Research findings
 - Documentation/ - Docs and guides
 - Technical/ - Technical notes
-- Projects/ - Project-specific (if doesn't warrant _System/Projects/)
+- Projects/ - Project-specific (if doesn't warrant Projects/)
 - [Root] - General work notes
 
 Filename:
@@ -302,10 +302,10 @@ Filename:
 ### Project Ideas
 ```
 Source: +Inbox/project-idea.md
-Destination: _System/Projects/project-name.md
+Destination: Projects/project-name.md
 
 Process:
-1. Read project template: _System/Projects/_template.md
+1. Read project template: Projects/_template.md
 2. Extract information from inbox capture
 3. Populate template fields
 4. Generate filename from project title

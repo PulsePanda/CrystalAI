@@ -2,7 +2,7 @@
 
 ## Session Log
 
-**Location:** `_System/Memory/Sessions/YYYY-MM-DD-HHmm-topic.md`
+**Location:** `state/sessions/YYYY-MM-DD-HHmm-topic.md`
 
 Key sections to read during resume:
 - **Quick Reference** — topics, projects, outcome (always read this)
@@ -11,7 +11,7 @@ Key sections to read during resume:
 
 ## Project Files
 
-**Location:** `_System/Projects/project-name.md`
+**Location:** `Projects/project-name.md`
 
 Frontmatter `status` field is the source of truth:
 - `active` — show in resume summary

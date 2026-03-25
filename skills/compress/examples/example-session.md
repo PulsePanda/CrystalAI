@@ -78,7 +78,7 @@ This is an example of a complete session log created by the `/compress` skill.
 - [ ] Build /compress skill (Created in Things3)
 - [ ] Build /preserve skill (Created in Things3)
 - [ ] Build /process-inbox skill (Created in Things3)
-- [ ] Create project template in _System/Projects/
+- [ ] Create project template in Projects/
 - [ ] Enhance meeting notes template with Things3 integration
 - [ ] Enhance daily notes template with Things3 integration
 - [ ] Update .claude/settings.local.json with additional permissions

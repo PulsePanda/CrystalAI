@@ -40,7 +40,7 @@ User: Redesign company website with modern UI and improved performance
 Claude: Creating project...
 
 Created project: Website Redesign
-- File: _System/Projects/website-redesign.md
+- File: Projects/website-redesign.md
 - Status: Planning
 - Started: 2026-01-30
 - Added to CLAUDE.md Active Projects
@@ -48,7 +48,7 @@ Created project: Website Redesign
 ```
 
 ### Result
-- File created: `_System/Projects/website-redesign.md`
+- File created: `Projects/website-redesign.md`
 - CLAUDE.md updated with project entry
 - Obsidian opens with new project file
 - User can immediately start adding details
@@ -80,7 +80,7 @@ Claude: Brief description? (Optional)
 User: [presses Enter to skip]
 
 Claude: Created project: API Migration
-- File: _System/Projects/api-migration.md
+- File: Projects/api-migration.md
 - Status: Planning
 - Started: 2026-01-30
 - Opened in Obsidian for editing
@@ -109,7 +109,7 @@ User: Obsidian Smart Assistant
 ### Interaction
 ```
 Claude: A project with this name already exists at:
-_System/Projects/obsidian-smart-assistant.md
+Projects/obsidian-smart-assistant.md
 
 What would you like to do?
 1. Open existing project
@@ -218,7 +218,7 @@ Description?
 User: Migrate to API v2.0 and clean up deprecated endpoints
 
 Claude: Created project: API v2.0 Migration & Cleanup
-- File: _System/Projects/api-v20-migration-cleanup.md
+- File: Projects/api-v20-migration-cleanup.md
 - Status: Planning
 - Opened in Obsidian
 ```
@@ -420,12 +420,12 @@ User: New Project
 ### Interaction
 ```
 Claude: I'll create the project, but I notice the project template is missing:
-_System/Projects/_template.md
+Projects/_template.md
 
 I'll create a minimal project file with basic structure.
 
 Created project: New Project
-- File: _System/Projects/new-project.md
+- File: Projects/new-project.md
 - Status: Planning
 - Basic structure provided
 

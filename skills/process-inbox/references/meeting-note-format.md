@@ -286,7 +286,7 @@ _Tasks created from this meeting (auto-populated by Claude when processing inbox
 - [[project-name]]
 ```
 
-Links meeting to relevant projects in `_System/Projects/`.
+Links meeting to relevant projects in `Projects/`.
 
 **Related Sessions Section:**
 ```markdown

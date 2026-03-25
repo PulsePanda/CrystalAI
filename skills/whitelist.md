@@ -29,7 +29,7 @@ Specific email addresses that always surface.
 
 ## Active Project Contacts
 
-**Auto-populated** from `_System/Projects/` files. Any sender mentioned in an active project file is treated as whitelisted. This section is rebuilt each time `/process-email` runs by scanning project files for email addresses and contact names.
+**Auto-populated** from `Projects/` files. Any sender mentioned in an active project file is treated as whitelisted. This section is rebuilt each time `/process-email` runs by scanning project files for email addresses and contact names.
 
 _Last rebuilt: never (pending first run)_
 

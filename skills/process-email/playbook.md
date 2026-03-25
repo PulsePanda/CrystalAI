@@ -8,7 +8,7 @@ purpose: Email triage rules, examples, and routing — v2 intent-based system
 
 Hybrid playbook: deterministic rules for obvious patterns + example case library for judgment calls. Used by the intent classifier in `/process-email`.
 
-**Design doc:** `_System/Projects/email-triage-v2.md`
+**Design doc:** `Projects/email-triage-v2.md`
 
 ## Global Rules
 
@@ -173,7 +173,7 @@ When deterministic rules don't match, classify by **intent** — what the email 
 ## Project-Related Emails
 
 When an email is clearly related to an ongoing project:
-1. Check if project exists in `_System/Projects/`
+1. Check if project exists in `Projects/`
 2. If yes: capture relevant context + message:// link to the project, then archive
 3. If no but should exist: create the project first
 4. Key context to capture: meeting dates, decisions, contacts, action items

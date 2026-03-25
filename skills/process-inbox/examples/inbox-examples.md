@@ -329,7 +329,7 @@ Could really help with visibility
 3. **Action**: Create project file from template
 
 ### After: Project File Created
-**File:** `_System/Projects/analytics-dashboard.md`
+**File:** `Projects/analytics-dashboard.md`
 ```markdown
 # Analytics Dashboard
 Status: Planning
@@ -377,7 +377,7 @@ Estimated 6-8 weeks for initial version
 - "Set up dashboard dev environment" - tags: [work, analytics-dashboard, setup]
 
 ### Result
-✓ Full project file created in _System/Projects/
+✓ Full project file created in Projects/
 ✓ 3 initial tasks created in Things3
 ✓ Project ready for tracking
 ✓ Inbox file deleted
@@ -548,7 +548,7 @@ Inbox capture with:
 
 → Create project file
 → Generate initial tasks
-→ Move to _System/Projects/
+→ Move to Projects/
 ```
 
 ### Multi-Item Pattern

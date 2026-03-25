@@ -6,7 +6,7 @@ Reference guide for the structure and sections of project files.
 
 All project files live in:
 ```
-/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/Projects/
+/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/Projects/
 ```
 
 ## Filename Convention
@@ -259,8 +259,8 @@ When project completes, entry can be archived (if CLAUDE.md > 280 lines).
 
 ## Example Full Template
 
-See: `_System/Projects/_template.md` for the complete template file.
+See: `Projects/_template.md` for the complete template file.
 
 ## Example Populated Project
 
-See: `_System/Projects/obsidian-smart-assistant.md` for a real-world example.
+See: `Projects/obsidian-smart-assistant.md` for a real-world example.

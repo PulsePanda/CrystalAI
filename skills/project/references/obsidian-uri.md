@@ -19,7 +19,7 @@ For this system: `VaultyBoi`
 The file path relative to the vault root, URL-encoded.
 
 Examples:
-- `_System/Projects/website-redesign.md`
+- `Projects/website-redesign.md`
 - `Areas/Work/Meeting notes/2026-01-30 [Standup] Team Planning.md`
 - `+Inbox/2026-01-30-1430.md`
 
@@ -33,7 +33,7 @@ File paths must be URL-encoded to handle:
 ### Using Python for Encoding
 
 ```bash
-PROJECT_FILE="_System/Projects/website-redesign.md"
+PROJECT_FILE="Projects/website-redesign.md"
 ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$PROJECT_FILE'))")
 echo "obsidian://open?vault=VaultyBoi&file=$ENCODED_PATH"
 ```
@@ -47,7 +47,7 @@ obsidian://open?vault=VaultyBoi&file=_System%2FProjects%2Fwebsite-redesign.md
 
 For simple cases without special characters:
 ```bash
-FILE="_System/Projects/test.md"
+FILE="Projects/test.md"
 URI="obsidian://open?vault=VaultyBoi&file=${FILE// /%20}"
 ```
 
@@ -74,7 +74,7 @@ Start-Process "obsidian://open?vault=VaultyBoi&file=_System%2FProjects%2Fproject
 #!/bin/bash
 
 VAULT="VaultyBoi"
-FILE="_System/Projects/my-new-project.md"
+FILE="Projects/my-new-project.md"
 
 # URL encode the file path
 ENCODED_FILE=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$FILE'))")
@@ -189,10 +189,10 @@ open "obsidian://open?vault=VaultyBoi&file=My%20Project/file.md"
 **Using absolute paths:**
 ```bash
 # Wrong - paths are relative to vault root
-file="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/Projects/file.md"
+file="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/Projects/file.md"
 
 # Correct - strip vault root
-file="_System/Projects/file.md"
+file="Projects/file.md"
 ```
 
 **Wrong vault name:**
@@ -216,7 +216,7 @@ The /project skill uses this pattern:
 
 ```bash
 # After creating project file
-PROJECT_FILE="_System/Projects/${filename}.md"
+PROJECT_FILE="Projects/${filename}.md"
 ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$PROJECT_FILE'))")
 open "obsidian://open?vault=VaultyBoi&file=$ENCODED_PATH" 2>/dev/null || {
     echo "Created: $PROJECT_FILE"
