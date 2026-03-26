@@ -63,7 +63,7 @@ Complete specification for session log file structure and content.
 - Installed Things3 MCP server via pipx
 - Configured Claude Desktop with MCP endpoint
 - Updated permissions in .claude/settings.local.json
-- Created helper scripts in _System/Memory/Scripts/
+- Created helper scripts in scripts/
 
 ## Errors & Workarounds
 - **Error:** Things3 MCP async coroutine not awaited

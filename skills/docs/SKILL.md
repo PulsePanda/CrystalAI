@@ -30,14 +30,14 @@ Review the current session and update:
 
 1. **Scan session context** - What was worked on? What decisions were made?
 2. **Identify docs to update:**
-   - If email triage → `.claude/skills/process-email/playbook.md`, `Projects/email-triage.md`, `.claude/skills/email/SKILL.md`
+   - If email triage → `${CLAUDE_PLUGIN_ROOT}/skills/process-email/references/playbook.md`, `Projects/email-triage.md`, `${CLAUDE_PLUGIN_ROOT}/skills/email/SKILL.md`
    - If skill work → relevant skill's `SKILL.md`
    - If project work → `Projects/[project].md`
    - If workflow patterns → `~/.claude/projects/.../memory/MEMORY.md`
    - If behavioral rules changed → `state/behavioral/` domain files
    - If Austin corrected Claude → `state/operational/corrections.md`
    - If Austin's preferences/style observed → `state/behavioral/austin-preferences.md`
-   - If resume/session flow changed → `.claude/skills/resume/SKILL.md`
+   - If resume/session flow changed → `${CLAUDE_PLUGIN_ROOT}/skills/resume/SKILL.md`
 3. **Read current state** of each doc
 4. **Update with new info:**
    - New rules/patterns learned

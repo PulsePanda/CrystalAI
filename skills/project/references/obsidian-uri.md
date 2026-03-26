@@ -40,7 +40,7 @@ echo "obsidian://open?vault=VaultyBoi&file=$ENCODED_PATH"
 
 Output:
 ```
-obsidian://open?vault=VaultyBoi&file=_System%2FProjects%2Fwebsite-redesign.md
+obsidian://open?vault=VaultyBoi&file=Projects%2Fwebsite-redesign.md
 ```
 
 ### Using Bash Parameter Expansion
@@ -55,17 +55,17 @@ URI="obsidian://open?vault=VaultyBoi&file=${FILE// /%20}"
 
 ### macOS
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=_System%2FProjects%2Fproject.md"
+open "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
 ```
 
 ### Linux
 ```bash
-xdg-open "obsidian://open?vault=VaultyBoi&file=_System%2FProjects%2Fproject.md"
+xdg-open "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
 ```
 
 ### Windows
 ```powershell
-Start-Process "obsidian://open?vault=VaultyBoi&file=_System%2FProjects%2Fproject.md"
+Start-Process "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
 ```
 
 ## Complete Example
@@ -160,7 +160,7 @@ Opens file and scrolls to line 42.
 
 ### Test in Terminal
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=_System/Memory/CLAUDE.md"
+open "obsidian://open?vault=VaultyBoi&file=CLAUDE.md"
 ```
 
 Should open CLAUDE.md in Obsidian.

@@ -4,8 +4,7 @@ Ready-to-use bash snippets for Gmail operations via GWS. Replace `ACCOUNT` and `
 
 **GWS wrapper path:**
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
-# Note: gws-mac.sh lives in vault _System/scripts/ — path unchanged
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 ```
 
 **Account names:** `personal`, `umb`, `gis`, `sja`, `kesa` (lowercase)

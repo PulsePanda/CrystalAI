@@ -111,12 +111,12 @@ Coming up this week:
 
 ### Step 6: Playbook Learning Log → New Sender Rules
 
-Read `.claude/skills/process-email/playbook.md` Learning Log table.
+Read `${CLAUDE_PLUGIN_ROOT}/skills/process-email/references/playbook.md` Learning Log table.
 
 For any new entries added this week:
 1. Should this become a permanent sender rule? (If same sender appears 2+ times → yes)
 2. If yes → add to Sender Rules table in playbook
-3. If it's an archive rule → add to `.claude/skills/process-email/gmail-filters.xml`
+3. If it's an archive rule → add to `${CLAUDE_PLUGIN_ROOT}/skills/process-email/references/gmail-filters.xml`
 
 ### Step 7: Review Known Errors
 

@@ -56,8 +56,8 @@ While categorizing, also check if any capture contains a content-worthy idea —
 - Anything Austin explicitly marked as "content idea", "could be a post", etc.
 
 If detected, append a row to the appropriate backlog file(s) during Step 6:
-- `_System/Content/umbrella/ideas.md` — company capabilities, service delivery, general school IT
-- `_System/Content/austin/ideas.md` — personal stories, building in public, AI/automation
+- `Areas/Content/umbrella/ideas.md` — company capabilities, service delivery, general school IT
+- `Areas/Content/austin/ideas.md` — personal stories, building in public, AI/automation
 
 **Row format:** `| YYYY-MM-DD | Idea title | [inbox-scan] | new | 2-3 sentence description |`
 

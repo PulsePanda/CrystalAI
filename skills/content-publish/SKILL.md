@@ -20,7 +20,7 @@ This skill is designed to run autonomously (Heart heartbeat or Canopy raindrop d
 
 The bundled script at `scripts/publish.py` handles everything deterministically:
 
-1. Reads both queue files (`_System/Content/umbrella/queue.md` and `_System/Content/austin/queue.md`)
+1. Reads both queue files (`Areas/Content/umbrella/queue.md` and `Areas/Content/austin/queue.md`)
 2. Finds rows where status is `scheduled` and date/time is now or in the past
 3. Resolves channel names to Buffer channel IDs and picks the correct API key (personal vs umbrella account)
 4. Calls the Buffer GraphQL API to publish each post
@@ -32,14 +32,14 @@ The bundled script at `scripts/publish.py` handles everything deterministically:
 ### Manual (MacBook or any machine with vault access)
 
 ```bash
-python3 .claude/skills/content-publish/scripts/publish.py \
+python3 {SKILL_DIR}/scripts/publish.py \
   --vault-path "/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi"
 ```
 
 ### Dry run (see what would publish without actually doing it)
 
 ```bash
-python3 .claude/skills/content-publish/scripts/publish.py \
+python3 {SKILL_DIR}/scripts/publish.py \
   --vault-path "/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi" \
   --dry-run
 ```
@@ -47,7 +47,7 @@ python3 .claude/skills/content-publish/scripts/publish.py \
 ### Heart / Canopy (autonomous via dispatcher)
 
 ```bash
-python3 /home/crystalos/VaultyBoi/.claude/skills/content-publish/scripts/publish.py \
+python3 /home/crystalos/CrystalAI/skills/content-publish/scripts/publish.py \
   --vault-path /home/crystalos/VaultyBoi
 ```
 
@@ -60,7 +60,7 @@ When Austin triggers this skill interactively (or it's triggered by a dispatcher
 Run the script with `--dry-run` to see what's queued:
 
 ```bash
-python3 .claude/skills/content-publish/scripts/publish.py \
+python3 {SKILL_DIR}/scripts/publish.py \
   --vault-path "VAULT_PATH" \
   --dry-run
 ```
@@ -72,7 +72,7 @@ If running interactively (Austin triggered it), show the results and ask for con
 Run without `--dry-run` to actually publish:
 
 ```bash
-python3 .claude/skills/content-publish/scripts/publish.py \
+python3 {SKILL_DIR}/scripts/publish.py \
   --vault-path "VAULT_PATH"
 ```
 
@@ -85,7 +85,7 @@ Tell Austin (or log to heart-log.md if autonomous) what happened:
 
 ### Step 4: Update post files (if applicable)
 
-If any published posts have corresponding markdown files in `_System/Content/umbrella/posts/` or `_System/Content/austin/posts/`, update their frontmatter `status` from `drafted` to `published`.
+If any published posts have corresponding markdown files in `Areas/Content/umbrella/posts/` or `Areas/Content/austin/posts/`, update their frontmatter `status` from `drafted` to `published`.
 
 Search for post files by matching the date in the filename to the queue row date. This step is best-effort — not all queue rows have corresponding post files (e.g., social-only posts without a blog article).
 

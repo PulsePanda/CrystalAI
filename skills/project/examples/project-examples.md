@@ -263,7 +263,7 @@ User works on a project and compresses the session.
         User: Infrastructure Upgrade
 
         Claude: Session compressed
-        - Created: _System/Memory/Sessions/2026-01-30-0900-infrastructure.md
+        - Created: state/sessions/2026-01-30-0900-infrastructure.md
         - Linked to project: Infrastructure Upgrade
         - Created 3 tasks in Things3 (tagged: infrastructure-upgrade)
         - Updated project Current State section

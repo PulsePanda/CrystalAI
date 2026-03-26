@@ -7,7 +7,7 @@ Generate Apple Mail `message://` links from GWS Gmail message IDs. Confirmed wor
 ## Get message:// Link from GWS Message ID
 
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 "$GWS" ACCOUNT gmail users messages get --params '{"userId":"me","id":"GWS_MSG_ID","format":"metadata","metadataHeaders":["Message-ID"]}' 2>/dev/null | \
   python3 -c "
 import json,sys,urllib.parse

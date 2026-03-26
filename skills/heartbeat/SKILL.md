@@ -15,7 +15,7 @@ You are running on Heart (CrystalOS, 10.1.11.214). This skill is invoked every 1
 | `staleness-check` | `last-morning-briefing` > 25 hours ago | POST to morning briefing n8n workflow to re-trigger |
 | `log-compression` | `last-log-compression` > 30 days ago | Compress old log files in `/home/crystalos/logs/` |
 | `content-capture` | `last-content-capture` > 24 hours ago | Run `/content-capture` skill to scan for new content ideas |
-| `content-publish` | `last-content-publish` > 1 hour ago | Run `python3 /home/crystalos/VaultyBoi/.claude/skills/content-publish/scripts/publish.py --vault-path /home/crystalos/VaultyBoi` |
+| `content-publish` | `last-content-publish` > 1 hour ago | Run `python3 /home/crystalos/CrystalAI/skills/content-publish/scripts/publish.py --vault-path /home/crystalos/VaultyBoi` |
 
 ## Execution Steps
 
@@ -26,7 +26,7 @@ You are running on Heart (CrystalOS, 10.1.11.214). This skill is invoked every 1
    - **staleness-check:** `curl -s -X POST http://localhost:5678/webhook/TjvFCtYDRWgglGgJ/trigger/morning-briefing`
    - **log-compression:** Find logs older than 30 days in `/home/crystalos/logs/`, gzip them
    - **content-capture:** Invoke the `/content-capture` skill inline (needs Claude — runs within this heartbeat session)
-   - **content-publish:** Run via Bash: `python3 /home/crystalos/VaultyBoi/.claude/skills/content-publish/scripts/publish.py --vault-path /home/crystalos/VaultyBoi` (standalone Python, no Claude needed). API keys loaded from `~/.crystalos/buffer-keys.json`.
+   - **content-publish:** Run via Bash: `python3 /home/crystalos/CrystalAI/skills/content-publish/scripts/publish.py --vault-path /home/crystalos/VaultyBoi` (standalone Python, no Claude needed). API keys loaded from `~/.crystalos/buffer-keys.json`.
 5. Update `state/environments/heart-state.md` with `last-heartbeat: <now>` and any other job-specific timestamps
 6. Log actions taken (or "no jobs due") to stdout
 

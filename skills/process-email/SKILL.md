@@ -21,11 +21,11 @@ Classify every email by what it's asking Austin to do, not just who sent it. Run
 
 Read these files to build the classification context:
 
-1. `.claude/skills/process-email/playbook.md` — deterministic rules, intent guide, routing tables
-2. `.claude/skills/process-email/whitelist.md` — protected senders/domains
-3. `.claude/skills/process-email/blacklist.md` — blocked senders/domains
-4. `.claude/skills/process-email/recent-correspondents.md` — rolling 6-month list
-5. `.claude/skills/process-email/examples.md` — case library of past corrections with reasoning
+1. `{SKILL_DIR}/references/playbook.md` — deterministic rules, intent guide, routing tables
+2. `{SKILL_DIR}/references/whitelist.md` — protected senders/domains
+3. `{SKILL_DIR}/references/blacklist.md` — blocked senders/domains
+4. `{SKILL_DIR}/references/recent-correspondents.md` — rolling 6-month list
+5. `{SKILL_DIR}/references/examples.md` — case library of past corrections with reasoning
 
 ---
 
@@ -34,8 +34,7 @@ Read these files to build the classification context:
 Query sent mail across all 5 Gmail accounts to rebuild the recent correspondents list. This ensures the list stays current without Austin maintaining it manually.
 
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
-# Note: gws-mac.sh lives in the vault at _System/scripts/ (not moved — it's a vault-resident script)
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 # Calculate 6 months ago in YYYY/MM/DD format
 SIX_MONTHS_AGO=$(date -v-6m +"%Y/%m/%d")
 "$GWS" ACCOUNT gmail users messages list --params "{\"userId\":\"me\",\"q\":\"in:sent after:$SIX_MONTHS_AGO\",\"maxResults\":100}" 2>/dev/null
@@ -90,8 +89,7 @@ Fetch all accounts in parallel. All commands require `dangerouslyDisableSandbox:
 
 **Gmail accounts (UMB, GIS, SJA, KESA, Personal) — GWS only:**
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
-# Note: gws-mac.sh lives in vault _System/scripts/ — path unchanged
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 "$GWS" ACCOUNT gmail users messages list --params '{"userId":"me","q":"in:inbox","maxResults":50}' 2>/dev/null
 ```
 Run all 5 in parallel. Returns Gmail hex message IDs.
@@ -197,8 +195,7 @@ Execute confirmed actions in **separated batches by operation type** to prevent 
 
 **Batch 1 — GWS Archives (all Gmail accounts):**
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
-# Note: gws-mac.sh lives in vault _System/scripts/ — path unchanged
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 "$GWS" ACCOUNT gmail users messages modify --params '{"userId":"me","id":"MSG_ID"}' --json '{"removeLabelIds":["INBOX"]}' 2>/dev/null
 ```
 Batch-archive multiple messages from the same account:
@@ -232,7 +229,7 @@ When Austin corrects a classification, two things happen:
 
 ### 10a: Store Example in Case Library
 
-For each correction, append to `.claude/skills/process-email/examples.md`:
+For each correction, append to `{SKILL_DIR}/references/examples.md`:
 
 ```markdown
 ### Example NNN
@@ -259,7 +256,7 @@ Add the decision to the playbook's Learning Log table.
 
 ### 10d: Update Gmail Filters
 
-When archiving a new sender with no action and the pattern is clearly repeatable, add an entry to `.claude/skills/process-email/gmail-filters.xml`.
+When archiving a new sender with no action and the pattern is clearly repeatable, add an entry to `{SKILL_DIR}/references/gmail-filters.xml`.
 
 ---
 
@@ -313,9 +310,9 @@ Summarize the session:
 - `email` tool skill — raw email access patterns (GWS commands, AppleScript snippets)
 - `things3` tool skill — task creation (MCP tools + AppleScript patterns)
 - `Projects/email-triage-v2.md` — design doc
-- `.claude/skills/process-email/playbook.md` — deterministic rules + intent guide
-- `.claude/skills/process-email/whitelist.md` — protected senders
-- `.claude/skills/process-email/blacklist.md` — blocked senders
-- `.claude/skills/process-email/recent-correspondents.md` — 6-month rolling window
-- `.claude/skills/process-email/examples.md` — case library
-- `.claude/skills/process-email/gmail-filters.xml` — Gmail filter rules
+- `{SKILL_DIR}/references/playbook.md` — deterministic rules + intent guide
+- `{SKILL_DIR}/references/whitelist.md` — protected senders
+- `{SKILL_DIR}/references/blacklist.md` — blocked senders
+- `{SKILL_DIR}/references/recent-correspondents.md` — 6-month rolling window
+- `{SKILL_DIR}/references/examples.md` — case library
+- `{SKILL_DIR}/references/gmail-filters.xml` — Gmail filter rules

@@ -9,8 +9,8 @@ Runs a tight optimization loop on a skill: test → evaluate → change → rete
 
 ## Step 1: Locate the skill
 
-Vault skills live at:
-`/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/.claude/skills/<skill-name>/SKILL.md`
+Skills live at:
+`/Users/Austin/Documents/GitHub/CrystalAI/skills/<skill-name>/SKILL.md`
 
 Read the SKILL.md for the target skill before doing anything else. You need to understand what it's supposed to do and how it works.
 

@@ -27,8 +27,8 @@ A content build session is collaborative. You draft, Austin refines. The content
 ### Step 1: Review the Backlogs
 
 Read both backlog files:
-- `_System/Content/umbrella/ideas.md`
-- `_System/Content/austin/ideas.md`
+- `Areas/Content/umbrella/ideas.md`
+- `Areas/Content/austin/ideas.md`
 
 Present all ideas with status `new`:
 
@@ -129,8 +129,8 @@ Once Austin approves:
 **4a: Save blog posts to vault**
 
 Write each blog post as a markdown file:
-- Umbrella: `_System/Content/umbrella/posts/YYYY-MM-DD-slug.md`
-- Austin: `_System/Content/austin/posts/YYYY-MM-DD-slug.md`
+- Umbrella: `Areas/Content/umbrella/posts/YYYY-MM-DD-slug.md`
+- Austin: `Areas/Content/austin/posts/YYYY-MM-DD-slug.md`
 
 Frontmatter:
 ```yaml
@@ -166,7 +166,7 @@ Tell Austin: "HTML is open in Chrome. Cmd+A, Cmd+C, then paste into Substack's e
 **4c: Save social posts archive**
 
 Save the social posts alongside the blog post for reference:
-- `_System/Content/umbrella/posts/YYYY-MM-DD-slug-social.md` (or austin/)
+- `Areas/Content/umbrella/posts/YYYY-MM-DD-slug-social.md` (or austin/)
 
 **4d: Schedule social posts**
 
@@ -176,7 +176,7 @@ Default cadence (unless Austin specifies otherwise):
 - Posts per day per platform: max 1. Spread them out.
 - Suggested posting times: 9:00 AM for LinkedIn, 10:00 AM for Twitter, 11:00 AM for Facebook.
 
-Append to the appropriate queue file (`_System/Content/umbrella/queue.md` or `_System/Content/austin/queue.md`):
+Append to the appropriate queue file (`Areas/Content/umbrella/queue.md` or `Areas/Content/austin/queue.md`):
 
 ```
 | YYYY-MM-DD | 10:00 | twitter | UmbrellaSysMN | scheduled | [full post text] |

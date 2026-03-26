@@ -5,8 +5,7 @@ Ready-to-use bash commands. All require `dangerouslyDisableSandbox: true`.
 ## Setup Variables (copy these to the top of any multi-command block)
 
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
-# Note: gws-mac.sh lives in vault _System/scripts/ — path unchanged
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 EXCLUDE="INTERNAL Staff Calendar|PUBLIC Twin Cities|Chromebook Cart|Room Reservations|Holidays in United States|US Holidays|Brendan Work|Work"
 
 # Calendar IDs (for non-primary calendars — use with --calendar or calendarId param)
@@ -208,8 +207,7 @@ if isinstance(events, list):
 Parallel (`&` + `wait`) interleaves output and is harder to parse. Use sequential when you need to process results:
 
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
-# Note: gws-mac.sh lives in vault _System/scripts/ — path unchanged
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 EXCLUDE="INTERNAL Staff Calendar|PUBLIC Twin Cities|Chromebook Cart|Room Reservations|Holidays in United States"
 
 for acct in gis umb personal kesa; do

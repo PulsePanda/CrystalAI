@@ -11,8 +11,8 @@ Capture Austin's content ideas through conversation and file them into the right
 
 This skill is part of the Umbrella Content Engine pipeline. Austin runs two content voices:
 
-- **Umbrella voice** — company perspective. "How we help schools do X." Professional, capability-focused. Goes to `_System/Content/umbrella/ideas.md`.
-- **Austin voice** — personal expert perspective. "What I've learned about X from running IT at charter schools." First-person, opinionated, story-driven. Goes to `_System/Content/austin/ideas.md`.
+- **Umbrella voice** — company perspective. "How we help schools do X." Professional, capability-focused. Goes to `Areas/Content/umbrella/ideas.md`.
+- **Austin voice** — personal expert perspective. "What I've learned about X from running IT at charter schools." First-person, opinionated, story-driven. Goes to `Areas/Content/austin/ideas.md`.
 
 Some ideas fit both voices with different framing — that's fine, file them in both backlogs.
 
@@ -74,7 +74,7 @@ Ask if anything needs adjusting — wrong voice, missing context, ideas to merge
 
 For each confirmed idea, append a row to the appropriate backlog file(s):
 
-**File:** `_System/Content/umbrella/ideas.md` and/or `_System/Content/austin/ideas.md`
+**File:** `Areas/Content/umbrella/ideas.md` and/or `Areas/Content/austin/ideas.md`
 
 **Format:** Append to the table under `## Backlog`:
 ```

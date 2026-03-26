@@ -42,11 +42,11 @@ Internal reference for all email operations. Read the reference files for copy-p
 
 ## GWS Wrapper
 
-**Script:** `_System/scripts/gws-mac.sh` (lives in the vault — path unchanged)
+**Script:** `~/Documents/GitHub/CrystalAI/scripts/gws-mac.sh`
 **Credentials:** `~/.config/gws/credentials/credentials-{account}.json`
 
 ```bash
-GWS="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/_System/scripts/gws-mac.sh"
+GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
 ```
 
 ## Reference Files (copy-paste snippets)

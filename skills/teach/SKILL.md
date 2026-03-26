@@ -32,7 +32,7 @@ If an example contradicts existing style rules, flag it and ask which is correct
 
 ## Step 3: Save Examples
 
-Append to `.claude/skills/teach/references/writing-examples.md`:
+Append to `{SKILL_DIR}/references/writing-examples.md`:
 
 ```markdown
 ## YYYY-MM-DD - [Brief context]

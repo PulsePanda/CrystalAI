@@ -45,7 +45,7 @@ Austin sometimes jots down observations, meeting takeaways, or raw ideas in dail
 
 ### Step 1: Load State
 
-Read `_System/Content/capture-state.json`. If it doesn't exist, create it:
+Read `Areas/Content/capture-state.json`. If it doesn't exist, create it:
 
 ```json
 {
@@ -90,7 +90,7 @@ Before appending, check existing backlog entries. Compare the new idea title aga
 
 For each new idea, append a row to the appropriate backlog file(s):
 
-**File:** `_System/Content/umbrella/ideas.md` and/or `_System/Content/austin/ideas.md`
+**File:** `Areas/Content/umbrella/ideas.md` and/or `Areas/Content/austin/ideas.md`
 
 **Format:**
 ```
@@ -101,7 +101,7 @@ Use the Edit tool to append rows to the end of the table.
 
 ### Step 6: Update State
 
-Update `_System/Content/capture-state.json`:
+Update `Areas/Content/capture-state.json`:
 - Set all `last_scan` timestamps to now
 - Add processed file paths/ticket IDs to `captured_sources`
 

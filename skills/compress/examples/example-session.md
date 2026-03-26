@@ -55,15 +55,15 @@ This is an example of a complete session log created by the `/compress` skill.
   **Why it worked:** Scripts check API availability first, use filesystem as fallback
 
 ## Files Modified
-- `_System/Memory/CLAUDE.md` - Created initial persistent memory structure
-- `_System/Memory/Scripts/api-check.sh` - Created API availability checker
-- `_System/Memory/Scripts/read-note.sh` - Created hybrid note reader
-- `_System/Memory/Scripts/write-note.sh` - Created hybrid note writer
-- `_System/Memory/Scripts/search-vault.sh` - Created vault search utility
-- `.claude/skills/resume/SKILL.md` - Created resume skill (~1,900 words)
-- `.claude/skills/resume/references/vault-integration.md` - API/filesystem patterns
-- `.claude/skills/resume/references/memory-format.md` - File format documentation
-- `.claude/skills/resume/references/things3-integration.md` - MCP integration guide
+- `state/memory/CLAUDE.md` - Created initial persistent memory structure
+- `scripts/api-check.sh` - Created API availability checker
+- `scripts/read-note.sh` - Created hybrid note reader
+- `scripts/write-note.sh` - Created hybrid note writer
+- `scripts/search-vault.sh` - Created vault search utility
+- `CrystalAI/skills/resume/SKILL.md` - Created resume skill (~1,900 words)
+- `CrystalAI/skills/resume/references/vault-integration.md` - API/filesystem patterns
+- `CrystalAI/skills/resume/references/memory-format.md` - File format documentation
+- `CrystalAI/skills/resume/references/things3-integration.md` - MCP integration guide
 - `~/Library/Application Support/Claude/claude_desktop_config.json` - Added Things3 MCP server config
 
 ## Setup & Configuration
@@ -71,7 +71,7 @@ This is an example of a complete session log created by the `/compress` skill.
 - Fixed async coroutine issue by creating __main__.py wrapper
 - Configured Claude Desktop with MCP server endpoint
 - Created _System/ directory structure (Memory/, Projects/, Scripts/)
-- Created .claude/skills/ structure for 4 planned skills
+- Created skills/ structure for 4 planned skills
 - Initialized CLAUDE.md with starter content and documentation
 
 ## Pending Tasks
