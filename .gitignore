@@ -18,6 +18,28 @@ state/feedback/
 state/glossary.md
 !state/_schemas/
 
+# Workspace eval artifacts (contain real names, emails, school data)
+skills/*-workspace/
+
+# Skill reference files with personal data
+skills/process-email/references/recent-correspondents.md
+skills/process-email/references/whitelist.md
+skills/process-email/references/blacklist.md
+skills/process-email/references/examples.md
+skills/process-email/recent-correspondents.md
+skills/process-email/whitelist.md
+skills/process-email/blacklist.md
+skills/process-email/examples.md
+skills/process-email/playbook.md
+skills/process-email/references/playbook.md
+skills/ynab/references/ids.md
+skills/calendar/references/gws-snippets.md
+skills/email/references/applescript-snippets.md
+skills/email/references/gws-snippets.md
+skills/process-email/gmail-filters.xml
+skills/process-email/references/gmail-filters.xml
+skills/skill-improver/references/trigger_eval.json
+
 # Environment-specific
 scripts/
 !scripts/.gitkeep

@@ -31,14 +31,16 @@ Internal reference for all email operations. Read the reference files for copy-p
 
 ## Account Reference
 
-| GWS Account | Email | Apple Mail Account Name |
-|-------------|-------|------------------------|
-| `umb` | austin@umbrellasystems.net | `UMB` |
-| `gis` | avanalstyne@germanschool-mn.org | `GIS` |
-| `sja` | austin@sejongacademy.org | `SJA` |
-| `kesa` | austin@kesa.pro | `KESA` |
-| `personal` | ajv857@gmail.com | `Personal` |
-| — | (iCloud — unused, don't query) | `iCloud` |
+Resolve account addresses from `crystal.local.yaml` → `email_accounts`. Apple Mail account names match the GWS account key in uppercase (umb→UMB, gis→GIS, etc.). iCloud is unused — don't query it.
+
+| GWS Account | Apple Mail Account Name |
+|-------------|------------------------|
+| `umb` | `UMB` |
+| `gis` | `GIS` |
+| `sja` | `SJA` |
+| `kesa` | `KESA` |
+| `personal` | `Personal` |
+| — | `iCloud` (unused) |
 
 ## GWS Wrapper
 

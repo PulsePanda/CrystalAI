@@ -17,8 +17,8 @@ TOKEN=$(cat ~/.config/ynab/credentials.json | python3 -c "import sys,json; print
 # Base URL
 BASE="https://api.ynab.com/v1"
 
-# Primary budget
-BUDGET="ae02b2eb-0a8c-4293-8222-1678d112dc19"
+# Primary budget — read from crystal.local.yaml → integrations.ynab.budget_id
+BUDGET="<resolve from crystal.local.yaml>"
 ```
 
 All API calls require `dangerouslyDisableSandbox: true` — the sandbox blocks YNAB API DNS.

@@ -1,12 +1,12 @@
 ---
-name: crystal:heartbeat
+name: heartbeat
 description: "Autonomous task dispatcher — runs every 15 minutes via cron, checks registered jobs against heart-state.md, executes due jobs, updates state."
-user_invocable: false
+user-invocable: false
 ---
 
 # Heartbeat — Autonomous Task Dispatcher
 
-You are running on Heart (CrystalOS, 10.1.11.214). This skill is invoked every 15 minutes by cron via `heart-run.sh /heartbeat`.
+You are running on Heart (CrystalOS). This skill is invoked every 15 minutes by cron via `heart-run.sh /heartbeat`. Resolve server paths from `crystal.local.yaml` → `environments.heart`.
 
 ## Job Registry
 
@@ -15,18 +15,18 @@ You are running on Heart (CrystalOS, 10.1.11.214). This skill is invoked every 1
 | `staleness-check` | `last-morning-briefing` > 25 hours ago | POST to morning briefing n8n workflow to re-trigger |
 | `log-compression` | `last-log-compression` > 30 days ago | Compress old log files in `/home/crystalos/logs/` |
 | `content-capture` | `last-content-capture` > 24 hours ago | Run `/content-capture` skill to scan for new content ideas |
-| `content-publish` | `last-content-publish` > 1 hour ago | Run `python3 /home/crystalos/CrystalAI/skills/content-publish/scripts/publish.py --vault-path /home/crystalos/VaultyBoi` |
+| `content-publish` | `last-content-publish` > 1 hour ago | Run `python3 ${PLUGIN_PATH}/skills/content-publish/scripts/publish.py --vault-path ${VAULT_PATH}` |
 
 ## Execution Steps
 
-1. Read `/home/crystalos/VaultyBoi/state/environments/heart-state.md` to get last-run timestamps
+1. Read `state/environments/heart-state.md` (relative to plugin root) to get last-run timestamps
 2. Get current time
 3. For each job in the registry, check if the condition is met
 4. For due jobs, execute the action:
-   - **staleness-check:** `curl -s -X POST http://localhost:5678/webhook/TjvFCtYDRWgglGgJ/trigger/morning-briefing`
-   - **log-compression:** Find logs older than 30 days in `/home/crystalos/logs/`, gzip them
+   - **staleness-check:** POST to morning briefing n8n webhook (URL in `crystal.secrets.yaml` → `n8n.morning_briefing_webhook`)
+   - **log-compression:** Find logs older than 30 days in `~/logs/`, gzip them
    - **content-capture:** Invoke the `/content-capture` skill inline (needs Claude — runs within this heartbeat session)
-   - **content-publish:** Run via Bash: `python3 /home/crystalos/CrystalAI/skills/content-publish/scripts/publish.py --vault-path /home/crystalos/VaultyBoi` (standalone Python, no Claude needed). API keys loaded from `~/.crystalos/buffer-keys.json`.
+   - **content-publish:** Run via Bash: `python3 ${PLUGIN_PATH}/skills/content-publish/scripts/publish.py --vault-path ${VAULT_PATH}` (standalone Python, no Claude needed). API keys loaded from path in `crystal.secrets.yaml` → `buffer.keys_file`.
 5. Update `state/environments/heart-state.md` with `last-heartbeat: <now>` and any other job-specific timestamps
 6. Log actions taken (or "no jobs due") to stdout
 

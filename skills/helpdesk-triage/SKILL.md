@@ -13,8 +13,8 @@ L1 helpdesk triage for Twin Cities German Immersion School (GIS) and Sejong Acad
 
 | School | Abbrev | Domain | Default Reply Sender |
 |--------|--------|--------|----------------------|
-| Twin Cities German Immersion School | GIS | germanschool-mn.org | avanalstyne@germanschool-mn.org |
-| Sejong Academy | SJA | sejongacademy.org | Escalate to Jesse |
+| Twin Cities German Immersion School | GIS | See `crystal.local.yaml` → `schools.gis.domain` | GIS email from `crystal.local.yaml` → `email_accounts.gis.address` |
+| Sejong Academy | SJA | See `crystal.local.yaml` → `schools.sja.domain` | Escalate to Jesse |
 
 ## Escalation Contacts
 
@@ -100,16 +100,13 @@ This is Austin's operational runbook for GIS — written during onboarding to do
 | Zoom | `Zoom` | Adding users |
 
 **Key facts to know without reading:**
-- Chromebook cart combo: **4130**
-- Printer IP (main office): **10.200.0.4**
-- NEC phone controller IP: **10.200.0.6**
-- Access control URL: `https://app.pureaccess.com/TCGIS/user` — always compile after changes
-- Email username format: first initial + last name (`avanalstyne@`)
-- Jamf wipe code: **112340**
+- School IPs, access control URL, contacts: see `crystal.local.yaml` → `schools.gis`
+- Jamf wipe code: see `crystal.secrets.yaml` → `sensitive.helpdesk.jamf_wipe_code`
+- Email username format: first initial + last name
 - Passwords/credentials: in **Keeper**
 - Asset inventory: **Snipe**
 - Device/student tracking: **Airtable**
-- Onboarding requests come from **Kim Hackett** via the New Hire Set Up Process spreadsheet
+- Onboarding requests: see `crystal.local.yaml` → `schools.gis.contacts.ops_director`
 
 **Maintaining the handbook:** When a procedure changes or a new one is learned, update the relevant section in the handbook directly. It should always be accurate enough to hand to a human covering for Austin.
 
@@ -159,7 +156,7 @@ Invoke `/write` to draft the reply in Austin's voice.
 
 - **To:** ticket submitter — always reply to whoever sent the ticket
 - **CC:** affected users if different from submitter, **unless they can't receive email** (see below)
-- **Sender:** match the school account (GIS = avanalstyne@germanschool-mn.org)
+- **Sender:** match the school account (resolve from `crystal.local.yaml` → `email_accounts`)
 - **Tone:** casual but competent, short paragraphs, no bullet points in casual emails
 
 **One-touch resolution:** Solve the problem in the email itself. Don't send holding replies ("I'll look into it and get back to you") — diagnose, resolve, and send. If the issue genuinely requires on-site or async follow-up, say what the next step is and when, but don't leave it open-ended.

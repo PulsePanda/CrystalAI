@@ -12,6 +12,11 @@ Build, edit, or remove features on the Heart CrystalOS server. Maintains a manif
 **Manifest:** `state/operational/heart-manifest.md`
 **Heart log:** `state/operational/heart-log.md`
 
+**Config resolution:** Before executing, read `crystal.local.yaml` to resolve:
+- `${HEART_SSH}` → `environments.heart.user`@`environments.heart.host`
+- `${HEART_USER}` → `environments.heart.user`
+- All server paths use `${HEART_USER}` instead of hardcoded usernames
+
 ---
 
 ## Heart Environment
@@ -20,11 +25,11 @@ Know this before touching anything.
 
 | Property | Value |
 |----------|-------|
-| Host | `crystalos@10.1.11.214` |
+| Host | See `crystal.local.yaml` → `environments.heart` |
 | Auth | SSH key (system identity key, no password) |
-| Vault path | `/home/crystalos/VaultyBoi` |
-| Run all ops as | `crystalos` (not root) |
-| Claude CLI | `/home/crystalos/.npm-global/bin/claude` |
+| Vault path | See `crystal.local.yaml` → `environments.heart.vault_path` |
+| Run all ops as | Heart user (not root) |
+| Claude CLI | See `crystal.local.yaml` → `environments.heart.claude_cli` |
 | Python | 3.12 available — **pip installed** (`pip3` via apt; `google-api-python-client`, `google-auth-oauthlib` available) |
 | n8n | Accessible via n8n MCP tools |
 
@@ -32,11 +37,11 @@ Know this before touching anything.
 
 | Purpose | Path |
 |---------|------|
-| General scripts | `/home/crystalos/scripts/` |
-| Morning briefing scripts | `/home/crystalos/briefing/` |
-| Web UI files | `/home/crystalos/crystalos-ui/` |
-| MCP server configs | `/home/crystalos/.claude.json` (user-level) |
-| Log output | `/home/crystalos/logs/` |
+| General scripts | `/home/${HEART_USER}/scripts/` |
+| Morning briefing scripts | `/home/${HEART_USER}/briefing/` |
+| Web UI files | `/home/${HEART_USER}/crystalos-ui/` |
+| MCP server configs | `/home/${HEART_USER}/.claude.json` (user-level) |
+| Log output | `/home/${HEART_USER}/logs/` |
 
 ---
 
@@ -117,11 +122,11 @@ Execute in dependency order (scripts before cron jobs that call them, etc.). Spa
 ### Scripts
 
 ```bash
-ssh crystalos@10.1.11.214 "mkdir -p /home/crystalos/scripts && cat > /home/crystalos/scripts/script-name.sh << 'SCRIPT'
+ssh ${HEART_SSH} "mkdir -p /home/${HEART_USER}/scripts && cat > /home/${HEART_USER}/scripts/script-name.sh << 'SCRIPT'
 #!/bin/bash
 # script content
 SCRIPT
-chmod +x /home/crystalos/scripts/script-name.sh"
+chmod +x /home/${HEART_USER}/scripts/script-name.sh"
 ```
 
 Note: Heart has Python 3.12 but **no pip**. If a script needs a Python package not in stdlib, either use a stdlib equivalent or explicitly verify pip availability first.
@@ -129,29 +134,29 @@ Note: Heart has Python 3.12 but **no pip**. If a script needs a Python package n
 ### Cron Jobs
 
 ```bash
-ssh crystalos@10.1.11.214 "(crontab -l 2>/dev/null; echo '0 6 * * * /home/crystalos/scripts/script.sh >> /home/crystalos/logs/script.log 2>&1') | crontab -"
+ssh ${HEART_SSH} "(crontab -l 2>/dev/null; echo '0 6 * * * /home/${HEART_USER}/scripts/script.sh >> /home/${HEART_USER}/logs/script.log 2>&1') | crontab -"
 ```
 
 Rules:
 - Always use absolute paths
-- Always redirect stdout and stderr to a log file in `/home/crystalos/logs/`
+- Always redirect stdout and stderr to a log file in `/home/${HEART_USER}/logs/`
 
 ### Systemd Services
 
 ```bash
 # Write unit file
-ssh crystalos@10.1.11.214 "sudo tee /etc/systemd/system/service-name.service > /dev/null << 'UNIT'
+ssh ${HEART_SSH} "sudo tee /etc/systemd/system/service-name.service > /dev/null << 'UNIT'
 [Unit]
 Description=Service description
 After=network.target
 
 [Service]
-User=crystalos
-WorkingDirectory=/home/crystalos
-ExecStart=/home/crystalos/scripts/service-name.sh
+User=${HEART_USER}
+WorkingDirectory=/home/${HEART_USER}
+ExecStart=/home/${HEART_USER}/scripts/service-name.sh
 Restart=on-failure
-StandardOutput=append:/home/crystalos/logs/service-name.log
-StandardError=append:/home/crystalos/logs/service-name.log
+StandardOutput=append:/home/${HEART_USER}/logs/service-name.log
+StandardError=append:/home/${HEART_USER}/logs/service-name.log
 
 [Install]
 WantedBy=multi-user.target
@@ -165,10 +170,10 @@ MCP servers on Heart extend Claude's capabilities for autonomous jobs. Install v
 
 ```bash
 # Install (example: npm-based MCP)
-ssh crystalos@10.1.11.214 "npm install -g @scope/mcp-server-name"
+ssh ${HEART_SSH} "npm install -g @scope/mcp-server-name"
 
 # Register in ~/.claude.json (add to mcpServers block)
-ssh crystalos@10.1.11.214 "cat ~/.claude.json"
+ssh ${HEART_SSH} "cat ~/.claude.json"
 # Then edit to add the new server entry
 ```
 
@@ -189,14 +194,14 @@ Use n8n MCP tools. Key tools:
 
 ```
 Execute Command node:
-  Command: /home/crystalos/heart-run.sh "your task description here"
+  Command: /home/${HEART_USER}/heart-run.sh "your task description here"
 ```
 
 Always test and validate before activating. Include error-handling nodes in complex workflows.
 
 ### Web UI
 
-Files live at `/home/crystalos/crystalos-ui/static/`. Server at `/home/crystalos/crystalos-ui/server.py`, port 8080.
+Files live at `/home/${HEART_USER}/crystalos-ui/static/`. Server at `/home/${HEART_USER}/crystalos-ui/server.py`, port 8080.
 
 Spawn **Frontend Developer** for JS/functionality, **UX Architect** for layout/CSS, **UI Designer** for visual polish — in parallel if independent.
 
@@ -207,9 +212,9 @@ Spawn **Frontend Developer** for JS/functionality, **UX Architect** for layout/C
 Confirm each component is alive before handing off to review agents:
 
 - **Scripts:** Run once manually via SSH and check output
-- **Cron jobs:** Confirm entry with `ssh crystalos@10.1.11.214 "crontab -l"`
+- **Cron jobs:** Confirm entry with `ssh ${HEART_SSH} "crontab -l"`
 - **Systemd services:** `systemctl status service-name` — confirm `active (running)`
-- **MCP servers:** `ssh crystalos@10.1.11.214 "claude mcp list"` — confirm it appears
+- **MCP servers:** `ssh ${HEART_SSH} "claude mcp list"` — confirm it appears
 - **n8n workflows:** Use `n8n_test_workflow`
 - **Backend API / Web UI:** Confirm endpoint responds with a basic `curl`
 
@@ -255,11 +260,11 @@ Update `state/operational/heart-manifest.md` with the new or changed feature.
 - **Description:** One sentence — what it does and when.
 - **Schedule:** `0 6 * * *` (daily at 6am) — only for cron
 - **Components:**
-  - Script: `/home/crystalos/scripts/filename.sh`
-  - Cron: `0 6 * * * /home/crystalos/scripts/filename.sh >> /home/crystalos/logs/filename.log 2>&1`
+  - Script: `/home/${HEART_USER}/scripts/filename.sh`
+  - Cron: `0 6 * * * /home/${HEART_USER}/scripts/filename.sh >> /home/${HEART_USER}/logs/filename.log 2>&1`
   - n8n Workflow ID: [id]
   - Systemd: `service-name.service`
-- **Logs:** `/home/crystalos/logs/filename.log`
+- **Logs:** `/home/${HEART_USER}/logs/filename.log`
 - **Added:** YYYY-MM-DD
 - **Status:** active
 ```
@@ -281,7 +286,7 @@ YYYY-MM-DD | /crystalos | [build|edit|remove] | [feature name] | [brief descript
 
 ## Error Handling
 
-- **SSH fails:** Verify network access to 10.1.11.214. Check that the system identity key is loaded.
+- **SSH fails:** Verify network access to Heart (see crystal.local.yaml). Check that the system identity key is loaded.
 - **n8n unreachable:** Run `n8n_health_check`. If down, note in the log and report to Austin.
 - **Cron not running:** Check the log file at the crontab path. Verify absolute paths are used.
 - **Permission denied on Heart:** All file operations run as `crystalos`. Never use sudo except for systemd unit files and system-level config.
