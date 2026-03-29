@@ -21,7 +21,7 @@ Restore context from the previous session and orient for today's work.
 
 ## Steps
 
-Run Steps 0–5 in parallel, then present the summary.
+Run Steps 0–6 in parallel, then present the summary.
 
 ### Step 0: Get Current Time
 
@@ -73,6 +73,16 @@ Read `${CLAUDE_PLUGIN_ROOT}/state/operational/heart-notifications.md`. Count the
 - Do not execute anything — just surface so the user knows to run `/process-email`
 - If no rows, skip silently.
 
+### Step 6: Read Cached Server Health
+
+Read `${CLAUDE_PLUGIN_ROOT}/state/operational/health-check-results.md`. This file is updated daily by a launchd job (`com.crystalos.health-check`) that runs at 6 AM and on login.
+
+- Parse the frontmatter: `overall`, `heart`, `canopy`, `content` status fields
+- Parse `last-check-local` to show when the check ran
+- If all statuses are `OK`: include a single line in the summary ("Servers: OK as of HH:MM AM")
+- If any status is `WARN` or `FAIL`: include a **Server Health** section with the per-server status and the specific non-OK rows from the tables
+- If the file doesn't exist or `last-check` is older than 48 hours, note "Health check stale — run `/server-health-check` for live results"
+
 ### Step 4: Check Active Projects + Daily Note
 
 **Projects:** Glob `Projects/*.md`, exclude `_template.md`. Read each with `limit: 5` to get frontmatter. **Only surface projects where `status` is `active`.** Skip `planned`, `on-hold`, `completed`, and `archived` — those are reviewed during `/weekly`, not `/resume`.
@@ -99,6 +109,10 @@ Read `${CLAUDE_PLUGIN_ROOT}/state/operational/heart-notifications.md`. Count the
 
 ## Active Projects
 - **Project Name** — [one-line status + next step]
+
+## Server Health
+Servers: OK (6:00 AM) | Heart: OK, Canopy: OK, Content: OK
+(or if issues: show per-server WARN/FAIL with one-line detail)
 
 ## Heart Notifications
 - N email items pending — run `/process-email` to resolve
