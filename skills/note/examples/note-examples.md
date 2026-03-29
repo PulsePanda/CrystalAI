@@ -26,8 +26,8 @@ Created: 2026-01-30 14:30
 
 
 ```
-5. Construct URI: `obsidian://open?vault=VaultyBoi&file=%2BInbox%2F2026-01-30-1430.md`
-6. Open with: `open "obsidian://open?vault=VaultyBoi&file=%2BInbox%2F2026-01-30-1430.md"`
+5. Construct URI: `obsidian://open?vault={vault_name}&file=%2BInbox%2F2026-01-30-1430.md`
+6. Open with: `open "obsidian://open?vault={vault_name}&file=%2BInbox%2F2026-01-30-1430.md"`
 
 ### Result
 ```
@@ -280,7 +280,7 @@ Note: Could not open in Obsidian automatically.
 Is Obsidian installed and configured?
 
 You can open the file manually:
-/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/+Inbox/2026-01-30-1430.md
+${VAULT_PATH}/+Inbox/2026-01-30-1430.md
 ```
 
 ### Result

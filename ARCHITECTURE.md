@@ -1,6 +1,6 @@
 # CrystalAI Architecture
 
-CrystalAI is a Claude Code plugin — "the secretary." VaultyBoi is an Obsidian vault — "the notebook." They are separate: the vault holds human content readable without any AI agent; the plugin holds all agent infrastructure, state, and skills.
+CrystalAI is a Claude Code plugin — a personal assistant that supports and tracks user information, processes, data, and helps streamline and automate processes to increase productivity while also reducing the number of things that "fall through the cracks." The "Vault" is an Obsidian vault — think of it as an infinitely scalable notebook - or even a proper "second brain". They are separate: the vault holds human content readable without any AI agent; the plugin holds all agent infrastructure, state, and skills.
 
 ## Why Separate?
 - Independence: vault works as a plain Obsidian vault; plugin works as a standalone Claude Code plugin
@@ -8,26 +8,13 @@ CrystalAI is a Claude Code plugin — "the secretary." VaultyBoi is an Obsidian 
 - Distribution: plugin can be cloned, configured, and used by anyone
 - Clean boundaries: no confusion about where things belong
 
-## Sync Model
-- **Vault** — Syncthing (MacBook <-> Heart)
-- **Plugin** — Syncthing (MacBook <-> Heart) + Git for versioning/distribution
-- **Canopy** — UmbrellaAI via git only
-
-## Relationship to UmbrellaAI
-| Plugin | Scope | Content |
-|--------|-------|---------|
-| CrystalAI | Personal — everything Austin-specific | Skills, behavioral rules, memory, state, writing style, integrations |
-| UmbrellaAI | Business — Umbrella Systems operations | Business skills, SOPs, assets, Canopy scripts, business context |
-
-Both plugins load at user scope. Cloned skills are intentionally duplicated — each tailors to its context.
-
 ---
 
 ## Decision Tree: Where Does This Go?
 
 ```
 Is this human-authored content that exists without an AI agent?
-  YES → Vault (VaultyBoi)
+  YES → Vault
     Is it a project tracking doc? → Projects/
     Is it a daily note? → Daily Notes/
     Is it a quick capture? → +Inbox/
@@ -39,7 +26,7 @@ Is this human-authored content that exists without an AI agent?
     Is it about an org, school, or person? → state/entities/[name].md
     Is it a behavioral rule or standing order? → state/behavioral/[domain].md
     Is it a copy-paste execution reference? → state/patterns/[name].md
-    Is it a correction/feedback from Austin? → state/feedback/ (queue for /weekly)
+    Is it a correction/feedback from User? → state/feedback/ (queue for /weekly)
     Is it a session log? → state/sessions/
     Is it live operational state (logs, queues, manifests)? → state/operational/
     Is it general reference that doesn't fit above? → state/memory/
@@ -54,10 +41,10 @@ Is this human-authored content that exists without an AI agent?
 - Create a new integration dir in `state/integrations/` when a new service is connected
 - Create a new entity file when a new org/school/person becomes relevant
 - Add rules to an existing behavioral domain file
-- Create a new feedback file when Austin gives a correction
+- Create a new feedback file when the User gives a correction
 - Absorb feedback into behavioral files during `/weekly`
 
-### The agent MUST ask Austin before:
+### The agent MUST ask the User before:
 - Creating a new state category (new directory under `state/`)
 - Creating a new behavioral domain (new file in `state/behavioral/`)
 - Restructuring existing directories
@@ -90,7 +77,7 @@ Is this human-authored content that exists without an AI agent?
 - `crystal.local.yaml` — personal config (paths, emails, IDs, server IPs). Gitignored.
 - `crystal.secrets.yaml` — credential paths and sensitive identifiers. Gitignored.
 - Both have `.template` versions for distribution (git-tracked).
-- Skills reference `${CRYSTAL_ROOT}` (plugin path) and `${VAULT_PATH}` (vault path from config).
+- Skills reference `${CLAUDE_PLUGIN_ROOT}` (plugin path, provided by Claude Code at runtime) and `${VAULT_PATH}` (vault path from config).
 - Agent reads config at skill start when environment-specific values are needed.
 - Reads `crystal.secrets.yaml` only when credential paths are needed for API calls.
 

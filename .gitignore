@@ -40,6 +40,7 @@ skills/process-email/gmail-filters.xml
 skills/process-email/references/gmail-filters.xml
 skills/skill-improver/references/trigger_eval.json
 skills/content-build/references/channels-and-platforms.md
+skills/heartbeat/
 
 # Environment-specific
 scripts/
@@ -49,6 +50,10 @@ agents/
 
 # OS
 .DS_Store
+
+# Pre-push audit (contains private data / local approvals)
+.push-blocklist
+.push-allow
 
 # Syncthing
 .stfolder/

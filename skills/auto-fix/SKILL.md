@@ -1,13 +1,13 @@
 ---
 name: crystal:auto-fix
-description: Internal tool skill — automatic error recovery. Called whenever a tool call, MCP operation, AppleScript, or skill execution fails. Diagnoses the error, applies the known fix if one exists, retries the operation, and documents new errors to known-errors.md. Covers Things3 MCP failures, AppleScript errors, Claude Code tool errors, and shell/code execution failures. Other skills should call this instead of surfacing errors directly to Austin.
+description: Internal tool skill — automatic error recovery. Called whenever a tool call, MCP operation, AppleScript, or skill execution fails. Diagnoses the error, applies the known fix if one exists, retries the operation, and documents new errors to known-errors.md. Covers Things3 MCP failures, AppleScript errors, Claude Code tool errors, and shell/code execution failures. Other skills should call this instead of surfacing errors directly to the user.
 version: 1.0.0
 allowed-tools: Read, Write, Edit, Bash, Grep
 ---
 
 # Auto-Fix Skill
 
-When any operation fails, run this skill before surfacing the error to Austin. The goal: fix it silently, retry, and only escalate if recovery is impossible.
+When any operation fails, run this skill before surfacing the error to the user. The goal: fix it silently, retry, and only escalate if recovery is impossible.
 
 ---
 
@@ -22,7 +22,7 @@ state/operational/known-errors.md
 Search for the error message, error code, or operation type. If a match is found:
 - Apply the documented fix immediately
 - Retry the original operation
-- If retry succeeds → proceed silently (do not mention the error to Austin)
+- If retry succeeds → proceed silently (do not mention the error to the user)
 - If retry fails → escalate (Step 4)
 
 ---
@@ -70,7 +70,7 @@ If the error is not in known-errors.md, classify it:
 
 1. Apply the fix (correct the code, adjust parameters, change approach)
 2. Retry the original operation **once**
-3. If successful → continue without mentioning the error to Austin
+3. If successful → continue without mentioning the error to the user
 4. If still failing → go to Step 4
 
 Do not retry more than once. Repeated retries on broken operations waste time and can create duplicate side effects (e.g., duplicate Things3 tasks).
@@ -81,7 +81,7 @@ Do not retry more than once. Repeated retries on broken operations waste time an
 
 Whether recovery succeeded or failed, document any error that wasn't already in known-errors.md.
 
-**Append to `state/operational/known-errors.md`** under the appropriate section:
+**Append to `${CLAUDE_PLUGIN_ROOT}/state/operational/known-errors.md`** under the appropriate section:
 
 ```markdown
 ### [Short descriptive title]
@@ -96,13 +96,13 @@ Update the `Last Updated` date at the bottom of the file.
 
 ## Step 5: Escalate if Unresolved
 
-If the operation still fails after one retry, surface it to Austin:
+If the operation still fails after one retry, surface it to the user:
 
 **Good escalation format:**
 ```
 [Operation] failed: [error in plain English].
 Tried: [fix attempted].
-Options: [what Austin can do — e.g., check Things3 connection, provide missing info, skip this step].
+Options: [what the user can do — e.g., check Things3 connection, provide missing info, skip this step].
 ```
 
 **Bad escalation:**
@@ -131,5 +131,5 @@ The things3 skill already has a heart-queue fallback for MCP outages — auto-fi
 
 - Don't retry infinitely — one fix attempt, one retry, then escalate
 - Don't create duplicate tasks/events/records while diagnosing
-- Don't surface raw error codes to Austin without translation
+- Don't surface raw error codes to the user without translation
 - Don't document trivial one-time typos — only document errors that could recur

@@ -7,7 +7,7 @@ Accumulated rules learned from corrections. Claude reads this file when drafting
 ## GIS Staff Communications
 
 ### When writing about absence/coverage
-- Always include how staff can get help while Austin is out
+- Always include how staff can get help while the user is out
 - Include: techsupport@tcgis.org email AND the "Create a Ticket" bookmark in their bookmarks folder
 - Frame it naturally, e.g., "As always, if anything comes up, shoot a message to techsupport@tcgis.org or use the 'Create a Ticket' bookmark."
 

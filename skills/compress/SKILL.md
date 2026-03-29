@@ -114,7 +114,7 @@ See [session-format.md](references/session-format.md) for complete format spec.
 
 ## Step 5: Save to Vault
 
-Write the file to `state/sessions/YYYY-MM-DD-HHmm-topic.md`. Confirm it was created and report the filename to the user.
+Write the file to `${CLAUDE_PLUGIN_ROOT}/state/sessions/YYYY-MM-DD-HHmm-topic.md`. Confirm it was created and report the filename to the user.
 
 ---
 
@@ -143,10 +143,10 @@ Run all sub-steps. Non-optional.
 
 ### 7a: Log Corrections
 
-Review the session for any moment Austin corrected Claude's behavior (wrong tool, wrong format, wrong approach). For each correction:
-1. Add a row to `state/operational/corrections.md`
+Review the session for any moment the user corrected Claude's behavior (wrong tool, wrong format, wrong approach). For each correction:
+1. Add a row to `${CLAUDE_PLUGIN_ROOT}/state/operational/corrections.md`
 2. Format: `YYYY-MM-DD | what was wrong | correct behavior | → Standing Order?`
-3. If the same correction appears 2+ times → promote to standing order in `state/behavioral/` domain files, mark `✅` in corrections table
+3. If the same correction appears 2+ times → promote to standing order in `${CLAUDE_PLUGIN_ROOT}/state/behavioral/` domain files, mark `✅` in corrections table
 
 ### 7b: Update Last Updated
 
@@ -159,19 +159,19 @@ Scan for any named future dates or deadlines mentioned this session. For each, c
 ### 7d: Flag New Patterns
 
 If a new behavioral pattern was established this session (new workflow, repeated rule, stated preference):
-1. If not in `state/behavioral/` domain files, add it
-2. If it's a preference/style pattern, add to `state/behavioral/austin-preferences.md`
+1. If not in `${CLAUDE_PLUGIN_ROOT}/state/behavioral/` domain files, add it
+2. If it's a preference/style pattern, add to `${CLAUDE_PLUGIN_ROOT}/state/behavioral/user-preferences.md`
 3. If skill-specific, update that skill's SKILL.md
 
 ### 7f: Detect Automation Candidates
 
 Scan the session for any recurring manual tasks, integration gaps, or workflow inefficiencies that could be automated. Look for:
-- Steps Austin did manually that a script, cron, or n8n workflow could handle
+- Steps the user did manually that a script, cron, or n8n workflow could handle
 - Repeated actions across multiple sessions (same lookup, same file edit, same copy-paste)
-- Times Austin said "I always do X" or "every time I have to Y"
+- Times the user said "I always do X" or "every time I have to Y"
 - Gaps between tools that require manual bridging (e.g. email → Things3, calendar → project file)
 
-For each candidate found, silently append a row to the appropriate table in `~/.claude/projects/-Users-Austin-Library-Mobile-Documents-iCloud-md-obsidian-Documents-VaultyBoi/memory/automation-ideas.md`:
+For each candidate found, silently append a row to the appropriate table in the `automation-ideas.md` file in the Claude Code auto-memory directory for this project:
 
 ```
 | [idea name] | [one-line context from this session] | idea |
@@ -179,33 +179,7 @@ For each candidate found, silently append a row to the appropriate table in `~/.
 
 Add to whichever category table fits best (Email & Communication, Daily Operations, GIS / School Systems, Reporting & Brag Book). If none fit, add a new category section.
 
-**Do not announce this to Austin.** Log silently and continue. If nothing qualifies, skip entirely.
-
----
-
-### 7e: Update Current State in CLAUDE.md
-
-Update the "Current State" section in the vault root `CLAUDE.md` so the next session loads with accurate context.
-
-**Steps:**
-1. Read `Projects/*.md` (frontmatter only, `limit: 5`) to get current status for each project
-2. Build the updated block:
-   ```markdown
-   # Current State
-   _Last updated: YYYY-MM-DD by /compress_
-
-   **Active focus:** [what this session worked on]
-
-   **Active projects:**
-   - **Project Name** — [status: one-line summary]
-
-   **Pinned/deferred:**
-   - [anything deferred or carried forward]
-
-   **Last session:** YYYY-MM-DD — [session topic slug]
-   ```
-3. Use Edit tool to replace the existing Current State section
-4. Rules: omit complete/archived projects; one line per project; reflect actual parking lot
+**Do not announce this to the user.** Log silently and continue. If nothing qualifies, skip entirely.
 
 ---
 

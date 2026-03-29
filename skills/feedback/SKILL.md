@@ -1,13 +1,13 @@
 ---
 name: crystal:feedback
-description: This skill should be used immediately and automatically whenever Austin gives a correction, behavioral feedback, or guidance about how Claude should act differently. Trigger on any phrase like "don't say X", "stop doing Y", "never Z", "wrong approach", "instead do this", "I don't want you to", "that's not how", or any moment where Austin is correcting Claude's behavior, tone, output format, or workflow. Also trigger when Austin says something like "remember that..." or "going forward, always...". The goal is to make every correction stick permanently — log it, route it to the right files, and never make Austin repeat himself. Only trigger when Austin is correcting or guiding Claude — NOT when Austin is asking Claude to evaluate or give feedback on his own writing or content.
+description: This skill should be used immediately and automatically whenever the user gives a correction, behavioral feedback, or guidance about how Claude should act differently. Trigger on any phrase like "don't say X", "stop doing Y", "never Z", "wrong approach", "instead do this", "I don't want you to", "that's not how", or any moment where the user is correcting Claude's behavior, tone, output format, or workflow. Also trigger when the user says something like "remember that..." or "going forward, always...". The goal is to make every correction stick permanently — log it, route it to the right files, and never make the user repeat himself. Only trigger when the user is correcting or guiding Claude — NOT when the user is asking Claude to evaluate or give feedback on his own writing or content.
 version: 1.0.0
 allowed-tools: Read, Write, Edit, Bash, Grep
 ---
 
 # Feedback & Correction Handler
 
-When Austin corrects something, route it immediately to the right permanent homes. Don't wait, don't ask. Act and confirm briefly.
+When the user corrects something, route it immediately to the right permanent homes. Don't wait, don't ask. Act and confirm briefly.
 
 ## Step 1: Classify the Feedback
 
@@ -15,10 +15,10 @@ Determine what kind of correction this is — it may be more than one:
 
 | Type | Examples | Destination |
 |------|---------|------------|
-| **Tone/style** | "Don't say 'great idea'", "stop using emojis", "less formal" | `state/behavioral/austin-preferences.md` + global CLAUDE.md if universal |
-| **Behavioral** | "Don't ask me to confirm every step", "stop summarizing at end" | `state/operational/corrections.md` + global CLAUDE.md standing orders |
+| **Tone/style** | "Don't say 'great idea'", "stop using emojis", "less formal" | `${CLAUDE_PLUGIN_ROOT}/state/behavioral/user-preferences.md` + global CLAUDE.md if universal |
+| **Behavioral** | "Don't ask me to confirm every step", "stop summarizing at end" | `${CLAUDE_PLUGIN_ROOT}/state/operational/corrections.md` + global CLAUDE.md standing orders |
 | **Skill-specific** | "In /compress, don't ask for reflections", "email should batch 5 at a time" | Relevant skill's SKILL.md |
-| **Workflow pattern** | "When ball is in someone's court, always create follow-up task" | `state/behavioral/` domain files + relevant skill if applicable |
+| **Workflow pattern** | "When ball is in someone's court, always create follow-up task" | `${CLAUDE_PLUGIN_ROOT}/state/behavioral/` domain files + relevant skill if applicable |
 | **Permission/auto-approve** | "Stop asking me to approve X", "auto-allow writes to Y" | `settings.local.json` (vault) or `~/.claude/settings.json` (global) |
 | **One-time fix** | "That file path was wrong" | Just acknowledge — no permanent update needed |
 
@@ -28,7 +28,7 @@ If it's a one-time situational fix, skip the logging steps and just fix it.
 
 ## Step 2: Log to Corrections Log
 
-Always log non-trivial corrections to `state/operational/corrections.md`.
+Always log non-trivial corrections to `${CLAUDE_PLUGIN_ROOT}/state/operational/corrections.md`.
 
 **Format — append a row to the log table:**
 ```
@@ -41,7 +41,7 @@ Check if a similar correction already exists before adding. If it's a repeat, no
 
 ## Step 3: Route to Permanent Files
 
-### If tone/style → `state/behavioral/austin-preferences.md`
+### If tone/style → `${CLAUDE_PLUGIN_ROOT}/state/behavioral/user-preferences.md`
 Add or update the relevant section. Keep it specific and behavioral.
 
 ### If behavioral/universal → `~/.claude/CLAUDE.md` (global standing orders)
@@ -80,7 +80,7 @@ Read the existing file first, then append to the `allow` array — never overwri
 
 ### If cross-session memory → auto-memory feedback file
 Write or update a feedback memory file at:
-`/Users/Austin/.claude/projects/-Users-Austin-Library-Mobile-Documents-iCloud-md-obsidian-Documents-VaultyBoi/memory/`
+The Claude Code auto-memory directory for this project (under `~/.claude/projects/` — derived from `vault_path` in crystal.local.yaml).
 
 Use the standard feedback memory format:
 ```markdown
@@ -92,7 +92,7 @@ type: feedback
 
 [The rule itself — imperative form]
 
-**Why:** [Austin's reason, even if brief]
+**Why:** [the user's reason, even if brief]
 **How to apply:** [when/where this kicks in]
 ```
 
@@ -102,7 +102,7 @@ Then add a pointer to it in `MEMORY.md`.
 
 ## Step 4: Confirm Briefly
 
-One line. Tell Austin what was updated and where. Don't explain or justify — just report.
+One line. Tell the user what was updated and where. Don't explain or justify — just report.
 
 **Good:** "Got it — logged to corrections.md and added to Standing Orders."
 **Good:** "Updated — removed the reflections prompt from /compress."
@@ -112,8 +112,8 @@ One line. Tell Austin what was updated and where. Don't explain or justify — j
 
 ## What NOT to Do
 
-- Don't ask Austin to confirm before applying the correction
-- Don't repeat the correction back to him in full
+- Don't ask the user to confirm before applying the correction
+- Don't repeat the correction back to them in full
 - Don't apologize excessively
 - Don't make it a bigger moment than it is — just fix it and move on
 - Don't add corrections to CLAUDE.md that are too narrow to be useful globally

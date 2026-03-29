@@ -1,197 +1,255 @@
 ---
 name: crystal:weekly
-description: This skill should be used when the user asks to "weekly review", "run weekly review", "end of week", or types "/weekly". Synthesizes the week's session logs into permanent memory, checks project hygiene, promotes patterns to standing orders, and surfaces upcoming commitments.
-version: 1.0
+description: "This skill should be used when the user asks to 'weekly review', 'run weekly review', 'end of week', or types '/weekly'. Synthesizes the week's session logs into permanent memory, consolidates and compresses state, writes weekly digest files, checks project hygiene, and surfaces upcoming commitments. Also runs a monthly rollup if it's the first weekly run of a new month."
+version: 2.0
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
-# /weekly - Weekly Review
+# /weekly — Weekly Review + Dream Consolidation
 
-Synthesize the past week's work into durable knowledge. Keeps the brain clean, promotes patterns, and surfaces what's coming up.
+Two jobs in one: (1) the weekly review surfaces what happened and what's coming, (2) the dream pass consolidates, compresses, and cleans state — like sleep consolidation for the brain.
 
-## When to Run
+Run every Friday afternoon or Monday morning.
 
-Every Monday morning (or Friday afternoon). Takes ~5 minutes. Creates a brief digest of the week and ensures nothing falls through the cracks.
+## Paths
 
-## Step-by-Step Workflow
+All state paths are relative to `${CLAUDE_PLUGIN_ROOT}`:
+- **Sessions:** `state/sessions/`
+- **Weekly digests:** `state/sessions/digests/weekly/`
+- **Monthly digests:** `state/sessions/digests/monthly/`
+- **Behavioral:** `state/behavioral/`
+- **Operational:** `state/operational/`
+- **Memory:** `state/memory/`
+- **Contacts:** `state/memory/contacts.md`
 
-### Step 1: Load Current Memory State
-
-Read in parallel:
-- `state/behavioral/` domain files (standing orders, decomposed)
-- `state/operational/corrections.md`
-- `state/operational/known-errors.md`
-- `state/behavioral/austin-preferences.md`
-
-This establishes the baseline — we're looking for what's changed this week and what should be promoted.
-
-### Step 2: Scan This Week's Sessions
-
-```
-Glob: state/sessions/*.md
-```
-
-Take all session logs from the past 7 days (filter by filename date prefix). Read each one — focus on:
-- **Key Learnings** section
-- **Decisions Made** section
-- Any corrections or errors mentioned in Raw Session Log
-
-Compile a flat list of learnings and patterns across all sessions.
-
-### Step 3: Promote Learnings to Permanent Memory
-
-For each learning or pattern identified in Step 2:
-
-**Is it already captured somewhere?**
-- Check `state/behavioral/` domain files, `state/operational/known-errors.md`, `state/behavioral/austin-preferences.md`
-- If yes → skip
-- If no → add it to the appropriate file:
-  - Behavioral rule → `state/behavioral/` domain files
-  - Error + fix → `state/operational/known-errors.md`
-  - Style/preference → `state/behavioral/austin-preferences.md`
-  - Vault/workflow pattern → vault root `CLAUDE.md`
-
-**Promoting a correction to a Standing Order:**
-- Check `state/operational/corrections.md` — if any entry appears 2+ times, it must become a Standing Order
-- Add to appropriate `state/behavioral/` domain file and mark `→ Standing Order? ✅` in corrections table
-
-### Step 4: Project Hygiene Audit
-
-```
-Glob: Projects/*.md (exclude _template.md)
-```
-
-Review projects in three groups:
-
-**Active projects (status: active):**
-1. **Last Updated** — is it within the last 2 weeks? If stale, flag it.
-2. **Waiting On table** — are all rows still accurate? Has anything resolved that should be cleared?
-3. **Things3 follow-up tasks** — does every row in the Waiting On table have a Things3 task? If not, create one.
-4. **Future dates in Next section** — does each have a Things3 task?
-
-**On-hold projects (status: on-hold):**
-1. Has the blocking condition resolved? (third party responded, trigger date passed, etc.)
-2. If yes → recommend promoting to `active`
-3. If still blocked → leave as-is, note the blocker
-
-**Planned projects (status: planned):**
-1. Has anything changed that makes this ready to start? (dependency met, bandwidth freed up, related work completed)
-2. If yes → recommend promoting to `active`
-3. If not → leave as-is
-
-Present a brief project health summary:
-```
-Active:
-  ✅ spectrum-voip — up to date, waiting on Kim (task set for 3/24)
-  ⚠️  raptor-visitorsafe — Last Updated is 3 weeks ago, review needed
-
-On-hold (3):
-  🔄 fastbridge-clever-sync — still waiting on Orry, leave as-is
-  ➡️  insurance-switch — trigger date passed, recommend → active
-
-Planned (2):
-  💤 youtube-transcript-skill — no change, leave as-is
-  💤 tax-financial-agent — no change, leave as-is
-```
-
-### Step 5: Review Things3 — Overdue & Upcoming
-
-Use the **`things3` tool skill** to query:
-1. `view-todos("Today")` — anything still sitting there that wasn't completed
-2. `view-todos("Upcoming")` — tasks due in the next 7 days
-
-Present as:
-```
-Overdue (needs attention):
-- Task name (was due March X)
-
-Coming up this week:
-- Task name (due March X)
-```
-
-### Step 6: Playbook Learning Log → New Sender Rules
-
-Read `${CLAUDE_PLUGIN_ROOT}/skills/process-email/references/playbook.md` Learning Log table.
-
-For any new entries added this week:
-1. Should this become a permanent sender rule? (If same sender appears 2+ times → yes)
-2. If yes → add to Sender Rules table in playbook
-3. If it's an archive rule → add to `${CLAUDE_PLUGIN_ROOT}/skills/process-email/references/gmail-filters.xml`
-
-### Step 7: Review Known Errors
-
-Read `state/operational/known-errors.md`.
-
-Check session logs for any new errors encountered this week that aren't yet documented. Add them.
-
-### Step 8: Calendar Look-Ahead
-
-Use the calendar skill to pull the next 7 days:
-```
-start_date: today T00:00:00
-end_date: today+7 T23:59:59
-```
-
-Filter to Austin's calendars only (same rule as /resume). Present upcoming events with anything that needs prep flagged.
-
-### Step 9: Automation Ideas Review
-
-Read `~/.claude/projects/-Users-Austin-Library-Mobile-Documents-iCloud-md-obsidian-Documents-VaultyBoi/memory/automation-ideas.md`.
-
-For each entry with status `idea` or `scoped`:
-1. Has it appeared in multiple session logs this week (grep session logs for the idea name/topic)?
-2. Does the context suggest it's now practical to build (related work was done, tooling is in place, etc.)?
-
-Flag anything that meets either condition as **ready to surface**. Include it in the weekly digest under "Automation Candidates" with a one-line recommendation.
-
-For anything flagged as ready, update its status in `automation-ideas.md` from `idea` → `scoped` if it hasn't been scoped yet.
-
-If nothing is ready to surface, omit the section from the digest entirely.
+Create digest directories if they don't exist.
 
 ---
 
-### Step 10: Present Weekly Digest
+## Step 1: Load Current State
+
+Read in parallel:
+- `state/behavioral/` — all domain files
+- `state/operational/corrections.md`
+- `state/operational/known-errors.md`
+- `state/memory/contacts.md` (if exists)
+
+This is the baseline for detecting what's new and what's stale.
+
+## Step 2: Scan Sessions + Write Weekly Digest
+
+Glob `state/sessions/*.md`. Filter to the past 7 days by filename date prefix. Read each — extract:
+- Key learnings and decisions
+- Errors or corrections
+- People mentioned (names, emails, roles) — hold for Step 3
+- Projects touched
+
+**Write the weekly digest** to `state/sessions/digests/weekly/YYYY-WXX.md`:
+
+```markdown
+---
+type: weekly-digest
+week: YYYY-WXX
+date-range: YYYY-MM-DD to YYYY-MM-DD
+sessions: N
+---
+
+# Weekly Digest — Week of YYYY-MM-DD
+
+## Summary
+[2-4 sentence narrative: what was the shape of this week? Main themes,
+biggest wins, key shifts. Written for someone skimming months later.]
+
+## Decisions & Outcomes
+[Organized by project/area, not by date. Each entry is a decision or
+outcome with enough context to be useful standalone.]
+
+### [Project/Area Name]
+- **[Decision/Outcome]** — [Context: why, what changed, what it affects]
+
+### [Another Area]
+- **[Decision/Outcome]** — [Context]
+
+## Open Threads
+- [Anything started but not resolved this week, with current state]
+```
+
+The digest is the persistent artifact. The live presentation to the user (Step 10) is separate.
+
+## Step 3: Memory Maintenance
+
+Three passes on the same state files:
+
+### 3a: Promote New Learnings
+For each learning from Step 2, check if it's already captured in `state/behavioral/` or `state/operational/`. If not, add it to the appropriate file:
+- Behavioral rule → `state/behavioral/[domain].md`
+- Error + fix → `state/operational/known-errors.md`
+- Preference → `state/behavioral/user-preferences.md`
+
+Corrections appearing 2+ times in `state/operational/corrections.md` → promote to Standing Order in the appropriate behavioral domain file.
+
+### 3b: Consolidate Redundant State
+Read all `state/behavioral/` files and `state/memory/` files. Look for:
+- **Duplicate rules** — same guidance stated differently in two files → merge into one, delete the other
+- **Contradictory rules** — conflicting guidance → keep the more recent one, note the resolution
+- **Verbose entries** — rules that can be stated more concisely without losing meaning → tighten them
+- **Orphaned references** — rules referencing files, paths, or tools that no longer exist → remove or update
+
+Don't be aggressive — only consolidate when the redundancy is clear. When in doubt, leave it.
+
+### 3c: Extract Contacts
+From this week's sessions, extract any people mentioned with identifying info (name, email, role, organization). Update `state/memory/contacts.md`:
+
+```markdown
+---
+type: reference
+description: Known contacts extracted from sessions
+last-updated: YYYY-MM-DD
+---
+
+# Contacts
+
+| Name | Email | Role | Org | Last Seen |
+|------|-------|------|-----|-----------|
+| Jesse | jesse@example.com | Co-owner | Umbrella | 2026-03-27 |
+```
+
+Merge with existing entries — update Last Seen, add new info, don't duplicate.
+
+## Step 4: Project Hygiene
+
+Glob `Projects/*.md` (exclude `_template.md`) from the vault.
+
+**Active projects:** Flag if Last Updated > 2 weeks. Check Waiting On tables — anything resolved? Ensure Things3 tasks exist for all waiting items and future dates.
+
+**On-hold projects:** Has the blocker resolved? Recommend promoting to active if so.
+
+**Planned projects:** Has anything changed that makes it ready to start?
+
+## Step 5: Things3 Review
+
+Use the **things3 tool skill**:
+1. `view-todos("Today")` — overdue items
+2. `view-todos("Upcoming")` — next 7 days
+
+## Step 6: Playbook Learning
+
+Read `${CLAUDE_PLUGIN_ROOT}/skills/process-email/references/playbook.md` Learning Log. Promote any sender appearing 2+ times to a permanent Sender Rule.
+
+## Step 7: State Hygiene
+
+Three checks in one pass:
+
+**Known errors:** Read `state/operational/known-errors.md`. Add any new errors from this week's sessions.
+
+**Stale references:** Grep `state/` for file paths and check if they still exist. Flag or remove dead references.
+
+**Frontmatter validation:** Spot-check `state/` files for valid YAML frontmatter (type, description, purpose fields present). Flag files missing required fields.
+
+## Step 8: Calendar Look-Ahead
+
+Use the **calendar skill** — pull the next 7 days. Filter to the user's approved calendars only. Flag events that need prep.
+
+## Step 9: Automation Ideas
+
+Read `automation-ideas.md` from the Claude Code auto-memory directory. For each `idea` or `scoped` entry, check if it appeared in this week's sessions or if related work makes it practical now. Update status to `scoped` if ready. Omit section from digest if nothing surfaces.
+
+**Implementation type lens:** For each candidate, classify what shape the automation takes:
+- **Hook** — "every time X happens, check/validate/block Y" patterns. PreToolUse guards, PostToolUse validations, Stop-event cleanups. These are event-driven and reactive.
+- **Skill** — multi-step workflows invoked by the user or another skill. These are intentional and orchestrated.
+- **Script** — standalone automation that runs on a schedule or trigger (cron, n8n, heartbeat job). These are autonomous and recurring.
+
+Include the type in the recommendation so candidates accumulate in the right bucket.
+
+## Step 10: Monthly Rollup (Conditional)
+
+Check: does a monthly digest exist for last month? Glob `state/sessions/digests/monthly/YYYY-MM.md`.
+
+If we're in a new month and last month's digest doesn't exist, create it:
+
+1. Read all weekly digests from last month (`state/sessions/digests/weekly/YYYY-W*.md`)
+2. Synthesize into `state/sessions/digests/monthly/YYYY-MM.md`:
+
+```markdown
+---
+type: monthly-digest
+month: YYYY-MM
+weeks: [WXX, WXX, WXX, WXX]
+sessions: N
+---
+
+# Monthly Digest — YYYY Month Name
+
+## Summary
+[3-5 sentence narrative of the month's arc — what moved, what shipped,
+what shifted. Written for someone reading this 6 months from now.]
+
+## Key Decisions & Outcomes
+[Same structure as weekly: organized by project/area, not chronologically.
+Elevated from weekly digests — only include decisions that still matter
+at month scale. Skip small fixes and routine maintenance.]
+
+### [Project/Area]
+- **[Decision]** — [Context]
+
+## Open Threads Carried Forward
+- [Threads still open at month end]
+```
+
+## Step 11: Present Weekly Digest
+
+Present a scannable summary to the user:
 
 ```markdown
 # Weekly Review — Week of YYYY-MM-DD
 
-## This Week's Sessions
-- Session 1 summary (1 line)
-- Session 2 summary (1 line)
-...
+## This Week (N sessions)
+- [1-line summary per session]
 
-## Promoted to Permanent Memory
-- [List anything added to standing-orders, known-errors, preferences, etc.]
-- (nothing new) if all learnings were already captured
+## Promoted to Memory
+- [What was added to behavioral/operational/preferences]
+- (nothing new) if already captured
+
+## Consolidated
+- [Merged N redundant entries, removed N stale references]
+- (nothing to consolidate) if state was clean
 
 ## Project Health
-- ✅/⚠️ [project] — [status note]
+- [status icon] [project] — [note]
 
 ## Overdue Tasks
 - [task] — was due [date]
 
-## Coming Up This Week
+## Coming Up
 - [date] — [event or task]
 
 ## Playbook Updates
-- Added X new sender rules / nothing new
+- [sender rules added / nothing new]
 
 ## Automation Candidates
-- [idea] — [one-line recommendation] _(omit section if nothing is ready)_
+- [idea] — [recommendation] (omit if none)
 
 ## Brain Health
-- [Any corrections promoted to Standing Orders?]
-- [Any known errors added?]
+- Corrections promoted: N
+- Known errors added: N
+- Contacts updated: N
+- State files cleaned: N
+- Monthly rollup: [created / not due]
 ```
 
-## Output Format
-
-Keep it scannable. No walls of text. The goal is a 2-minute read that tells Austin:
-- What happened this week
-- What the brain learned
-- What needs attention
-- What's coming up
+Also write this digest to the weekly digest file if not already written in Step 2 (Step 2 writes the A+C digest; this is the full operational summary shown live).
 
 ---
 
-**Last Updated:** 2026-03-20
+## Digest Retrieval Pattern
+
+When searching for past work, use the digest tree in reverse:
+1. Monthly digests → find the right month
+2. Weekly digests → find the right week
+3. Individual sessions → find the exact session
+
+This is faster than grepping 150+ session files for context.
+
+---
+
+**Last Updated:** 2026-03-27

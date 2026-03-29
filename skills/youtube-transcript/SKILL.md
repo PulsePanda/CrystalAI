@@ -141,7 +141,7 @@ After all output files are successfully written, delete the source files from `+
 #### 5. Open the output folder
 
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=Areas/YouTube"
+open "obsidian://open?vault={vault_name}&file=Areas/YouTube"
 ```
 
 This opens the YouTube folder in Obsidian so the user can immediately start reading through the briefings.

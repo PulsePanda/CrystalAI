@@ -1,8 +1,8 @@
 # Scheduling Preferences
 
-Learned preferences from Austin's corrections and feedback. This file is updated automatically whenever Austin corrects a scheduling decision — the underlying preference is extracted and saved here for future runs.
+Learned preferences from the user's corrections and feedback. This file is updated automatically whenever the user corrects a scheduling decision — the underlying preference is extracted and saved here for future runs.
 
-**How this works:** When Austin says something like "no, not Thursday — I don't take meetings on Thursdays anymore" or "mornings don't work for vendor calls", the /schedule skill updates this file with the new preference. Future runs read this file before proposing slots.
+**How this works:** When the user says something like "no, not Thursday — I don't take meetings on Thursdays anymore" or "mornings don't work for vendor calls", the /calendar-booking skill updates this file with the new preference. Future runs read this file before proposing slots.
 
 ---
 
@@ -10,18 +10,18 @@ Learned preferences from Austin's corrections and feedback. This file is updated
 
 _Preferences tied to specific people or organizations._
 
-_(none yet — will be populated as Austin provides corrections)_
+_(none yet — will be populated as the user provides corrections)_
 
 ## Time-of-Day Preferences
 
-_When Austin prefers to schedule different types of events._
+_When the user prefers to schedule different types of events._
 
 - Personal appointments (vet, doctor, errands): prefer mornings
 - Work meetings (vendors, partners): prefer afternoons
 
 ## Day-of-Week Preferences
 
-_Days Austin prefers or avoids for certain types of scheduling._
+_Days the user prefers or avoids for certain types of scheduling._
 
 - Avoid Tuesdays for morning personal appointments (early on-site departure at 6:30 AM)
 
@@ -34,7 +34,7 @@ _Default durations by meeting type._
 
 ## Location Preferences
 
-_Where Austin prefers to meet._
+_Where the user prefers to meet._
 
 _(none yet)_
 

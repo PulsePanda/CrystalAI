@@ -7,7 +7,7 @@ allowed-tools: Read, Write, Edit
 
 # /teach - Teach Writing Style from Examples
 
-Analyzes writing samples Austin provides, extracts new patterns, and updates the permanent style reference.
+Analyzes writing samples the user provides, extracts new patterns, and updates the permanent style reference.
 
 ---
 
@@ -23,7 +23,7 @@ Compare against the `# Writing Style` section in the vault root CLAUDE.md and lo
 
 - **New patterns:** phrases, openers/closers, structural habits not yet documented
 - **Existing patterns confirmed:** note if examples reinforce what's already there
-- **Anti-patterns:** things Austin clearly avoids that aren't documented yet
+- **Anti-patterns:** things the user clearly avoids that aren't documented yet
 - **Context-specific rules:** formal vs casual, internal vs external differences
 
 If an example contradicts existing style rules, flag it and ask which is correct.
@@ -32,7 +32,7 @@ If an example contradicts existing style rules, flag it and ask which is correct
 
 ## Step 3: Save Examples
 
-Append to `{SKILL_DIR}/references/writing-examples.md`:
+Append to `${CLAUDE_PLUGIN_ROOT}/state/behavioral/writing-examples.md`:
 
 ```markdown
 ## YYYY-MM-DD - [Brief context]
@@ -48,7 +48,7 @@ Append to `{SKILL_DIR}/references/writing-examples.md`:
 
 ## Step 4: Update Style Guide
 
-If new patterns were discovered, update the `# Writing Style` section in the vault root CLAUDE.md (`/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/CLAUDE.md`):
+If new patterns were discovered, update the `# Writing Style` section in the vault root CLAUDE.md (`${VAULT_PATH}/CLAUDE.md`):
 - Add new phrases/patterns to the appropriate subsection
 - Add new "never use" items if found
 - Note context-specific rules

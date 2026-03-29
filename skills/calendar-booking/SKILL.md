@@ -1,13 +1,13 @@
 ---
-name: crystal:schedule
+name: crystal:calendar-booking
 description: "ALWAYS use this skill when the task involves creating a NEW calendar entry or checking availability in order to plan something. This includes: booking/scheduling any meeting, appointment, call, or event (work or personal); drafting any email that proposes specific dates or times to someone else; blocking off new time on the calendar; checking when you're free ('when am I free', 'what days work', 'do I have time') to plan anything — a meeting, vet appointment, vendor visit, personal errand; or putting something new on the calendar even conditionally ('put this on my calendar once he confirms', 'add that once we have a date'). Trigger on: 'set up a call', 'book time', 'put this on my calendar', 'block off time', 'find a time', 'when am I free', 'draft with my availability', 'get something scheduled'. Do NOT trigger for: pure calendar reads ('what's on my calendar', 'show my schedule', 'what meetings do I have'); modifying or moving existing events ('move this to Wednesday', 'reschedule this to next week', 'change the time'); or canceling events — all of those go to /calendar directly."
 version: 1.0.0
 allowed-tools: Bash, Read, Write, Edit
 ---
 
-# /schedule — Calendar-Aware Scheduling
+# /calendar-booking — Calendar-Aware Scheduling
 
-Schedule meetings, appointments, and calls using Austin's real calendar availability. This skill is the bridge between "I need to set something up" and the actual email draft or calendar event — it makes sure proposed times are actually open.
+Schedule meetings, appointments, and calls using the user's real calendar availability. This skill is the bridge between "I need to set something up" and the actual email draft or calendar event — it makes sure proposed times are actually open.
 
 ## Why This Exists
 
@@ -16,7 +16,7 @@ Scheduling emails without checking the calendar first are useless — they creat
 ## Usage
 
 ```
-/schedule [what to schedule]
+/calendar-booking [what to schedule]
 ```
 
 ## Workflow
@@ -33,10 +33,10 @@ Extract from the user's message:
 
 ### Step 2: Pull Calendar via /calendar Skill
 
-Invoke the **calendar** tool skill to query events across the full timeframe. Read `references/availability-rules.md` for Austin's recurring patterns, time zone conversion, and slot preferences — these shape which slots to propose.
+Invoke the **calendar** tool skill to query events across the full timeframe. Read `references/availability-rules.md` for the user's recurring patterns, time zone conversion, and slot preferences — these shape which slots to propose.
 
 Key rules (details in the reference file):
-- Filter to Austin's calendars only — exclude PUBLIC, resource, Chromebook, and INTERNAL Staff calendars
+- Filter to the user's calendars only — exclude PUBLIC, resource, Chromebook, and INTERNAL Staff calendars
 - All mcp-ical times are UTC — convert to Central Time before presenting
 - Never call GWS calendar commands directly — always go through the /calendar skill
 
@@ -44,13 +44,13 @@ Key rules (details in the reference file):
 
 Build a picture of availability:
 1. Map all existing events across the timeframe
-2. Overlay Austin's recurring constraints (on-site days, typical patterns from the reference file)
+2. Overlay the user's recurring constraints (on-site days, typical patterns from the reference file)
 3. Apply any user-specified constraints
 4. Select the best 3-5 slots to propose
 
 The reference file has detailed preferences for slot selection — mornings for personal appointments, afternoons for work meetings, buffer time between events, and so on. Read it before selecting slots.
 
-Also read `references/scheduling-preferences.md` — this contains learned preferences from Austin's past corrections (person-specific timing, day-of-week rules, duration defaults, etc.). These take priority over the general rules in availability-rules.md when they conflict.
+Also read `references/scheduling-preferences.md` — this contains learned preferences from the user's past corrections (person-specific timing, day-of-week rules, duration defaults, etc.). These take priority over the general rules in availability-rules.md when they conflict.
 
 ### Step 4: Take Action
 
@@ -76,7 +76,7 @@ When the scheduling requires a response from the other party, invoke the **/thin
 
 ### Step 6: Learn from Corrections
 
-When Austin corrects a scheduling decision — changes the proposed times, overrides a slot preference, specifies a new constraint — extract the underlying preference and save it to `references/scheduling-preferences.md` under the appropriate section.
+When the user corrects a scheduling decision — changes the proposed times, overrides a slot preference, specifies a new constraint — extract the underlying preference and save it to `references/scheduling-preferences.md` under the appropriate section.
 
 This is how the skill gets smarter over time. Examples of corrections that become preferences:
 - "No, not mornings for vendor calls" → Time-of-Day: vendor calls in afternoons only

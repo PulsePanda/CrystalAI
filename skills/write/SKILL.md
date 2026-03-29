@@ -1,13 +1,13 @@
 ---
 name: crystal:write
-description: This skill should be used when the user asks to "/write", "draft an email", "write a message", "help me write", or wants content drafted in Austin's voice. Drafts emails, messages, and other content in Austin's personal writing style, learns from corrections, and creates Apple Mail drafts on approval.
+description: This skill should be used when the user asks to "/write", "draft an email", "write a message", "help me write", or wants content drafted in the user's voice. Drafts emails, messages, and other content in the user's personal writing style, learns from corrections, and creates Apple Mail drafts on approval.
 version: 1.0.0
 allowed-tools: Read, Write, Edit
 ---
 
-# /write - Draft Content in Austin's Voice
+# /write - Draft Content in the User's Voice
 
-Write emails, messages, or other content in Austin's personal writing style. This skill learns from corrections — when Austin fixes something, the underlying rule is saved for future drafts.
+Write emails, messages, or other content in the user's personal writing style. This skill learns from corrections — when the user fixes something, the underlying rule is saved for future drafts.
 
 ## Usage
 
@@ -49,7 +49,7 @@ If the recipient relationship isn't obvious from context or previous sessions, a
 
 ### Step 4: Draft Content
 
-Write the content following Austin's style:
+Write the content following the user's style:
 
 **Tone:**
 - Casual but competent
@@ -84,7 +84,7 @@ Write the content following Austin's style:
 
 ### Step 5: Create Draft in Apple Mail (emails only)
 
-**Never show the draft text in the terminal.** For emails, go straight to creating the draft in Apple Mail via AppleScript. Austin edits and sends from Mail directly.
+**Never show the draft text in the terminal.** For emails, go straight to creating the draft in Apple Mail via AppleScript. The user edits and sends from Mail directly.
 
 Use the **`email` tool skill** to create the draft. Confirm with one line: "Draft created in Mail — [To] / [Subject]."
 

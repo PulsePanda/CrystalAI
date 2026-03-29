@@ -37,7 +37,7 @@ _Meeting Notes:_
 
 – **John**: API integration work is progressing well
 – **Sarah**: Authentication bug fix completed
-– **Austin**: Working on documentation updates
+– **Me**: Working on documentation updates
 
 _Action Items:_
 

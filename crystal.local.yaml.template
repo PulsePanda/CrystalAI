@@ -4,7 +4,7 @@
 
 # --- Paths ---
 vault_path: "/path/to/your/obsidian/vault"
-scripts_path: "${CRYSTAL_ROOT}/scripts"
+scripts_path: "${CLAUDE_PLUGIN_ROOT}/scripts"
 
 # --- Identity ---
 user:
@@ -24,7 +24,7 @@ email_accounts:
 environments:
   workstation:
     type: "workstation"
-    gws_wrapper: "${CRYSTAL_ROOT}/scripts/gws-mac.sh"
+    gws_wrapper: "${CLAUDE_PLUGIN_ROOT}/scripts/gws-mac.sh"
 
 # --- Calendars ---
 calendars:

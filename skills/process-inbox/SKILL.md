@@ -49,11 +49,11 @@ Also watch for **win/brag book entries** — cost savings, problems fixed, impro
 
 While categorizing, also check if any capture contains a content-worthy idea — something that could become a blog post or social media content for the Umbrella Content Engine. Signals:
 
-- A problem Austin solved that other school IT pros would find useful
-- A cost savings, efficiency improvement, or process Austin built
+- A problem the user solved that other school IT pros would find useful
+- A cost savings, efficiency improvement, or process the user built
 - A story or lesson learned from troubleshooting
 - An opinion or insight about school IT, managed services, or automation
-- Anything Austin explicitly marked as "content idea", "could be a post", etc.
+- Anything the user explicitly marked as "content idea", "could be a post", etc.
 
 If detected, append a row to the appropriate backlog file(s) during Step 6:
 - `Areas/Content/umbrella/ideas.md` — company capabilities, service delivery, general school IT
@@ -61,7 +61,7 @@ If detected, append a row to the appropriate backlog file(s) during Step 6:
 
 **Row format:** `| YYYY-MM-DD | Idea title | [inbox-scan] | new | 2-3 sentence description |`
 
-Include the content idea detection in the Step 3 plan presentation so Austin can confirm or skip it. This is additive — it doesn't change the primary categorization of the capture.
+Include the content idea detection in the Step 3 plan presentation so the user can confirm or skip it. This is additive — it doesn't change the primary categorization of the capture.
 
 ---
 
@@ -107,7 +107,7 @@ After processing any meeting note, check if it's an owners meeting with Jesse:
 - Content references "owners meeting" + "jesse" + "gis"/"sja"
 
 **If detected:**
-1. Read `state/operational/owners-meeting.md`
+1. Read `${CLAUDE_PLUGIN_ROOT}/state/operational/owners-meeting.md`
 2. Update `Last Meeting` section with date + meeting note link
 3. Add row to History table
 4. Scan for Jesse's wins → auto-add to brag book with `Source: owners meeting [DATE] (Jesse)`
@@ -119,7 +119,7 @@ After processing any meeting note, check if it's an owners meeting with Jesse:
 Use the **`things3` tool skill** for all task creation. Always include an Obsidian backlink in task notes:
 
 ```
-[Source note](obsidian://open?vault=VaultyBoi&file=PATH_URL_ENCODED)
+[Source note](obsidian://open?vault={vault_name}&file=PATH_URL_ENCODED)
 
 Context: [1-3 sentences]
 ```

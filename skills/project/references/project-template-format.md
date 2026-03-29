@@ -6,172 +6,128 @@ Reference guide for the structure and sections of project files.
 
 All project files live in:
 ```
-/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/Projects/
+${VAULT_PATH}/Projects/
 ```
+
+## Two Formats
+
+### Single-file
+```
+Projects/project-name.md
+```
+A standalone tracking doc for simple initiatives — skill builds, one-off tasks, planning documents.
+
+### Folder
+```
+Projects/project-name/
+├── _project.md        ← tracker (same structure as single-file)
+├── reference/         Research, specs, background docs
+├── deliverables/      Outputs, proposals, reports
+└── notes/             Meeting notes, call notes, working notes
+```
+For projects that accumulate material over time — sales prospects, client engagements, multi-phase initiatives.
 
 ## Filename Convention
 
 - Lowercase project name
 - Spaces replaced with hyphens
 - No special characters
-- .md extension
+- `.md` extension (single-file) or directory name (folder)
 
 Examples:
-- "Website Redesign" → `website-redesign.md`
-- "Q1 Planning" → `q1-planning.md`
-- "API v2.0 Migration" → `api-v20-migration.md`
+- "Website Redesign" → `website-redesign`
+- "Twin Cities German Immersion" → `twin-cities-german-immersion`
+- "API v2.0 Migration" → `api-v20-migration`
 
-## Template Structure
-
-### Header (YAML frontmatter optional)
+## Core Sections (always present)
 
 ```markdown
+---
+type: project
+date-created: YYYY-MM-DD
+status: planning | active | on-hold | complete
+tags: [tag1, tag2]
+---
+
 # Project Name
 
-**Status:** Planning | Active | Paused | Complete
 **Started:** YYYY-MM-DD
-**Completed:** (if applicable)
-```
 
-### Overview Section
+## Overview
+Brief description — what, why, expected outcome.
 
-Brief description of project purpose, goals, and expected outcomes.
-
-Typically 2-4 sentences explaining:
-- What is this project?
-- Why are we doing it?
-- What's the expected outcome?
-
-### Goals Section
-
-Bulleted list of primary objectives:
-```markdown
 ## Goals
+- Goal 1
+- Goal 2
 
-- Primary goal 1
-- Primary goal 2
-- Primary goal 3
-```
-
-Keep to 3-5 main goals, not an exhaustive task list.
-
-### Current State Section
-
-Three subsections tracking progress:
-
-```markdown
 ## Current State
 
-**Done:**
-- Completed milestone 1
-- Completed milestone 2
+### Done
+### In Progress
+### Next
 
-**In Progress:**
-- Current work item 1
-- Current work item 2
-
-**Next:**
-- Planned work item 1
-- Planned work item 2
-```
-
-Update regularly as project progresses.
-
-### Key Decisions Section
-
-Document important choices made during the project:
-
-```markdown
 ## Key Decisions
 
-### YYYY-MM-DD: Decision Title
-- **Decision:** What was decided
-- **Rationale:** Why this approach
-- **Alternatives considered:** Other options
-- **Impact:** What this affects
+## Notes
+
+---
+
+**Last Updated:** YYYY-MM-DD
 ```
 
-Chronological order (newest first or oldest first, be consistent).
+### Important: Status lives in frontmatter only
 
-### Things3 Tasks Section
+The `status:` field in YAML frontmatter is the single source of truth. Do NOT add a `**Status:**` line in the body — it creates drift between two locations.
 
-Links to task management:
+### Folder format adds: Project Files section
 
 ```markdown
-## Things3 Tasks
+## Project Files
 
-To view tasks related to this project:
-- Search Things3 for: "Project Name"
-- Or use MCP: "Show me tasks for [project]"
-- Link to Things3 project/area if applicable
+This project uses folder format:
+- `reference/` — Research, specs, background docs
+- `deliverables/` — Outputs, proposals, reports
+- `notes/` — Meeting notes, call notes, working notes
 
-**Active tasks:**
-- (Query Things3 for current status)
+Use `/project-load {filename}` to load project context.
 ```
 
-Tasks live in Things3, not duplicated here.
+## Optional Sections (add when relevant)
 
-### Technical Approach Section
+### Waiting On
+When there are known blockers or dependencies on other people:
+```markdown
+## Waiting On
 
-For technical projects, document architecture and implementation:
+| Person | For What | Since | Follow-up By | Things3 Task |
+|--------|----------|-------|--------------|--------------|
+| Name | What we're waiting for | YYYY-MM-DD | YYYY-MM-DD | yes/no |
+```
 
+### Technical Approach
+For engineering/technical projects:
 ```markdown
 ## Technical Approach
 
 ### Architecture
 - Key technical decisions
-- Tools and technologies
-- Design patterns
 
 ### Implementation Notes
-- Important technical details
-- Gotchas or considerations
-- Performance implications
+- Important details and gotchas
 ```
 
-Optional for non-technical projects.
-
-### Timeline Section
-
+### Timeline
+When there are known deadlines:
 ```markdown
 ## Timeline
 
 **Estimated:** X weeks/months
 **Key milestones:**
 - Milestone 1: Date
-- Milestone 2: Date
-- Launch: Target date
 ```
 
-Update estimates as project progresses.
-
-### Related Notes Section
-
-Wikilinks to relevant notes:
-
-```markdown
-## Related Notes
-
-- [[Note 1]]
-- [[Note 2]]
-- [[Reference Document]]
-```
-
-### Related Sessions Section
-
-Links to session logs from /compress:
-
-```markdown
-## Related Sessions
-
-- [[YYYY-MM-DD-HHmm-session-topic]]
-- [[YYYY-MM-DD-HHmm-session-topic]]
-```
-
-Automatically updated by /compress when sessions reference this project.
-
-### Team & Stakeholders Section
-
+### Team & Stakeholders
+For collaborative projects:
 ```markdown
 ## Team & Stakeholders
 
@@ -180,87 +136,69 @@ Automatically updated by /compress when sessions reference this project.
 
 **Stakeholders:**
 - Stakeholder 1
-- Stakeholder 2
 ```
 
-### Resources Section
-
-External links and internal documentation:
-
+### Resources
+When there are external links:
 ```markdown
 ## Resources
 
-- [External link 1](url)
-- [External link 2](url)
+- [Link](url)
 - Documentation: [[Internal doc]]
 ```
 
-### Notes Section
-
-Free-form additional context:
-
-```markdown
-## Notes
-
-Additional context, learnings, or observations about the project.
-```
-
-### Footer
-
-```markdown
----
-
-**Last Updated:** YYYY-MM-DD
-```
-
-## Required vs Optional Sections
-
-**Required:**
-- Header (name, status, started date)
-- Overview
-- Goals
-- Current State
-
-**Recommended:**
-- Key Decisions
-- Things3 Tasks
-- Timeline
-- Last Updated footer
-
-**Optional:**
-- Technical Approach (for technical projects)
-- Team & Stakeholders (for collaborative projects)
-- Resources (if external links needed)
-- Related Notes/Sessions (filled over time)
-- Notes (as needed)
+### Dataview Queries
+Only when explicitly requested. Note: session logs live in CrystalAI `state/sessions/`, not in the vault.
 
 ## Update Frequency
 
-- **Weekly:** Current State section
-- **As they occur:** Key Decisions, Related Sessions
-- **Monthly:** Timeline estimates, Goals review
-- **On completion:** Status, Completed date
+- **As work happens:** Current State, Key Decisions
+- **Weekly:** Status check, Waiting On follow-ups
+- **On completion:** Status → complete, add Completed date
 
-## Integration with CLAUDE.md
+## Real-World Examples
 
-When project is created, add summary entry to CLAUDE.md:
-
+Lean prospect project (TCGIS):
 ```markdown
-# Active Projects
+---
+type: project
+date-created: 2026-03-27
+status: active
+tags: [work, umbrella, sales, prospect]
+---
 
-## Project Name
-- **Status**: Active
-- **Started**: YYYY-MM-DD
-- **Goal**: Brief one-line description
-- **Details**: [[project-filename]]
+# Twin Cities German Immersion School
+
+**Started:** 2026-03-27
+
+## Overview
+Sales prospect research and relationship management for TCGIS.
+
+## Goals
+- Maintain comprehensive prospect dossier for meeting prep
+- Track relationship touchpoints and contract status
+
+## Current State
+
+### Done
+- Initial prospect dossier generated (2026-03-27)
+
+### In Progress
+### Next
+
+## Key Decisions
+
+## Notes
+
+## Project Files
+This project uses folder format:
+- `reference/` — Prospect dossier, research artifacts
+- `deliverables/` — Quotes, proposals, bid documents
+- `notes/` — Meeting notes, call logs
+
+Use `/project-load twin-cities-german-immersion` to load project context.
+
+---
+
+**Last Updated:** 2026-03-27
 ```
-
-When project completes, entry can be archived (if CLAUDE.md > 280 lines).
-
-## Example Full Template
-
-See: `Projects/_template.md` for the complete template file.
-
-## Example Populated Project
-
-See: `Projects/obsidian-smart-assistant.md` for a real-world example.

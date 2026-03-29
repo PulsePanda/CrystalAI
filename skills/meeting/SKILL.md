@@ -47,7 +47,7 @@ Skip this step entirely if no matches found.
 
 ## Step 4: Create Pre-filled Note
 
-Write to `/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/+Inbox/FILENAME.md`:
+Write to `${VAULT_PATH}/+Inbox/FILENAME.md`:
 
 ```markdown
 ---
@@ -104,7 +104,7 @@ notes:
 Requires `dangerouslyDisableSandbox: true` for this one call only.
 
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=%2BInbox%2FFILENAME.md"
+open "obsidian://open?vault={vault_name}&file=%2BInbox%2FFILENAME.md"
 ```
 
 ---

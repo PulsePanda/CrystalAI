@@ -1,6 +1,6 @@
 ---
-name: crystal:content-build
-description: Turn content ideas into publishable blog posts and social media content. Use this skill when Austin wants to "build content", "write posts", "work on content", "turn ideas into posts", "content session", "let's write some posts", "/content-build", "work the content pipeline", "what's in the content backlog", or wants to review the ideas backlog and produce Substack articles and social media posts. This is the production engine of the Umbrella Content Engine — where ideas become actual content. Also trigger when Austin says "let's do a content build session" or "time to make some posts".
+name: content-build
+description: Turn content ideas into publishable blog posts and social media content. Use this skill when the user wants to "build content", "write posts", "work on content", "turn ideas into posts", "content session", "let's write some posts", "/content-build", "work the content pipeline", "what's in the content backlog", or wants to review the ideas backlog and produce Substack articles and social media posts. This is the production engine of the Umbrella Content Engine — where ideas become actual content. Also trigger when the user says "let's do a content build session" or "time to make some posts".
 ---
 
 # Content Build
@@ -16,13 +16,13 @@ This skill sits in the middle of the content pipeline:
 
 Two voices, always distinct:
 - **Umbrella** — "How we help schools do X." Company capability, professional warmth.
-- **Austin** — "What I've learned about X." First-person, opinionated, story-driven.
+- **Personal voice** — "What I've learned about X." First-person, opinionated, story-driven.
 
 For channel IDs, platform constraints, and voice framing details, read `references/channels-and-platforms.md`.
 
 ## The Build Session
 
-A content build session is collaborative. You draft, Austin refines. The content authenticity rule: AI provides structure and polish, Austin provides the substance — real stories, genuine opinions, lived experience. If a draft feels generic, ask Austin for the specific detail that makes it real.
+A content build session is collaborative. You draft, the user refines. The content authenticity rule: AI provides structure and polish, the user provides the substance — real stories, genuine opinions, lived experience. If a draft feels generic, ask the user for the specific detail that makes it real.
 
 ### Step 1: Review the Backlogs
 
@@ -69,13 +69,13 @@ For each picked idea, generate a long-form blog post draft.
 
 **If the idea appears in both backlogs**, generate two versions:
 - Umbrella version: "we" perspective, capability framing
-- Austin version: "I" perspective, story/experience framing
+- Personal voice version: "I" perspective, story/experience framing
 
-**Present to Austin for review:**
+**Present to the user for review:**
 
-IMPORTANT: Never present draft text in the terminal. Always write the draft to a temp file (`/private/tmp/claude/content-draft-[slug].md`) and open it in VS Code (`open -a "Visual Studio Code" /path/to/file`). Austin edits directly in VS Code. When he's done, he'll tell you — then read the file back to pick up his changes.
+IMPORTANT: Never present draft text in the terminal. Always write the draft to a temp file (`/private/tmp/claude/content-draft-[slug].md`) and open it in VS Code (`open -a "Visual Studio Code" /path/to/file`). The user edits directly in VS Code. When they're done, they'll tell you — then read the file back to pick up their changes.
 
-This is the most important review point. Austin will likely want to:
+This is the most important review point. The user will likely want to:
 - Add specific stories or examples the AI couldn't know
 - Adjust tone or framing
 - Cut sections that feel generic
@@ -101,16 +101,16 @@ For an Umbrella blog post → generate:
 - Umbrella LinkedIn posts (multiple — one per distinct angle)
 - Umbrella Facebook posts (multiple — one per distinct angle)
 
-For an Austin blog post → generate:
-- Austin Twitter individual posts (multiple)
-- Austin LinkedIn posts (multiple)
+For a personal voice blog post → generate:
+- Personal voice Twitter individual posts (multiple)
+- Personal voice LinkedIn posts (multiple)
 
 **Social post principles:**
 - Each post stands alone as value — not just "check out my blog post"
 - Extract a DIFFERENT angle from the blog for each post — slice the content, don't summarize it repeatedly
 - Platform-native: a LinkedIn post reads differently than a tweet
-- **NEVER say "link in comments", "link in bio", or reference anything not in the post itself.** Austin won't add comments and Claude can't either.
-- **Always include the actual Substack URL in the post body** when referencing a blog post. Use the real link (e.g. `https://umbrellasystems.substack.com/p/slug`). If you don't have the URL, ask Austin for it before writing the post.
+- **NEVER say "link in comments", "link in bio", or reference anything not in the post itself.** The user won't add comments and Claude can't either.
+- **Always include the actual Substack URL in the post body** when referencing a blog post. Use the real link (e.g. `https://umbrellasystems.substack.com/p/slug`). If you don't have the URL, ask the user for it before writing the post.
 - No thread formatting (1/, 2/, etc.) — every post is a single standalone item
 
 **LinkedIn specifically** (this matters for reach):
@@ -124,7 +124,7 @@ For an Austin blog post → generate:
 
 ### Step 4: Schedule and Save
 
-Once Austin approves:
+Once the user approves:
 
 **4a: Save blog posts to vault**
 
@@ -136,7 +136,7 @@ Frontmatter:
 ```yaml
 ---
 type: content
-voice: umbrella  # or austin
+voice: umbrella  # or personal
 date: YYYY-MM-DD
 title: "Post Title"
 subtitle: "Hook-style subtitle for Substack"
@@ -161,7 +161,7 @@ Write the HTML to `/private/tmp/claude-501/substack-[slug].html` with this struc
 
 Open it in Chrome: `open -a "Google Chrome" "file:///private/tmp/claude-501/substack-[slug].html"`
 
-Tell Austin: "HTML is open in Chrome. Cmd+A, Cmd+C, then paste into Substack's editor. Title: [title]. Subtitle: [subtitle]. Tags: [tag1, tag2, tag3]."
+Tell the user: "HTML is open in Chrome. Cmd+A, Cmd+C, then paste into Substack's editor. Title: [title]. Subtitle: [subtitle]. Tags: [tag1, tag2, tag3]."
 
 **4c: Save social posts archive**
 
@@ -170,7 +170,7 @@ Save the social posts alongside the blog post for reference:
 
 **4d: Schedule social posts**
 
-Default cadence (unless Austin specifies otherwise):
+Default cadence (unless the user specifies otherwise):
 - **Monday:** Substack blog post publishes. First social posts go out same day (blog announcement + thread).
 - **Tuesday–Sunday:** Remaining social posts spread evenly across the week. Alternate platforms to avoid flooding one channel.
 - Posts per day per platform: max 1. Spread them out.
@@ -196,11 +196,11 @@ Content build complete:
 
 Blog posts:
 - "[Title]" — Umbrella version saved to posts/YYYY-MM-DD-slug.md
-- "[Title]" — Austin version saved to posts/YYYY-MM-DD-slug.md
+- "[Title]" — Personal voice version saved to posts/YYYY-MM-DD-slug.md
 
 Social posts scheduled:
 - [N] Umbrella posts (Twitter, LinkedIn, Facebook) — [date range]
-- [N] Austin posts (Twitter, LinkedIn) — [date range]
+- [N] personal voice posts (Twitter, LinkedIn) — [date range]
 
 Next: Publish the Substack posts manually, then `/content-publish` will handle the social posts on schedule.
 
@@ -210,14 +210,14 @@ Next: Publish the Substack posts manually, then `/content-publish` will handle t
 ## Edge Cases
 
 - **Idea only in one backlog** — generate content for that voice only, social posts for that voice's channels only
-- **Austin wants to skip the blog post** — go straight to social posts. Some ideas work better as standalone social content without a full article.
-- **Austin wants to batch multiple ideas** — work through them one at a time within the same session. Present each for review before moving to the next.
-- **Austin provides the blog post himself** — skip generation, go straight to deriving social posts from his draft
-- **Austin wants to edit inline** — he might paste revised text directly. Use it as-is.
+- **The user wants to skip the blog post** — go straight to social posts. Some ideas work better as standalone social content without a full article.
+- **The user wants to batch multiple ideas** — work through them one at a time within the same session. Present each for review before moving to the next.
+- **The user provides the blog post themselves** — skip generation, go straight to deriving social posts from their draft
+- **The user wants to edit inline** — they might paste revised text directly. Use it as-is.
 - **Scheduling conflict** — if queue already has posts for a suggested date, shift the new ones to avoid stacking
 
 ## What This Skill Does NOT Do
 
-- **Does not publish to Substack** — Substack has no public API. Austin publishes manually by copy-pasting the rendered HTML into Substack's web editor. This skill generates the HTML, subtitle, and tags — Austin handles the actual publish.
+- **Does not publish to Substack** — Substack has no public API. The user publishes manually by copy-pasting the rendered HTML into Substack's web editor. This skill generates the HTML, subtitle, and tags — the user handles the actual publish.
 - **Does not publish to Buffer** — that's `/content-publish`'s job. This skill only adds to the queue.
 - **Does not generate ideas from scratch** — ideas come from the backlogs (fed by `/content-dump` and `/content-capture`). If the backlog is empty, suggest running `/content-dump`.

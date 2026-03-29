@@ -34,9 +34,9 @@ Review the current session and update:
    - If skill work → relevant skill's `SKILL.md`
    - If project work → `Projects/[project].md`
    - If workflow patterns → `~/.claude/projects/.../memory/MEMORY.md`
-   - If behavioral rules changed → `state/behavioral/` domain files
-   - If Austin corrected Claude → `state/operational/corrections.md`
-   - If Austin's preferences/style observed → `state/behavioral/austin-preferences.md`
+   - If behavioral rules changed → `${CLAUDE_PLUGIN_ROOT}/state/behavioral/` domain files
+   - If the user corrected Claude → `${CLAUDE_PLUGIN_ROOT}/state/operational/corrections.md`
+   - If the user's preferences/style observed → `${CLAUDE_PLUGIN_ROOT}/state/behavioral/user-preferences.md`
    - If resume/session flow changed → `${CLAUDE_PLUGIN_ROOT}/skills/resume/SKILL.md`
 3. **Read current state** of each doc
 4. **Update with new info:**

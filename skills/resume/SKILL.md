@@ -29,12 +29,12 @@ Run Steps 0–5 in parallel, then present the summary.
 date '+%I:%M %p, %A %B %e'
 ```
 
-Include this in the summary header. Use it to inform tone and context — e.g., if it's past 6:30 AM on a school day, Austin is likely already on-site or in transit, not at his desk.
+Include this in the summary header. Use it to inform tone and context — e.g., if it's past 6:30 AM on a school day, the user is likely already on-site or in transit, not at their desk.
 
 ### Step 1: Read Last Session (for "Where We Left Off")
 
 ```
-Glob: state/sessions/*.md
+Glob: ${CLAUDE_PLUGIN_ROOT}/state/sessions/*.md
 ```
 
 Glob returns files sorted by modification time (newest first). Read **only the most recent session's** Quick Reference section (topics, projects, outcome) — this populates the "Where We Left Off" summary. Do not list or read additional sessions unless a search filter argument was provided.
@@ -45,11 +45,21 @@ Use the **`things3` tool skill** — Pull a list of all the tasks marked for tod
 
 ### Step 3: Query Today's Calendar
 
-Use the **`calendar` tool skill** — Pull a list of events for today. Filter to Austin's calendars only: `TCGIS`, `KESA`, `Personal`, `Umbrella - Personal`, `GIS`, `SJA`, `Umbrella Internal`. Exclude everything else.
+Use the **`calendar` tool skill** — Query each of the user's 7 approved calendars individually using the `calendar_name` parameter:
+
+1. `TCGIS`
+2. `KESA`
+3. `Personal`
+4. `Umbrella - Personal`
+5. `GIS`
+6. `SJA`
+7. `Umbrella Internal`
+
+**CRITICAL:** Do NOT query without a `calendar_name` filter. Do NOT include results from any other calendar (e.g., `INTERNAL Staff Calendar TCGIS`, `PUBLIC Twin Cities German Immersion School`, Chromebook Cart calendars, `Formula 1`, `Office/Admin Staff Calendar`). If a calendar returns no events, skip it silently.
 
 ### Step 5: Process Heart Queue
 
-Read `state/operational/heart-queue.md`. If any entries exist with `status: pending`, execute each one:
+Read `${CLAUDE_PLUGIN_ROOT}/state/operational/heart-queue.md`. If any entries exist with `status: pending`, execute each one:
 - **`things3-task` type:** Create the Things3 task using the things3 skill.
 - After successful execution, remove the YAML block (between and including its `---` markers) from the file.
 - If execution fails, add `last-error:` to the entry and leave it in place.
@@ -57,10 +67,10 @@ Read `state/operational/heart-queue.md`. If any entries exist with `status: pend
 
 ### Step 5.5: Check Heart Notifications
 
-Read `state/operational/heart-notifications.md`. Count the rows in the table (ignore the header row).
+Read `${CLAUDE_PLUGIN_ROOT}/state/operational/heart-notifications.md`. Count the rows in the table (ignore the header row).
 
 - If rows exist: include a **Heart Notifications** section in the summary with the count and a brief list (account + subject, max 5 shown)
-- Do not execute anything — just surface so Austin knows to run `/process-email`
+- Do not execute anything — just surface so the user knows to run `/process-email`
 - If no rows, skip silently.
 
 ### Step 4: Check Active Projects + Daily Note
@@ -81,7 +91,7 @@ Read `state/operational/heart-notifications.md`. Count the rows in the table (ig
 
 ## Today's Calendar
 - HH:MM — Event Name [Calendar]
-(omit if nothing on Austin's calendars)
+(omit if nothing on the user's calendars)
 
 ## Today's Tasks (Things3)
 - [ ] Task name
@@ -101,7 +111,7 @@ Keep it tight — this is orientation, not a report. Lead with what matters most
 
 ## Search Filter (if argument provided)
 
-If a search term was given, use the Grep tool to search `state/sessions/` for matching sessions. Read those sessions' Quick Reference sections and surface relevant context.
+If a search term was given, use the Grep tool to search `${CLAUDE_PLUGIN_ROOT}/state/sessions/` for matching sessions. Read those sessions' Quick Reference sections and surface relevant context.
 
 ---
 

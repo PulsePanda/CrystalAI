@@ -24,7 +24,7 @@ If a file with that name already exists, append `-2` (e.g. `2026-01-30-1430-2.md
 
 ## Step 2: Create File
 
-Write to: `/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/+Inbox/FILENAME.md`
+Write to: `${VAULT_PATH}/+Inbox/FILENAME.md`
 
 ```markdown
 ---
@@ -45,7 +45,7 @@ Body stays empty — user starts typing immediately after the frontmatter.
 Requires `dangerouslyDisableSandbox: true` for this one call only — `open obsidian://` needs macOS Launch Services, which the sandbox blocks. All other Bash calls stay sandboxed.
 
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=%2BInbox%2FFILENAME.md"
+open "obsidian://open?vault={vault_name}&file=%2BInbox%2FFILENAME.md"
 ```
 
 URL encoding: `+` → `%2B`, `/` → `%2F` (or leave as `/`).

@@ -27,7 +27,7 @@ Internal reference for all email operations. Read the reference files for copy-p
 - **Always query all 5 Gmail accounts** via GWS. iCloud uses apple-mail-mcp for reads, AppleScript for archive.
 - **Never use AppleScript for Gmail reads or archives.** GWS only. AppleScript is exclusively for: creating draft windows, reply-all windows, and forward windows in Apple Mail.
 - **Never show draft text in terminal** — create Apple Mail drafts directly via AppleScript.
-- **Reply-all by default** unless Austin says sender-only.
+- **Reply-all by default** unless the user says sender-only.
 
 ## Account Reference
 
@@ -44,11 +44,11 @@ Resolve account addresses from `crystal.local.yaml` → `email_accounts`. Apple 
 
 ## GWS Wrapper
 
-**Script:** `~/Documents/GitHub/CrystalAI/scripts/gws-mac.sh`
+**Script:** `${CLAUDE_PLUGIN_ROOT}/scripts/gws-mac.sh`
 **Credentials:** `~/.config/gws/credentials/credentials-{account}.json`
 
 ```bash
-GWS="/Users/Austin/Documents/GitHub/CrystalAI/scripts/gws-mac.sh"
+GWS="${CLAUDE_PLUGIN_ROOT}/scripts/gws-mac.sh"
 ```
 
 ## Reference Files (copy-paste snippets)

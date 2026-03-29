@@ -1,6 +1,6 @@
 ---
-name: crystal:content-publish
-description: Autonomous social media publisher for the Umbrella Content Engine. Reads the content queue files, finds posts that are due, and publishes them to Buffer via the GraphQL API. Use this skill when running the content publishing pipeline, when the heartbeat/raindrop dispatcher triggers it, when Austin says "publish content", "push the queue", "post to social", "/content-publish", "run the publisher", or when checking if there are scheduled posts ready to go out. This skill makes real API calls to Buffer — it actually publishes content. Also trigger when Austin asks "are there posts ready to publish" or "what's in the content queue".
+name: content-publish
+description: Autonomous social media publisher for the Umbrella Content Engine. Reads the content queue files, finds posts that are due, and publishes them to Buffer via the GraphQL API. Use this skill when running the content publishing pipeline, when the heartbeat/raindrop dispatcher triggers it, when the user says "publish content", "push the queue", "post to social", "/content-publish", "run the publisher", or when checking if there are scheduled posts ready to go out. This skill makes real API calls to Buffer — it actually publishes content. Also trigger when the user asks "are there posts ready to publish" or "what's in the content queue".
 ---
 
 # Content Publish
@@ -14,7 +14,7 @@ This is the final step in the content pipeline:
 - `/content-build` → turns ideas into posts and schedules them in queue files
 - **This skill** → reads the queue, publishes due posts to Buffer via API
 
-This skill is designed to run autonomously (Heart heartbeat or Canopy raindrop dispatcher) but can also be triggered manually by Austin.
+This skill is designed to run autonomously (Heart heartbeat or Canopy raindrop dispatcher) but can also be triggered manually by the user.
 
 ## How It Works
 
@@ -33,14 +33,14 @@ The bundled script at `scripts/publish.py` handles everything deterministically:
 
 ```bash
 python3 {SKILL_DIR}/scripts/publish.py \
-  --vault-path "/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi"
+  --vault-path "${VAULT_PATH}"
 ```
 
 ### Dry run (see what would publish without actually doing it)
 
 ```bash
 python3 {SKILL_DIR}/scripts/publish.py \
-  --vault-path "/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi" \
+  --vault-path "${VAULT_PATH}" \
   --dry-run
 ```
 
@@ -48,12 +48,12 @@ python3 {SKILL_DIR}/scripts/publish.py \
 
 ```bash
 python3 /home/crystalos/CrystalAI/skills/content-publish/scripts/publish.py \
-  --vault-path /home/crystalos/VaultyBoi
+  --vault-path {environments.heart.vault_path}  # see crystal.local.yaml
 ```
 
 ## When Invoked as a Skill
 
-When Austin triggers this skill interactively (or it's triggered by a dispatcher prompt):
+When the user triggers this skill interactively (or it's triggered by a dispatcher prompt):
 
 ### Step 1: Dry run first
 
@@ -65,7 +65,7 @@ python3 {SKILL_DIR}/scripts/publish.py \
   --dry-run
 ```
 
-If running interactively (Austin triggered it), show the results and ask for confirmation before publishing. If running autonomously (heartbeat/raindrop), skip confirmation and publish directly.
+If running interactively (the user triggered it), show the results and ask for confirmation before publishing. If running autonomously (heartbeat/raindrop), skip confirmation and publish directly.
 
 ### Step 2: Publish
 
@@ -78,7 +78,7 @@ python3 {SKILL_DIR}/scripts/publish.py \
 
 ### Step 3: Report
 
-Tell Austin (or log to heart-log.md if autonomous) what happened:
+Tell the user (or log to heart-log.md if autonomous) what happened:
 - How many posts published
 - Which channels they went to
 - Any failures and why

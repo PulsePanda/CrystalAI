@@ -19,16 +19,16 @@ Guidance for identifying tasks in a session conversation. For Things3 creation p
 - Things already done in this session
 - Vague references with no clear next action
 - Duplicates of tasks already created
-- **Project next steps** — if it's something Austin would naturally do the next time he works on that project, it belongs in the project file, not Things3. The project file IS the tracking system.
+- **Project next steps** — if it's something the user would naturally do the next time they work on that project, it belongs in the project file, not Things3. The project file IS the tracking system.
 - **Any work that happens inside a project work session** — if opening the project doc and reading "Next:" would prompt the action, no task needed.
 
 ### What TO extract (the real filter)
 Before creating a task, ask: **"Does this need to happen outside of a project work session?"**
 
-- If Austin needs to remember to do something on a specific date → task
+- If the user needs to remember to do something on a specific date → task
 - If it's a real-world action that won't surface naturally (send an email, make a call, follow up with someone, pay something) → task
 - If it's a "waiting on" item that needs a follow-up reminder → task
-- If it'll come up automatically next time Austin opens the project → skip it
+- If it'll come up automatically next time the user opens the project → skip it
 
 ## Session Backlink Format
 

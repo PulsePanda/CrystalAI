@@ -1,10 +1,10 @@
 # Availability Rules & Scheduling Preferences
 
-Reference for the /schedule skill. Read this before selecting slots to propose.
+Reference for the /calendar-booking skill. Read this before selecting slots to propose.
 
 ## Time Zone Conversion
 
-Calendar events from GWS come with timezone offsets (e.g., `2026-03-17T09:00:00-05:00`). Austin is in Central Time (America/Chicago).
+Calendar events from GWS come with timezone offsets (e.g., `2026-03-17T09:00:00-05:00`). the user is in Central Time (America/Chicago).
 
 | Period | Offset | Example |
 |--------|--------|---------|
@@ -19,7 +19,7 @@ These show as calendar events, so the calendar query catches them. Listed here f
 
 | Day | Commitment | Typical CT | Notes |
 |-----|-----------|------------|-------|
-| Tuesday | GIS on-site | ~7:30–10:30 AM | Austin leaves home at 6:30 AM |
+| Tuesday | GIS on-site | ~7:30–10:30 AM | the user leaves home at 6:30 AM |
 | Thursday | GIS on-site | ~7:30–10:30 AM | Same pattern |
 | Monday | GIS on-site | ~7:30–10:30 AM | Same pattern |
 | Varies | SJA (Jesse) | Check calendar | Jesse's on-site days vary |
@@ -31,7 +31,7 @@ These show as calendar events, so the calendar query catches them. Listed here f
 - **Prefer mornings** — easier to fit before work ramps up
 - **Best days:** Days without on-site obligations, or where on-site is afternoon-only
 - **Avoid Tuesdays** — early departure (6:30 AM) makes morning appointments tight
-- **School breaks and PD days** are more flexible — Austin isn't on-site
+- **School breaks and PD days** are more flexible — the user isn't on-site
 
 ### Work meetings (vendors, partners, internal calls)
 - **Prefer afternoons** — mornings often have on-site commitments
@@ -47,7 +47,7 @@ These show as calendar events, so the calendar query catches them. Listed here f
 
 ## Presenting Times in Emails
 
-Use natural, conversational language. Match Austin's voice — casual, not corporate.
+Use natural, conversational language. Match the user's voice — casual, not corporate.
 
 **Do this:**
 - "Wednesday March 18th, anytime works"

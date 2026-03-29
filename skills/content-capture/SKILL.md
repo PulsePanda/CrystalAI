@@ -1,6 +1,6 @@
 ---
-name: crystal:content-capture
-description: Autonomous passive content idea scanner for the Umbrella Content Engine. Runs on Heart via heartbeat dispatcher — scans session logs, Freshdesk tickets, and daily notes for content-worthy ideas and appends them to the backlogs. Use this skill when the heartbeat triggers a content scan, when Austin says "run the content scanner", "scan for content ideas", "/content-capture", "check for new content candidates", or when any autonomous process needs to feed the content pipeline with fresh ideas from recent activity.
+name: content-capture
+description: Autonomous passive content idea scanner for the Umbrella Content Engine. Runs on Heart via heartbeat dispatcher — scans session logs, Freshdesk tickets, and daily notes for content-worthy ideas and appends them to the backlogs. Use this skill when the heartbeat triggers a content scan, when the user says "run the content scanner", "scan for content ideas", "/content-capture", "check for new content candidates", or when any autonomous process needs to feed the content pipeline with fresh ideas from recent activity.
 ---
 
 # Content Capture
@@ -9,15 +9,15 @@ Passively scan sources for content-worthy ideas and feed them into the backlogs.
 
 ## Context
 
-This is the passive input funnel for the content pipeline. It runs autonomously on Heart (via heartbeat) and scans three sources for material that could become blog posts or social media content. The goal is to make sure nothing content-worthy slips through the cracks — Austin's daily work generates a constant stream of stories, solutions, and insights that are valuable content if captured.
+This is the passive input funnel for the content pipeline. It runs autonomously on Heart (via heartbeat) and scans three sources for material that could become blog posts or social media content. The goal is to make sure nothing content-worthy slips through the cracks — The user's daily work generates a constant stream of stories, solutions, and insights that are valuable content if captured.
 
 Capture broadly. Curation happens later during `/content-build`. It's better to capture 10 ideas and skip 7 during build than to miss 3 good ones because the filter was too tight.
 
 ## Sources
 
-### 1. Session Logs (`state/sessions/*.md`)
+### 1. Session Logs (`~/Documents/GitHub/CrystalAI/state/sessions/*.md`)
 
-Session logs document everything Austin works on with Claude. Rich source for:
+Session logs document everything the user works on with Claude. Rich source for:
 - **Building in public** — automation built, skills created, system architecture decisions
 - **War stories** — bugs debugged, unexpected root causes, multi-hour troubleshooting
 - **Technical discoveries** — workarounds, tool integrations, patterns that worked
@@ -36,7 +36,7 @@ If the triage state file doesn't exist (running on MacBook), skip this source si
 
 ### 3. Daily Notes (`Daily Notes/*.md`)
 
-Austin sometimes jots down observations, meeting takeaways, or raw ideas in daily notes. Look for:
+The user sometimes jots down observations, meeting takeaways, or raw ideas in daily notes. Look for:
 - Explicit content ideas ("that could be a post", "write about", "content idea")
 - Meeting notes that surfaced interesting problems
 - Observations about school IT trends or patterns
@@ -64,7 +64,7 @@ Read `Areas/Content/capture-state.json`. If it doesn't exist, create it:
 
 For each source, find items newer than the last scan timestamp.
 
-**Sessions:** Glob `state/sessions/*.md`, filter by file modification time > `last_scan.sessions`. Read each new session log and look for content candidates.
+**Sessions:** Glob `~/Documents/GitHub/CrystalAI/state/sessions/*.md`, filter by file modification time > `last_scan.sessions`. Read each new session log and look for content candidates.
 
 **Tickets:** Read the triage state file, find tickets resolved since `last_scan.tickets`. If the state file doesn't exist, skip silently.
 
@@ -109,7 +109,7 @@ Keep `captured_sources` trimmed — only retain entries from the last 30 days to
 
 ### Step 7: Log and Report
 
-Append a summary to `state/operational/heart-log.md`:
+Append a summary to `~/Documents/GitHub/CrystalAI/state/operational/heart-log.md`:
 
 ```
 ### YYYY-MM-DD HH:MM — Content Capture
@@ -131,15 +131,15 @@ Think like a school IT professional scrolling LinkedIn or Twitter. Would this ma
 - Security/compliance implications
 - Cost savings or efficiency improvements
 - Something that contradicts common assumptions
-- A process Austin built or improved
+- A process the user built or improved
 
 **Weak signals (skip these):**
 - Routine task completion ("updated DNS records")
 - Internal tooling changes with no broader lesson
 - Conversations that were purely about project management mechanics
-- Things that are too specific to Austin's exact setup to generalize
+- Things that are too specific to the user's exact setup to generalize
 
-When in doubt, capture it. Austin can skip it later during `/content-build`. A skipped idea costs nothing; a missed insight is lost forever.
+When in doubt, capture it. The user can skip it later during `/content-build`. A skipped idea costs nothing; a missed insight is lost forever.
 
 ## Edge Cases
 

@@ -13,7 +13,7 @@ obsidian://open?vault=VAULT_NAME&file=FILE_PATH
 ### vault (required)
 The name of the Obsidian vault.
 
-For this system: `VaultyBoi`
+For this system: `{vault_name}`
 
 ### file (required)
 The file path relative to the vault root, URL-encoded.
@@ -35,12 +35,12 @@ File paths must be URL-encoded to handle:
 ```bash
 PROJECT_FILE="Projects/website-redesign.md"
 ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$PROJECT_FILE'))")
-echo "obsidian://open?vault=VaultyBoi&file=$ENCODED_PATH"
+echo "obsidian://open?vault={vault_name}&file=$ENCODED_PATH"
 ```
 
 Output:
 ```
-obsidian://open?vault=VaultyBoi&file=Projects%2Fwebsite-redesign.md
+obsidian://open?vault={vault_name}&file=Projects%2Fwebsite-redesign.md
 ```
 
 ### Using Bash Parameter Expansion
@@ -48,24 +48,24 @@ obsidian://open?vault=VaultyBoi&file=Projects%2Fwebsite-redesign.md
 For simple cases without special characters:
 ```bash
 FILE="Projects/test.md"
-URI="obsidian://open?vault=VaultyBoi&file=${FILE// /%20}"
+URI="obsidian://open?vault={vault_name}&file=${FILE// /%20}"
 ```
 
 ## Opening URIs
 
 ### macOS
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
+open "obsidian://open?vault={vault_name}&file=Projects%2Fproject.md"
 ```
 
 ### Linux
 ```bash
-xdg-open "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
+xdg-open "obsidian://open?vault={vault_name}&file=Projects%2Fproject.md"
 ```
 
 ### Windows
 ```powershell
-Start-Process "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
+Start-Process "obsidian://open?vault={vault_name}&file=Projects%2Fproject.md"
 ```
 
 ## Complete Example
@@ -73,7 +73,7 @@ Start-Process "obsidian://open?vault=VaultyBoi&file=Projects%2Fproject.md"
 ```bash
 #!/bin/bash
 
-VAULT="VaultyBoi"
+VAULT="{vault_name}"
 FILE="Projects/my-new-project.md"
 
 # URL encode the file path
@@ -102,7 +102,7 @@ if ! open "$URI" 2>/dev/null; then
     echo "Is Obsidian installed and configured?"
     echo ""
     echo "You can open the file manually:"
-    echo "/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/$FILE"
+    echo "${VAULT_PATH}/$FILE"
 fi
 ```
 
@@ -126,7 +126,7 @@ Double-check vault name matches exactly (case-sensitive).
 ### Open in New Pane
 
 ```
-obsidian://open?vault=VaultyBoi&file=path.md&newleaf=true
+obsidian://open?vault={vault_name}&file=path.md&newleaf=true
 ```
 
 Opens file in a new pane instead of current pane.
@@ -134,7 +134,7 @@ Opens file in a new pane instead of current pane.
 ### Open with Mode
 
 ```
-obsidian://open?vault=VaultyBoi&file=path.md&mode=source
+obsidian://open?vault={vault_name}&file=path.md&mode=source
 ```
 
 Modes:
@@ -144,7 +144,7 @@ Modes:
 ### Open with Line
 
 ```
-obsidian://open?vault=VaultyBoi&file=path.md&line=42
+obsidian://open?vault={vault_name}&file=path.md&line=42
 ```
 
 Opens file and scrolls to line 42.
@@ -160,7 +160,7 @@ Opens file and scrolls to line 42.
 
 ### Test in Terminal
 ```bash
-open "obsidian://open?vault=VaultyBoi&file=CLAUDE.md"
+open "obsidian://open?vault={vault_name}&file=CLAUDE.md"
 ```
 
 Should open CLAUDE.md in Obsidian.
@@ -180,16 +180,16 @@ Path%20with%20spaces/file.md
 **Forgetting to encode spaces:**
 ```bash
 # Wrong - will fail
-open "obsidian://open?vault=VaultyBoi&file=My Project/file.md"
+open "obsidian://open?vault={vault_name}&file=My Project/file.md"
 
 # Correct
-open "obsidian://open?vault=VaultyBoi&file=My%20Project/file.md"
+open "obsidian://open?vault={vault_name}&file=My%20Project/file.md"
 ```
 
 **Using absolute paths:**
 ```bash
 # Wrong - paths are relative to vault root
-file="/Users/Austin/Library/Mobile Documents/iCloud~md~obsidian/Documents/VaultyBoi/Projects/file.md"
+file="${VAULT_PATH}/Projects/file.md"
 
 # Correct - strip vault root
 file="Projects/file.md"
@@ -201,7 +201,7 @@ file="Projects/file.md"
 vault="vaultyboi"
 
 # Correct
-vault="VaultyBoi"
+vault="{vault_name}"
 ```
 
 ## References
@@ -218,7 +218,7 @@ The /project skill uses this pattern:
 # After creating project file
 PROJECT_FILE="Projects/${filename}.md"
 ENCODED_PATH=$(python3 -c "import urllib.parse; print(urllib.parse.quote('$PROJECT_FILE'))")
-open "obsidian://open?vault=VaultyBoi&file=$ENCODED_PATH" 2>/dev/null || {
+open "obsidian://open?vault={vault_name}&file=$ENCODED_PATH" 2>/dev/null || {
     echo "Created: $PROJECT_FILE"
     echo "(Open manually if Obsidian didn't launch)"
 }
