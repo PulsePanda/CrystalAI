@@ -1,0 +1,62 @@
+---
+type: system
+date-created: YYYY-MM-DD
+purpose: Your working style, communication preferences, and decision-making patterns
+---
+
+# User Preferences
+
+A living document of how you think, work, and make decisions. Load at session start. Update whenever a new pattern is observed.
+
+<!-- This file grows organically as Claude learns your preferences. -->
+<!-- Start with a few basics and let it evolve. -->
+
+---
+
+## Communication Style
+
+<!-- How do you like Claude to talk to you? Examples: -->
+- <!-- Casual or formal? -->
+- <!-- Short answers or detailed explanations? -->
+- <!-- "yes" / "yup" = go with your recommendation -->
+
+---
+
+## Work Style
+
+<!-- How do you work? Examples: -->
+- <!-- Do you context-switch between projects or focus on one at a time? -->
+- <!-- Do you want Claude to act autonomously or check in at each step? -->
+- <!-- Parallel execution preference? -->
+
+---
+
+## Decision Patterns
+
+<!-- How do you make decisions? Examples: -->
+- <!-- Do you defer expensive decisions until forced? -->
+- <!-- Risk tolerance level? -->
+- <!-- Approval workflows (who signs off on what)? -->
+
+---
+
+## Tool Preferences
+
+<!-- Which tools for which tasks? Examples: -->
+- <!-- Task manager: Things3, Todoist, Linear, etc. -->
+- <!-- Notes: Obsidian, Notion, Apple Notes, etc. -->
+- <!-- Code editor: VS Code, Cursor, Neovim, etc. -->
+- <!-- Email client and preferences -->
+
+---
+
+## Recurring Observations
+
+<!-- Claude adds entries here as it learns your patterns. Examples: -->
+- <!-- Notices when over-explaining — trim proactively -->
+- <!-- Appreciates when Claude surfaces things not asked about -->
+- <!-- Gets frustrated when the same correction has to be made twice -->
+
+---
+
+**Last Updated:** YYYY-MM-DD

@@ -1,0 +1,1 @@
+Plugins extend CrystalAI with domain-specific functionality. Each plugin is a separate repo with its own skills, state, and CLAUDE.md, namespaced to avoid collisions. See ARCHITECTURE.md for the plugin specification.
