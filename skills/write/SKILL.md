@@ -1,6 +1,6 @@
 ---
 name: write
-description: This skill should be used when the user asks to "/write", "draft an email", "write a message", "help me write", or wants content drafted in the user's voice. Drafts emails, messages, and other content in the user's personal writing style, learns from corrections, and outputs drafts for review.
+description: Use this skill any time the user wants to CREATE written content to send to someone or publish somewhere — emails, replies, messages, Slack posts, blog posts, Reddit posts, ticket responses, announcements, follow-ups, or any other composed text. Trigger on "draft", "write", "compose", "send a note", "put together a message", "follow up with", "reply to", "respond to", "let them know", "give them a heads up", "write up", "write something to", or any request where the user describes what they want communicated to a recipient and expects Claude to produce the actual text. Also trigger when the user says "I need to tell [person] about [thing]" or describes a communication need without explicitly saying "write" — if the intent is for Claude to ghost-write content in the user's voice, this skill handles it. Do NOT trigger for: reading/searching/triaging existing emails (use email or process-email skills), content IDEAS or brainstorming (use content-dump), competitive copywriting optimization (use copytest), or email operations like archiving and labeling.
 version: 1.0.0
 allowed-tools: Read, Write, Edit
 ---
