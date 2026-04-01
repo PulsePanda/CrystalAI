@@ -97,7 +97,7 @@ if "!NEED_PYTHON!"=="1" (
 if "!NEED_CLAUDE_DESKTOP!"=="1" (
     echo [MISSING] Claude Desktop — downloading installer...
     set "CLAUDE_INSTALLER=!DL_DIR!\Claude-Setup-x64.exe"
-    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://storage.googleapis.com/osprey-downloads-c02f6a0d-347c-492b-a752-3e0651722e97/nest-win-x64/Claude-Setup-x64.exe' -OutFile '!DL_DIR!\Claude-Setup-x64.exe' }" 2>nul
+    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://claude.ai/redirect/claudedotcom.v1.5f36ec2e-fc5d-4d33-911f-6e77d2fa6052/api/desktop/win32/x64/setup/latest/redirect' -OutFile '!DL_DIR!\Claude-Setup-x64.exe' }" 2>nul
     if not exist "!CLAUDE_INSTALLER!" (
         echo [FAIL] Could not download Claude Desktop installer.
         echo        Download manually from: https://claude.ai/download

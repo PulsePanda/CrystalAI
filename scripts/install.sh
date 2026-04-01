@@ -361,6 +361,30 @@ fi
 
 echo ""
 
+# --- 4b. Claude Desktop App ---
+
+if [ "$OS_TYPE" = "macOS" ]; then
+    if [ -d "/Applications/Claude.app" ]; then
+        ok "Claude Desktop: installed"
+    else
+        info "Claude Desktop not found. Downloading..."
+        CLAUDE_DMG="$(mktemp /tmp/claude-desktop-XXXXXX.dmg)"
+        if curl -fSL -o "$CLAUDE_DMG" "https://claude.ai/redirect/claudedotcom.v1.5f36ec2e-fc5d-4d33-911f-6e77d2fa6052/api/desktop/darwin/universal/dmg/latest/redirect"; then
+            info "Mounting and installing Claude Desktop..."
+            hdiutil attach "$CLAUDE_DMG" -quiet -mountpoint /tmp/claude-mount
+            cp -R "/tmp/claude-mount/Claude.app" /Applications/
+            hdiutil detach /tmp/claude-mount -quiet
+            rm -f "$CLAUDE_DMG"
+            ok "Claude Desktop: installed to /Applications/Claude.app"
+        else
+            rm -f "$CLAUDE_DMG"
+            warn "Failed to download Claude Desktop."
+            warn "Download manually from: https://claude.ai/download"
+        fi
+    fi
+    echo ""
+fi
+
 # --- 5. Clone / update CrystalAI ---
 
 if [ -d "$INSTALL_DIR/.git" ]; then
