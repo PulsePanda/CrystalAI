@@ -1,9 +1,9 @@
 @echo off
 REM CrystalAI Installer - Windows
-REM Downloads and sets up the CrystalAI starter framework.
-REM Automatically installs missing prerequisites via winget.
+REM Downloads prerequisite GUI installers, lets the user run them manually,
+REM then verifies everything is on PATH before setting up the framework.
 REM
-REM Run this from Command Prompt or PowerShell, not Git Bash.
+REM Run from Command Prompt or PowerShell, not Git Bash.
 
 setlocal enabledelayedexpansion
 
@@ -13,179 +13,174 @@ echo NOTE: Run this from Command Prompt or PowerShell, not Git Bash.
 echo.
 
 REM ================================================================
-REM Step 1: Check for winget (needed to auto-install prerequisites)
+REM Step 1: Check what's already installed
 REM ================================================================
 
-set "HAS_WINGET=0"
-where winget >nul 2>&1
-if not errorlevel 1 set "HAS_WINGET=1"
+set "NEED_GIT=0"
+set "NEED_NODE=0"
+set "NEED_PYTHON=0"
 
-if "!HAS_WINGET!"=="0" (
-    echo [INFO] winget not found on PATH.
-    echo        winget is built into Windows 10 ^(1709+^) and Windows 11.
-    echo        If you're on an older build, install "App Installer" from the Microsoft Store.
+where git >nul 2>&1
+if errorlevel 1 set "NEED_GIT=1"
+
+where node >nul 2>&1
+if errorlevel 1 set "NEED_NODE=1"
+
+where python >nul 2>&1
+if errorlevel 1 (
+    where python3 >nul 2>&1
+    if errorlevel 1 set "NEED_PYTHON=1"
+)
+
+REM If everything is installed, skip to verification/setup
+if "!NEED_GIT!"=="0" if "!NEED_NODE!"=="0" if "!NEED_PYTHON!"=="0" goto :all_prereqs_present
+
+REM ================================================================
+REM Step 2: Download missing installers
+REM ================================================================
+
+set "DL_DIR=%TEMP%\crystalai-installers"
+if not exist "!DL_DIR!" mkdir "!DL_DIR!"
+
+set "DL_FAILED=0"
+
+if "!NEED_GIT!"=="1" (
+    echo [MISSING] Git — downloading installer...
+    set "GIT_INSTALLER=!DL_DIR!\Git-2.47.1-64-bit.exe"
+    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/latest/download/Git-2.47.1-64-bit.exe' -OutFile '!DL_DIR!\Git-2.47.1-64-bit.exe' }" 2>nul
+    if not exist "!GIT_INSTALLER!" (
+        echo [FAIL] Could not download Git installer.
+        echo        Download manually from: https://git-scm.com/downloads
+        set "DL_FAILED=1"
+    ) else (
+        echo [DONE] Git installer downloaded.
+    )
     echo.
 )
 
-REM ================================================================
-REM Step 2: Check and install Git
-REM ================================================================
+if "!NEED_NODE!"=="1" (
+    echo [MISSING] Node.js — downloading installer...
+    set "NODE_INSTALLER=!DL_DIR!\node-v22.16.0-x64.msi"
+    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-x64.msi' -OutFile '!DL_DIR!\node-v22.16.0-x64.msi' }" 2>nul
+    if not exist "!NODE_INSTALLER!" (
+        echo [FAIL] Could not download Node.js installer.
+        echo        Download manually from: https://nodejs.org
+        set "DL_FAILED=1"
+    ) else (
+        echo [DONE] Node.js installer downloaded.
+    )
+    echo.
+)
 
-set "INSTALLED_SOMETHING=0"
+if "!NEED_PYTHON!"=="1" (
+    echo [MISSING] Python — downloading installer...
+    set "PY_INSTALLER=!DL_DIR!\python-3.12.8-amd64.exe"
+    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe' -OutFile '!DL_DIR!\python-3.12.8-amd64.exe' }" 2>nul
+    if not exist "!PY_INSTALLER!" (
+        echo [FAIL] Could not download Python installer.
+        echo        Download manually from: https://python.org/downloads
+        set "DL_FAILED=1"
+    ) else (
+        echo [DONE] Python installer downloaded.
+    )
+    echo.
+)
 
-where git >nul 2>&1
-if not errorlevel 1 goto :git_ok
-
-echo [MISSING] git is not installed.
-if "!HAS_WINGET!"=="0" goto :git_manual
-echo Installing Git via winget...
-winget install Git.Git --accept-package-agreements --accept-source-agreements
-if errorlevel 1 goto :git_manual
-set "INSTALLED_SOMETHING=1"
-echo [DONE] Git installed.
-echo.
-goto :check_node
-
-:git_manual
-echo Downloading Git installer via PowerShell...
-set "GIT_INSTALLER=%TEMP%\git-installer.exe"
-powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/latest/download/Git-2.47.1-64-bit.exe' -OutFile '%GIT_INSTALLER%' }" 2>nul
-if not exist "!GIT_INSTALLER!" (
-    echo [FAIL] Download failed. Please install Git manually:
-    echo        https://git-scm.com/downloads
-    echo Then close this terminal, reopen, and re-run this script.
+if "!DL_FAILED!"=="1" (
+    echo ---------------------------------------------------------------
+    echo  Some downloads failed. Install the missing tools manually,
+    echo  then close this terminal, reopen, and re-run this script.
+    echo ---------------------------------------------------------------
+    echo.
     pause
     exit /b 1
 )
-echo Running Git installer ^(this may take a minute^)...
-"!GIT_INSTALLER!" /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
-del "!GIT_INSTALLER!" 2>nul
-set "INSTALLED_SOMETHING=1"
-echo [DONE] Git installed.
-echo.
-goto :check_node
-
-:git_ok
-for /f "tokens=*" %%i in ('git --version') do echo [OK] git:    %%i
 
 REM ================================================================
-REM Step 3: Check and install Node.js
+REM Step 3: Launch each installer and let the user click through
 REM ================================================================
-
-:check_node
-where node >nul 2>&1
-if not errorlevel 1 goto :node_ok
-
-echo [MISSING] node is not installed.
-if "!HAS_WINGET!"=="0" goto :node_manual
-echo Installing Node.js LTS via winget...
-winget install OpenJS.NodeJS.LTS --accept-package-agreements --accept-source-agreements
-if errorlevel 1 goto :node_manual
-set "INSTALLED_SOMETHING=1"
-echo [DONE] Node.js installed.
-echo.
-goto :check_python
-
-:node_manual
-echo Downloading Node.js LTS installer via PowerShell...
-set "NODE_INSTALLER=%TEMP%\node-installer.msi"
-powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-x64.msi' -OutFile '%NODE_INSTALLER%' }" 2>nul
-if not exist "!NODE_INSTALLER!" (
-    echo [SKIP] Download failed. Install Node.js manually from: https://nodejs.org
-    goto :check_python
-)
-echo Running Node.js installer ^(this may take a minute^)...
-msiexec /i "!NODE_INSTALLER!" /qn /norestart
-del "!NODE_INSTALLER!" 2>nul
-set "INSTALLED_SOMETHING=1"
-echo [DONE] Node.js installed.
-echo.
-goto :check_python
-
-:node_ok
-for /f "tokens=*" %%i in ('node --version') do echo [OK] node:   %%i
-
-REM ================================================================
-REM Step 4: Check and install Python
-REM ================================================================
-
-:check_python
-set "PYTHON_FOUND=0"
-where python >nul 2>&1
-if not errorlevel 1 goto :python_ok_python
-
-where python3 >nul 2>&1
-if not errorlevel 1 goto :python_ok_python3
-
-echo [MISSING] python is not installed.
-if "!HAS_WINGET!"=="0" goto :python_manual
-echo Installing Python 3.12 via winget...
-winget install Python.Python.3.12 --accept-package-agreements --accept-source-agreements
-if errorlevel 1 goto :python_manual
-set "INSTALLED_SOMETHING=1"
-set "PYTHON_FOUND=1"
-echo [DONE] Python installed.
-echo.
-goto :check_restart
-
-:python_manual
-echo Downloading Python 3.12 installer via PowerShell...
-set "PY_INSTALLER=%TEMP%\python-installer.exe"
-powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe' -OutFile '%PY_INSTALLER%' }" 2>nul
-if not exist "!PY_INSTALLER!" (
-    echo [SKIP] Download failed. Install Python manually from: https://python.org/downloads
-    goto :check_restart
-)
-echo Running Python installer ^(this may take a minute^)...
-"!PY_INSTALLER!" /quiet InstallAllUsers=0 PrependPath=1 Include_pip=1
-del "!PY_INSTALLER!" 2>nul
-set "INSTALLED_SOMETHING=1"
-set "PYTHON_FOUND=1"
-echo [DONE] Python installed.
-echo.
-goto :check_restart
-
-:python_ok_python
-set "PYTHON_FOUND=1"
-for /f "tokens=*" %%i in ('python --version 2^>^&1') do echo [OK] python: %%i
-goto :check_restart
-
-:python_ok_python3
-set "PYTHON_FOUND=1"
-for /f "tokens=*" %%i in ('python3 --version 2^>^&1') do echo [OK] python: %%i
-goto :check_restart
-
-REM ================================================================
-REM Step 5: If anything was installed, user must restart terminal
-REM ================================================================
-
-:check_restart
-echo.
-if "!INSTALLED_SOMETHING!"=="0" goto :all_prereqs_present
 
 echo ---------------------------------------------------------------
-echo  One or more tools were just installed via winget.
-echo  Your current terminal does not have the updated PATH.
+echo  The following tools need to be installed:
+if "!NEED_GIT!"=="1" echo    - Git
+if "!NEED_NODE!"=="1" echo    - Node.js
+if "!NEED_PYTHON!"=="1" echo    - Python
 echo.
-echo  Please close this terminal, open a new one, and re-run:
+echo  Each installer will open with its normal GUI.
+echo  Use the default settings unless noted otherwise.
+echo ---------------------------------------------------------------
+echo.
+
+if "!NEED_GIT!"=="1" (
+    echo Installing Git...
+    echo Please follow the installer prompts. Use default settings.
+    echo.
+    start /wait "" "!DL_DIR!\Git-2.47.1-64-bit.exe"
+    echo Git installer finished.
+    echo.
+)
+
+if "!NEED_NODE!"=="1" (
+    echo Installing Node.js...
+    echo Please follow the installer prompts. Use default settings.
+    echo.
+    start /wait "" "!DL_DIR!\node-v22.16.0-x64.msi"
+    echo Node.js installer finished.
+    echo.
+)
+
+if "!NEED_PYTHON!"=="1" (
+    echo Installing Python...
+    echo IMPORTANT: Check "Add Python to PATH" on the first screen!
+    echo Then click Install Now and follow the prompts.
+    echo.
+    start /wait "" "!DL_DIR!\python-3.12.8-amd64.exe"
+    echo Python installer finished.
+    echo.
+)
+
+REM Clean up downloaded installers
+echo Cleaning up downloaded installers...
+rmdir /s /q "!DL_DIR!" 2>nul
+echo.
+
+echo ===============================================================
+echo  All installers complete.
+echo.
+echo  Please CLOSE this terminal and REOPEN it, then re-run:
 echo    %~f0
 echo.
-echo  The script will pick up where it left off.
-echo ---------------------------------------------------------------
+echo  The script will verify your installations and finish setup.
+echo ===============================================================
 echo.
 pause
 exit /b 0
 
 REM ================================================================
-REM Step 6: All prereqs present — check/install Claude Code CLI
+REM Step 4: All tools present — verify and set up framework
 REM ================================================================
 
 :all_prereqs_present
 
+echo Prerequisites found:
+for /f "tokens=*" %%i in ('git --version') do echo   [OK] git:    %%i
+
+for /f "tokens=*" %%i in ('node --version') do echo   [OK] node:   %%i
+
+set "PY_CMD=python"
+where python >nul 2>&1
+if errorlevel 1 set "PY_CMD=python3"
+for /f "tokens=*" %%i in ('!PY_CMD! --version 2^>^&1') do echo   [OK] python: %%i
+
+echo.
+
+REM ================================================================
+REM Step 5: Check/install Claude Code CLI
+REM ================================================================
+
 where claude >nul 2>&1
 if not errorlevel 1 goto :claude_found
 
-REM Claude not found — try to install via npm
 where npm >nul 2>&1
 if errorlevel 1 goto :no_npm_for_claude
 
@@ -193,7 +188,6 @@ echo Claude Code CLI not found. Installing via npm...
 call npm install -g @anthropic-ai/claude-code
 echo.
 
-REM Verify the install worked
 where claude >nul 2>&1
 if errorlevel 1 goto :claude_install_warn
 goto :claude_found
@@ -212,29 +206,29 @@ echo.
 goto :install_framework
 
 :claude_found
-for /f "tokens=*" %%i in ('claude --version 2^>^&1') do echo [OK] Claude Code: %%i
+for /f "tokens=*" %%i in ('claude --version 2^>^&1') do echo   [OK] claude: %%i
 echo.
 
 REM ================================================================
-REM Step 7: Clone repo and copy templates
+REM Step 6: Clone repo and copy templates
 REM ================================================================
 
 :install_framework
 
 set "INSTALL_DIR=%USERPROFILE%\.claude"
 
-if exist "%INSTALL_DIR%\.git" goto :already_installed
+if exist "!INSTALL_DIR!\.git" goto :already_installed
 
-if not exist "%INSTALL_DIR%\" goto :fresh_clone
+if not exist "!INSTALL_DIR!\" goto :fresh_clone
 
 REM Directory exists but is not a CrystalAI git repo — back it up
 echo Warning: %INSTALL_DIR% exists and is not a CrystalAI install.
-if exist "%INSTALL_DIR%.backup" (
+if exist "!INSTALL_DIR!.backup" (
     echo Removing old backup...
-    rmdir /s /q "%INSTALL_DIR%.backup" 2>nul
+    rmdir /s /q "!INSTALL_DIR!.backup" 2>nul
 )
 echo Backing up to %INSTALL_DIR%.backup
-move "%INSTALL_DIR%" "%INSTALL_DIR%.backup"
+move "!INSTALL_DIR!" "!INSTALL_DIR!.backup"
 if errorlevel 1 (
     echo ERROR: Could not back up existing .claude directory.
     echo Please manually rename or remove %INSTALL_DIR% and try again.
@@ -244,7 +238,7 @@ if errorlevel 1 (
 
 :fresh_clone
 echo Cloning CrystalAI framework...
-git clone https://github.com/PulsePanda/CrystalAI.git "%INSTALL_DIR%"
+git clone https://github.com/PulsePanda/CrystalAI.git "!INSTALL_DIR!"
 if errorlevel 1 (
     echo.
     echo ERROR: git clone failed. Check your internet connection and try again.
@@ -257,22 +251,22 @@ goto :copy_templates
 :already_installed
 echo CrystalAI already installed at %INSTALL_DIR%
 echo Pulling latest changes...
-pushd "%INSTALL_DIR%" && git pull & popd
+pushd "!INSTALL_DIR!" && git pull & popd
 if errorlevel 1 (
     echo Warning: git pull failed. Your local copy may have uncommitted changes.
 )
 
 REM ================================================================
-REM Step 8: Copy templates
+REM Step 7: Copy templates
 REM ================================================================
 
 :copy_templates
 echo.
 
-if not exist "%INSTALL_DIR%\settings.json" (
-    if exist "%INSTALL_DIR%\settings.json.template" (
-        copy /Y "%INSTALL_DIR%\settings.json.template" "%INSTALL_DIR%\settings.json" >nul
-        echo Copied settings.json ^(default permissions^)
+if not exist "!INSTALL_DIR!\settings.json" (
+    if exist "!INSTALL_DIR!\settings.json.template" (
+        copy /Y "!INSTALL_DIR!\settings.json.template" "!INSTALL_DIR!\settings.json" >nul
+        echo Copied settings.json from template.
     )
 )
 
