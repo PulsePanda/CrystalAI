@@ -47,13 +47,23 @@ echo.
 goto :check_node
 
 :git_manual
+echo Downloading Git installer via PowerShell...
+set "GIT_INSTALLER=%TEMP%\git-installer.exe"
+powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/latest/download/Git-2.47.1-64-bit.exe' -OutFile '%GIT_INSTALLER%' }" 2>nul
+if not exist "!GIT_INSTALLER!" (
+    echo [FAIL] Download failed. Please install Git manually:
+    echo        https://git-scm.com/downloads
+    echo Then close this terminal, reopen, and re-run this script.
+    pause
+    exit /b 1
+)
+echo Running Git installer ^(this may take a minute^)...
+"!GIT_INSTALLER!" /VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS /RESTARTAPPLICATIONS /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
+del "!GIT_INSTALLER!" 2>nul
+set "INSTALLED_SOMETHING=1"
+echo [DONE] Git installed.
 echo.
-echo Cannot auto-install Git. Please install manually:
-echo   https://git-scm.com/downloads
-echo Then close this terminal, reopen, and re-run this script.
-echo.
-pause
-exit /b 1
+goto :check_node
 
 :git_ok
 for /f "tokens=*" %%i in ('git --version') do echo [OK] git:    %%i
@@ -77,7 +87,18 @@ echo.
 goto :check_python
 
 :node_manual
-echo   [SKIP] Cannot auto-install Node.js. Download from: https://nodejs.org ^(LTS recommended^)
+echo Downloading Node.js LTS installer via PowerShell...
+set "NODE_INSTALLER=%TEMP%\node-installer.msi"
+powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-x64.msi' -OutFile '%NODE_INSTALLER%' }" 2>nul
+if not exist "!NODE_INSTALLER!" (
+    echo [SKIP] Download failed. Install Node.js manually from: https://nodejs.org
+    goto :check_python
+)
+echo Running Node.js installer ^(this may take a minute^)...
+msiexec /i "!NODE_INSTALLER!" /qn /norestart
+del "!NODE_INSTALLER!" 2>nul
+set "INSTALLED_SOMETHING=1"
+echo [DONE] Node.js installed.
 echo.
 goto :check_python
 
@@ -108,8 +129,19 @@ echo.
 goto :check_restart
 
 :python_manual
-echo   [SKIP] Cannot auto-install Python. Download from: https://python.org/downloads
-echo          Check "Add Python to PATH" during install.
+echo Downloading Python 3.12 installer via PowerShell...
+set "PY_INSTALLER=%TEMP%\python-installer.exe"
+powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe' -OutFile '%PY_INSTALLER%' }" 2>nul
+if not exist "!PY_INSTALLER!" (
+    echo [SKIP] Download failed. Install Python manually from: https://python.org/downloads
+    goto :check_restart
+)
+echo Running Python installer ^(this may take a minute^)...
+"!PY_INSTALLER!" /quiet InstallAllUsers=0 PrependPath=1 Include_pip=1
+del "!PY_INSTALLER!" 2>nul
+set "INSTALLED_SOMETHING=1"
+set "PYTHON_FOUND=1"
+echo [DONE] Python installed.
 echo.
 goto :check_restart
 
