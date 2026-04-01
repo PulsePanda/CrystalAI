@@ -29,9 +29,9 @@ refresh_path() {
 
 has_sudo() {
     if command -v sudo >/dev/null 2>&1; then
-        # Check if user can sudo without a tty prompt failing
-        sudo -n true 2>/dev/null && return 0
-        # They have sudo but may need a password -- that's fine, sudo will prompt
+        # sudo exists on this system. We can't cheaply tell whether the user
+        # is in sudoers without prompting, so assume yes -- if they aren't,
+        # the actual sudo call will fail and set -e will catch it.
         return 0
     fi
     return 1
@@ -244,8 +244,9 @@ install_claude_code() {
         return 0
     fi
 
-    # npm global install often fails on Linux system Node without sudo
-    if [ "$OS_TYPE" = "Linux" ] && has_sudo; then
+    # npm global install often fails without sudo (Linux system Node,
+    # macOS .pkg Node where /usr/local is root-owned, etc.)
+    if has_sudo; then
         info "Retrying with sudo..."
         if sudo npm install -g @anthropic-ai/claude-code; then
             refresh_path
@@ -392,20 +393,10 @@ if [ "$OS_TYPE" = "macOS" ]; then
     if [ "$CLAUDE_DESKTOP_FOUND" = "1" ]; then
         ok "Claude Desktop: installed"
     else
-        info "Claude Desktop not found. Downloading..."
-        CLAUDE_DMG="$(mktemp /tmp/claude-desktop-XXXXXX.dmg)"
-        if curl -fSL -o "$CLAUDE_DMG" "https://claude.ai/redirect/claudedotcom.v1.5f36ec2e-fc5d-4d33-911f-6e77d2fa6052/api/desktop/darwin/universal/dmg/latest/redirect"; then
-            info "Mounting and installing Claude Desktop..."
-            hdiutil attach "$CLAUDE_DMG" -quiet -mountpoint /tmp/claude-mount
-            cp -R "/tmp/claude-mount/Claude.app" /Applications/
-            hdiutil detach /tmp/claude-mount -quiet
-            rm -f "$CLAUDE_DMG"
-            ok "Claude Desktop: installed to /Applications/Claude.app"
-        else
-            rm -f "$CLAUDE_DMG"
-            warn "Failed to download Claude Desktop."
-            warn "Download manually from: https://claude.ai/download"
-        fi
+        info "Claude Desktop not found. Opening download page..."
+        open "https://claude.ai/download" 2>/dev/null || true
+        warn "Install Claude Desktop from the page that just opened."
+        warn "If the browser didn't open, visit: https://claude.ai/download"
     fi
     echo ""
 fi

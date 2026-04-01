@@ -13,40 +13,44 @@ echo NOTE: Run this from Command Prompt or PowerShell, not Git Bash.
 echo.
 
 REM ================================================================
-REM Step 1: Check what's already installed
+REM Step 1: Detect what is already installed
 REM ================================================================
+REM Each check is done OUTSIDE of parenthesized blocks to avoid
+REM errorlevel contamination. We use goto for flow control.
 
 set "NEED_GIT=0"
 set "NEED_NODE=0"
 set "NEED_PYTHON=0"
 set "NEED_CLAUDE_DESKTOP=0"
+set "NEED_INSTALL=0"
 
+REM --- Git ---
 where git >nul 2>&1
-if errorlevel 1 set "NEED_GIT=1"
+if !errorlevel! neq 0 set "NEED_GIT=1"
 
+REM --- Node.js ---
 where node >nul 2>&1
-if errorlevel 1 set "NEED_NODE=1"
+if !errorlevel! neq 0 set "NEED_NODE=1"
 
+REM --- Python (try python then python3) ---
 where python >nul 2>&1
-if errorlevel 1 (
-    where python3 >nul 2>&1
-    if errorlevel 1 set "NEED_PYTHON=1"
-)
+if !errorlevel! equ 0 goto :python_found
+where python3 >nul 2>&1
+if !errorlevel! equ 0 goto :python_found
+set "NEED_PYTHON=1"
+:python_found
 
-REM Check for Claude desktop app (MSIX or traditional install)
-set "NEED_CLAUDE_DESKTOP=1"
-if exist "%LOCALAPPDATA%\Microsoft\WindowsApps\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
-if exist "%LOCALAPPDATA%\AnthropicClaude\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
-if exist "%LOCALAPPDATA%\Programs\claude\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
-if exist "%PROGRAMFILES%\Claude\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
-REM Fallback: check if Claude.exe is anywhere on PATH
-if "!NEED_CLAUDE_DESKTOP!"=="1" (
-    where Claude.exe >nul 2>&1
-    if not errorlevel 1 set "NEED_CLAUDE_DESKTOP=0"
-)
+REM --- Claude Desktop (MSIX installs vary; only reliable check is PATH) ---
+where Claude.exe >nul 2>&1
+if !errorlevel! neq 0 set "NEED_CLAUDE_DESKTOP=1"
 
-REM If everything is installed, skip to verification/setup
-if "!NEED_GIT!"=="0" if "!NEED_NODE!"=="0" if "!NEED_PYTHON!"=="0" if "!NEED_CLAUDE_DESKTOP!"=="0" goto :all_prereqs_present
+REM --- Decide if we need to install anything ---
+if "!NEED_GIT!"=="1" set "NEED_INSTALL=1"
+if "!NEED_NODE!"=="1" set "NEED_INSTALL=1"
+if "!NEED_PYTHON!"=="1" set "NEED_INSTALL=1"
+if "!NEED_CLAUDE_DESKTOP!"=="1" set "NEED_INSTALL=1"
+
+if "!NEED_INSTALL!"=="0" goto :all_prereqs_present
 
 REM ================================================================
 REM Step 2: Download missing installers
@@ -54,67 +58,64 @@ REM ================================================================
 
 set "DL_DIR=%TEMP%\crystalai-installers"
 if not exist "!DL_DIR!" mkdir "!DL_DIR!"
-
 set "DL_FAILED=0"
 
-if "!NEED_GIT!"=="1" (
-    echo [MISSING] Git — downloading installer...
-    set "GIT_INSTALLER=!DL_DIR!\Git-2.47.1-64-bit.exe"
-    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/latest/download/Git-2.47.1-64-bit.exe' -OutFile '!DL_DIR!\Git-2.47.1-64-bit.exe' }" 2>nul
-    if not exist "!GIT_INSTALLER!" (
-        echo [FAIL] Could not download Git installer.
-        echo        Download manually from: https://git-scm.com/downloads
-        set "DL_FAILED=1"
-    ) else (
-        echo [DONE] Git installer downloaded.
-    )
-    echo.
+if "!NEED_GIT!"=="0" goto :skip_dl_git
+echo [MISSING] Git -- downloading installer...
+powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://github.com/git-for-windows/git/releases/latest/download/Git-2.47.1-64-bit.exe' -OutFile '%DL_DIR%\Git-2.47.1-64-bit.exe' }" 2>nul
+if exist "!DL_DIR!\Git-2.47.1-64-bit.exe" (
+    echo [DONE] Git installer downloaded.
+) else (
+    echo [FAIL] Could not download Git installer.
+    echo        Download manually from: https://git-scm.com/downloads
+    set "DL_FAILED=1"
 )
+echo.
+:skip_dl_git
 
-if "!NEED_NODE!"=="1" (
-    echo [MISSING] Node.js — downloading installer...
-    set "NODE_INSTALLER=!DL_DIR!\node-v22.16.0-x64.msi"
-    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-x64.msi' -OutFile '!DL_DIR!\node-v22.16.0-x64.msi' }" 2>nul
-    if not exist "!NODE_INSTALLER!" (
-        echo [FAIL] Could not download Node.js installer.
-        echo        Download manually from: https://nodejs.org
-        set "DL_FAILED=1"
-    ) else (
-        echo [DONE] Node.js installer downloaded.
-    )
-    echo.
+if "!NEED_NODE!"=="0" goto :skip_dl_node
+echo [MISSING] Node.js -- downloading installer...
+powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://nodejs.org/dist/v22.16.0/node-v22.16.0-x64.msi' -OutFile '%DL_DIR%\node-v22.16.0-x64.msi' }" 2>nul
+if exist "!DL_DIR!\node-v22.16.0-x64.msi" (
+    echo [DONE] Node.js installer downloaded.
+) else (
+    echo [FAIL] Could not download Node.js installer.
+    echo        Download manually from: https://nodejs.org
+    set "DL_FAILED=1"
 )
+echo.
+:skip_dl_node
 
-if "!NEED_PYTHON!"=="1" (
-    echo [MISSING] Python — downloading installer...
-    set "PY_INSTALLER=!DL_DIR!\python-3.12.8-amd64.exe"
-    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe' -OutFile '!DL_DIR!\python-3.12.8-amd64.exe' }" 2>nul
-    if not exist "!PY_INSTALLER!" (
-        echo [FAIL] Could not download Python installer.
-        echo        Download manually from: https://python.org/downloads
-        set "DL_FAILED=1"
-    ) else (
-        echo [DONE] Python installer downloaded.
-    )
-    echo.
+if "!NEED_PYTHON!"=="0" goto :skip_dl_python
+echo [MISSING] Python -- downloading installer...
+powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.12.8/python-3.12.8-amd64.exe' -OutFile '%DL_DIR%\python-3.12.8-amd64.exe' }" 2>nul
+if exist "!DL_DIR!\python-3.12.8-amd64.exe" (
+    echo [DONE] Python installer downloaded.
+) else (
+    echo [FAIL] Could not download Python installer.
+    echo        Download manually from: https://python.org/downloads
+    set "DL_FAILED=1"
 )
+echo.
+:skip_dl_python
 
-if "!NEED_CLAUDE_DESKTOP!"=="1" (
-    echo [MISSING] Claude Desktop — opening download page in your browser...
-    start "" "https://claude.ai/download"
-    echo          Install Claude Desktop from the page that just opened.
-    echo.
-)
+if "!NEED_CLAUDE_DESKTOP!"=="0" goto :skip_dl_claude
+echo [MISSING] Claude Desktop -- opening download page in your browser...
+start "" "https://claude.ai/download"
+echo          Install Claude Desktop from the page that just opened.
+echo.
+:skip_dl_claude
 
-if "!DL_FAILED!"=="1" (
-    echo ---------------------------------------------------------------
-    echo  Some downloads failed. Install the missing tools manually,
-    echo  then close this terminal, reopen, and re-run this script.
-    echo ---------------------------------------------------------------
-    echo.
-    pause
-    exit /b 1
-)
+if "!DL_FAILED!"=="0" goto :downloads_ok
+echo ---------------------------------------------------------------
+echo  Some downloads failed. Install the missing tools manually,
+echo  then close this terminal, reopen, and re-run this script.
+echo ---------------------------------------------------------------
+echo.
+pause
+exit /b 1
+
+:downloads_ok
 
 REM ================================================================
 REM Step 3: Launch each installer and let the user click through
@@ -132,40 +133,40 @@ echo  Use the default settings unless noted otherwise.
 echo ---------------------------------------------------------------
 echo.
 
-if "!NEED_GIT!"=="1" (
-    echo Installing Git...
-    echo Please follow the installer prompts. Use default settings.
-    echo.
-    start /wait "" "!DL_DIR!\Git-2.47.1-64-bit.exe"
-    echo Git installer finished.
-    echo.
-)
+if "!NEED_GIT!"=="0" goto :skip_install_git
+echo Installing Git...
+echo Please follow the installer prompts. Use default settings.
+echo.
+start /wait "" "!DL_DIR!\Git-2.47.1-64-bit.exe"
+echo Git installer finished.
+echo.
+:skip_install_git
 
-if "!NEED_NODE!"=="1" (
-    echo Installing Node.js...
-    echo Please follow the installer prompts. Use default settings.
-    echo.
-    start /wait "" "!DL_DIR!\node-v22.16.0-x64.msi"
-    echo Node.js installer finished.
-    echo.
-)
+if "!NEED_NODE!"=="0" goto :skip_install_node
+echo Installing Node.js...
+echo Please follow the installer prompts. Use default settings.
+echo.
+start /wait "" "!DL_DIR!\node-v22.16.0-x64.msi"
+echo Node.js installer finished.
+echo.
+:skip_install_node
 
-if "!NEED_PYTHON!"=="1" (
-    echo Installing Python...
-    echo IMPORTANT: Check "Add Python to PATH" on the first screen!
-    echo Then click Install Now and follow the prompts.
-    echo.
-    start /wait "" "!DL_DIR!\python-3.12.8-amd64.exe"
-    echo Python installer finished.
-    echo.
-)
+if "!NEED_PYTHON!"=="0" goto :skip_install_python
+echo Installing Python...
+echo IMPORTANT: Check "Add Python to PATH" on the first screen!
+echo Then click Install Now and follow the prompts.
+echo.
+start /wait "" "!DL_DIR!\python-3.12.8-amd64.exe"
+echo Python installer finished.
+echo.
+:skip_install_python
 
-if "!NEED_CLAUDE_DESKTOP!"=="1" (
-    echo Waiting for you to install Claude Desktop from the browser...
-    echo Press any key once you've installed it.
-    pause >nul
-    echo.
-)
+if "!NEED_CLAUDE_DESKTOP!"=="0" goto :skip_install_claude
+echo Waiting for you to install Claude Desktop from the browser...
+echo Press any key once you have installed it.
+pause >nul
+echo.
+:skip_install_claude
 
 REM Clean up downloaded installers
 echo Cleaning up downloaded installers...
@@ -185,62 +186,70 @@ pause
 exit /b 0
 
 REM ================================================================
-REM Step 4: All tools present — verify and set up framework
+REM Step 4: All prereqs present -- verify and print versions
 REM ================================================================
 
 :all_prereqs_present
+echo All prerequisites found. Verifying versions...
+echo.
 
-echo Prerequisites found:
-for /f "tokens=*" %%i in ('git --version') do echo   [OK] git:    %%i
+REM --- Git version ---
+for /f "tokens=*" %%i in ('git --version 2^>nul') do echo   [OK] git:    %%i
 
-for /f "tokens=*" %%i in ('node --version') do echo   [OK] node:   %%i
+REM --- Node version ---
+for /f "tokens=*" %%i in ('node --version 2^>nul') do echo   [OK] node:   %%i
 
+REM --- Python version (try python first, then python3) ---
 set "PY_CMD=python"
 where python >nul 2>&1
-if errorlevel 1 set "PY_CMD=python3"
+if !errorlevel! neq 0 set "PY_CMD=python3"
 for /f "tokens=*" %%i in ('!PY_CMD! --version 2^>^&1') do echo   [OK] python: %%i
 
+REM --- Claude Desktop ---
+echo   [OK] Claude Desktop installed
 echo.
 
 REM ================================================================
 REM Step 5: Check/install Claude Code CLI
 REM ================================================================
 
-REM Check for Claude Code CLI specifically (not Claude Desktop app).
-REM "claude --version" on the CLI prints a version string; the Desktop app won't.
-set "CLAUDE_CLI_FOUND=0"
-where claude >nul 2>&1
-if not errorlevel 1 (
-    for /f "tokens=*" %%i in ('claude --version 2^>^&1') do (
-        echo %%i | findstr /r /c:"[0-9]\.[0-9]" >nul 2>&1
-        if not errorlevel 1 set "CLAUDE_CLI_FOUND=1"
-    )
+REM Claude Code CLI installs as a .cmd shim via npm.
+REM On Windows, "where claude" is case-insensitive and matches both
+REM Claude.exe (Desktop) and claude.cmd (CLI). We check .cmd specifically.
+REM NEVER run claude --version during detection -- it can hang or launch GUI.
+
+where claude.cmd >nul 2>&1
+if !errorlevel! equ 0 goto :claude_cli_found
+
+REM Not on PATH -- also check npm global prefix directly
+where npm >nul 2>&1
+if !errorlevel! neq 0 goto :no_npm_for_claude
+
+REM Check npm global bin for claude.cmd before installing
+for /f "tokens=*" %%p in ('npm prefix -g 2^>nul') do (
+    if exist "%%p\claude.cmd" goto :claude_cli_found
 )
 
-if "!CLAUDE_CLI_FOUND!"=="1" goto :claude_found
-
-where npm >nul 2>&1
-if errorlevel 1 goto :no_npm_for_claude
-
+REM Not found anywhere -- install it
 echo Claude Code CLI not found. Installing via npm...
 call npm install -g @anthropic-ai/claude-code
+if !errorlevel! neq 0 goto :claude_install_failed
 echo.
 
-set "CLAUDE_CLI_FOUND=0"
-where claude >nul 2>&1
-if not errorlevel 1 (
-    for /f "tokens=*" %%i in ('claude --version 2^>^&1') do (
-        echo %%i | findstr /r /c:"[0-9]\.[0-9]" >nul 2>&1
-        if not errorlevel 1 set "CLAUDE_CLI_FOUND=1"
-    )
-)
-if "!CLAUDE_CLI_FOUND!"=="1" goto :claude_found
-goto :claude_install_warn
+REM Verify installation
+where claude.cmd >nul 2>&1
+if !errorlevel! equ 0 goto :claude_cli_found
 
-:claude_install_warn
-echo [WARN] Claude Code installed but 'claude' not found on PATH.
+REM Installed but not on PATH yet
+echo [WARN] Claude Code installed but claude.cmd not found on PATH.
 echo        Close and reopen your terminal, then try again.
 echo        If you see "EPERM" or "Access denied", try running as Administrator.
+echo.
+goto :install_framework
+
+:claude_install_failed
+echo [WARN] npm install failed. Try running as Administrator, or install manually:
+echo        npm install -g @anthropic-ai/claude-code
 echo.
 goto :install_framework
 
@@ -250,70 +259,80 @@ echo        Install Node.js first, then re-run this script.
 echo.
 goto :install_framework
 
-:claude_found
-for /f "tokens=*" %%i in ('claude --version 2^>^&1') do echo   [OK] claude: %%i
+:claude_cli_found
+REM Safe to run --version now since we confirmed it is the .cmd CLI shim
+for /f "tokens=*" %%i in ('claude.cmd --version 2^>^&1') do echo   [OK] claude: %%i
 echo.
 
 REM ================================================================
-REM Step 6: Clone repo and copy templates
+REM Step 6: Clone CrystalAI repo or pull latest
 REM ================================================================
 
 :install_framework
 
 set "INSTALL_DIR=%USERPROFILE%\.claude"
 
-if exist "!INSTALL_DIR!\.git" goto :already_installed
+REM Check if already a CrystalAI git repo
+if exist "!INSTALL_DIR!\.git" goto :already_cloned
 
-if not exist "!INSTALL_DIR!\" goto :fresh_clone
+REM Check if directory exists but is not a git repo
+if not exist "!INSTALL_DIR!" goto :fresh_clone
 
-REM Directory exists but is not a CrystalAI git repo — back it up
+REM Directory exists but is not a CrystalAI install -- back it up
 echo Warning: %INSTALL_DIR% exists and is not a CrystalAI install.
+
 if exist "!INSTALL_DIR!.backup" (
     echo Removing old backup...
     rmdir /s /q "!INSTALL_DIR!.backup" 2>nul
 )
+
 echo Backing up to %INSTALL_DIR%.backup
 move "!INSTALL_DIR!" "!INSTALL_DIR!.backup"
-if errorlevel 1 (
-    echo ERROR: Could not back up existing .claude directory.
-    echo Please manually rename or remove %INSTALL_DIR% and try again.
-    pause
-    exit /b 1
-)
+if !errorlevel! neq 0 goto :backup_failed
+goto :fresh_clone
+
+:backup_failed
+echo ERROR: Could not back up existing .claude directory.
+echo Please manually rename or remove %INSTALL_DIR% and try again.
+pause
+exit /b 1
 
 :fresh_clone
 echo Cloning CrystalAI framework...
 git clone https://github.com/PulsePanda/CrystalAI.git "!INSTALL_DIR!"
-if errorlevel 1 (
-    echo.
-    echo ERROR: git clone failed. Check your internet connection and try again.
-    echo If the repo is private, make sure you have access.
-    pause
-    exit /b 1
-)
+if !errorlevel! neq 0 goto :clone_failed
 goto :copy_templates
 
-:already_installed
+:clone_failed
+echo.
+echo ERROR: git clone failed. Check your internet connection and try again.
+echo If the repo is private, make sure you have access.
+pause
+exit /b 1
+
+:already_cloned
 echo CrystalAI already installed at %INSTALL_DIR%
 echo Pulling latest changes...
-pushd "!INSTALL_DIR!" && git pull & popd
-if errorlevel 1 (
-    echo Warning: git pull failed. Your local copy may have uncommitted changes.
-)
+pushd "!INSTALL_DIR!"
+git pull
+popd
+echo.
 
 REM ================================================================
-REM Step 7: Copy templates
+REM Step 7: Copy settings template
 REM ================================================================
 
 :copy_templates
-echo.
 
-if not exist "!INSTALL_DIR!\settings.json" (
-    if exist "!INSTALL_DIR!\settings.json.template" (
-        copy /Y "!INSTALL_DIR!\settings.json.template" "!INSTALL_DIR!\settings.json" >nul
-        echo Copied settings.json from template.
-    )
-)
+if exist "!INSTALL_DIR!\settings.json" goto :skip_copy_settings
+if not exist "!INSTALL_DIR!\settings.json.template" goto :skip_copy_settings
+copy /Y "!INSTALL_DIR!\settings.json.template" "!INSTALL_DIR!\settings.json" >nul
+echo Copied settings.json from template.
+:skip_copy_settings
+
+REM ================================================================
+REM Done
+REM ================================================================
 
 echo.
 echo === Installation complete ===
