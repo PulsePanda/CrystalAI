@@ -1,5 +1,5 @@
 ---
-name: crystal:onboard
+name: onboard
 description: First-run setup wizard for CrystalAI. Detects the user's environment, conducts a conversational interview to learn preferences, generates configuration files, validates integrations, and guides the user through creating their first skill. Run this once after installing CrystalAI. Safe to re-run — updates existing config without overwriting manual edits.
 version: 1.0.0
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
@@ -56,7 +56,7 @@ Check for each tool's presence and version. Use `which` (or `where` on Windows c
 | code (VS Code) | `code --version` |
 | cursor | `cursor --version` |
 
-Record what's present. Don't warn about missing tools unless they're needed later.
+Record what's present. Don't warn about missing tools unless they're needed later. **Do NOT attempt to install missing tools.** Detection only — report what's there and what isn't.
 
 ### 1c: Existing CrystalAI Configuration
 
@@ -101,7 +101,21 @@ ls "/c/Program Files/Obsidian" 2>/dev/null
 ls "$LOCALAPPDATA/Programs/obsidian" 2>/dev/null
 ```
 
-### 1e: Report Findings
+### 1e: Permissions Setup
+
+Check if `~/.claude/settings.json` exists. If it does NOT, copy the starter template:
+
+```bash
+if [ ! -f ~/.claude/settings.json ]; then
+  cp ~/.claude/settings.json.template ~/.claude/settings.json 2>/dev/null
+fi
+```
+
+This ships a conservative permissions config that auto-allows safe read operations and CrystalAI file edits while blocking dangerous commands. It replaces the need for bypass mode and significantly reduces permission prompt noise for new users.
+
+If `settings.json` already exists, leave it alone — the user may have customized it.
+
+### 1f: Report Findings
 
 Present a concise summary:
 
@@ -427,6 +441,8 @@ Read `~/.claude/CLAUDE.md`. Fill in any `<!-- CUSTOMIZE -->` placeholder section
 
 Test each configured integration to verify it actually works. Run tests in parallel.
 
+**IMPORTANT: Do NOT install, download, or configure any tools, packages, MCP servers, or dependencies during onboarding.** This skill detects and validates only. If something is missing or fails validation, report the issue with a specific fix instruction and move on. Tool installation happens separately — either via the install script, the instructor, or the user after the session. Never run `npm install`, `pip install`, `brew install`, or any package manager commands as part of onboarding.
+
 ### 4a: File System Access
 
 ```bash
@@ -466,17 +482,69 @@ For each failure, provide a **specific, actionable fix instruction**. Don't just
 
 ---
 
-## Phase 5: First Skill Moment (~3 min, guided)
+## Phase 5: Tool Installation (~5-10 min, instructor-led)
 
-This phase is both functional and pedagogical. The user creates a real skill while learning the skill creation pattern.
+Phase 4 identified which integrations are working and which need setup. This phase hands off to the instructor for tool installation — many tools (GWS, MCP servers, auth flows) require navigating external UIs, managing credentials, and troubleshooting in ways that the AI cannot reliably guide.
 
-### 5a: Connect to Their Pain Point
+### 5a: Identify What's Needed
+
+Review Phase 4 validation results and the user's Topic 8 answer (their biggest daily annoyance / first skill idea). Present a prioritized list:
+
+```
+Tools needed before we can build your first skill:
+  1. [tool] — needed for [pain point feature]
+  2. [tool] — needed for [core workflow feature]
+
+Also recommended (can be set up later):
+  3. [tool] — for [feature]
+```
+
+Prioritize:
+1. **Tools needed for the first skill** — highest priority. If their pain point is morning calendar notifications, they need calendar access working before we build the skill.
+2. **Tools needed for core daily workflow** — email, calendar, task manager (whichever they mentioned in the interview).
+3. **Everything else** — can be set up after the session.
+
+### 5b: Hand Off to Instructor
+
+**Stop and wait.** Say:
+
+"These tools need to be set up before we can build your first skill. [Instructor name] is going to walk you through this part — I'll be here when you're ready to continue."
+
+**Do NOT attempt to guide the user through tool installation yourself.** Tool setup often involves:
+- External web UIs (Google Cloud Console, OAuth consent screens, etc.)
+- Credential file management that requires human judgment
+- Platform-specific troubleshooting that changes frequently
+- Auth flows that the AI cannot see or interact with
+
+The instructor handles this. Your job is to clearly identify what needs to be installed and to validate it once it's done.
+
+> **Future:** A dedicated guided setup skill (`/setup`) is planned that will use deep research to build verified, up-to-date step-by-step guides for each tool — and can either walk the user through interactively or execute the setup autonomously. Once that skill exists, Phase 5 can invoke it instead of handing off to the instructor. Until then, this is a human-led step.
+
+### 5c: Validate After Installation
+
+Once the instructor signals that tools are set up, re-run the relevant Phase 4 validation tests:
+
+"Let me verify everything is working..."
+
+Re-run the smoke tests for each newly installed tool. Report results.
+
+If everything passes: "All good. Let's build your first skill."
+
+If something still fails: Report the specific failure to the instructor. Let them fix it. Re-validate when they're ready.
+
+---
+
+## Phase 6: First Skill Moment (~3 min, guided)
+
+This phase is both functional and pedagogical. The user creates a real skill while learning the skill creation pattern. All tools needed for their skill should be validated and working from Phase 5.
+
+### 6a: Connect to Their Pain Point
 
 Reference their answer from Topic 8:
 
 "You mentioned that [their automation annoyance] is a pain point. Let's build a tiny skill for that right now — it'll take about 3 minutes and you'll learn how the skill system works."
 
-### 5b: Design the Skill Together
+### 6b: Design the Skill Together
 
 Walk them through the thinking:
 
@@ -484,7 +552,7 @@ Walk them through the thinking:
 2. "What should it do, step by step? Walk me through what you do manually today."
 3. "What tools does it need? (Reading files, writing files, running commands, calling an API?)"
 
-### 5c: Generate the Skill
+### 6c: Generate the Skill
 
 Based on their answers, write a SKILL.md for their first skill:
 
@@ -493,7 +561,7 @@ Based on their answers, write a SKILL.md for their first skill:
 - Keep it simple — 1-3 steps maximum
 - Include clear error handling
 
-### 5d: Test It
+### 6d: Test It
 
 "Try running `/{skill-name}` right now. Let's see if it works."
 
@@ -503,9 +571,9 @@ If it fails: Debug together. Fix the issue. This is a teaching moment — show t
 
 ---
 
-## Phase 6: Wrap-Up
+## Phase 7: Wrap-Up
 
-### 6a: Configuration Summary
+### 7a: Configuration Summary
 
 Present a clean summary of everything that was configured:
 
@@ -529,7 +597,7 @@ Config files created:
   ~/.claude/skills/{first-skill}/SKILL.md
 ```
 
-### 6b: Quick Reference Card
+### 7b: Quick Reference Card
 
 ```
 What you can do now:
@@ -545,7 +613,7 @@ Coming soon (as you use the system):
   /feedback     — Tell me when I get something wrong (I'll remember).
 ```
 
-### 6c: Next Steps
+### 7c: Next Steps
 
 "Run `/resume` at the start of your next session to see the system in action. The more you use it, the more it learns — your preferences, your writing style, your workflows. Everything adapts."
 
@@ -576,8 +644,13 @@ If anything failed in Phase 4:
 - **Vault path doesn't exist:** Ask the user to verify the path. Common issue: iCloud paths with spaces or `~` expansion.
 - **Tool not responding:** Note it as "needs manual setup" and provide the fix steps.
 
-### Phase 5 Errors
-- **User doesn't want to create a skill:** Skip Phase 5 entirely. No pressure.
+### Phase 5 Errors (Tool Installation)
+- **Tool install fails:** Note it for post-session follow-up. Don't spend more than 5 minutes on any single tool — move on and come back later.
+- **Missing credentials:** The instructor should have these ready. If not, skip that tool and adjust the first skill plan.
+- **Auth flow fails:** Try once, note the error, move on. Auth issues are often transient or need the instructor's GCP project access.
+
+### Phase 6 Errors (First Skill)
+- **User doesn't want to create a skill:** Skip Phase 6 entirely. No pressure.
 - **Skill creation fails:** Debug together. The teaching is more valuable than the skill.
 
 ### General

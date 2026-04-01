@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Skill",
+      "WebFetch",
+      "WebSearch",
+      "Write(~/.claude/**)",
+      "Edit(~/.claude/**)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git branch*)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(date*)",
+      "Bash(uname*)",
+      "Bash(which *)",
+      "Bash(where *)",
+      "Bash(whoami)",
+      "Bash(hostname)",
+      "Bash(node --version)",
+      "Bash(python* --version)",
+      "Bash(git --version)",
+      "Bash(echo *)",
+      "Bash(mkdir -p ~/.claude/*)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(chmod 777 *)",
+      "Bash(curl * | bash)",
+      "Bash(curl * | sh)"
+    ]
+  }
+}
