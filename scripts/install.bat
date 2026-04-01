@@ -10,39 +10,45 @@ echo.
 
 REM --- Check prerequisites ---
 
-set "MISSING=0"
-
+REM Git is REQUIRED (needed to clone the repo)
 where git >nul 2>&1
 if errorlevel 1 (
-    echo [MISSING] git — https://git-scm.com/downloads
-    set "MISSING=1"
+    echo [REQUIRED] git is not installed.
+    echo.
+    echo Download from: https://git-scm.com/downloads
+    echo Install it, then close and reopen this terminal, and re-run this script.
+    echo.
+    pause
+    exit /b 1
 )
 
+echo Checking tools:
+for /f "tokens=*" %%i in ('git --version') do echo   [OK] git:    %%i
+
+REM Node is needed for Claude Code CLI and GWS — warn if missing but continue
 where node >nul 2>&1
 if errorlevel 1 (
-    echo [MISSING] node — https://nodejs.org ^(LTS recommended^)
-    set "MISSING=1"
+    echo   [MISSING] node — needed for Claude Code CLI and email integration
+    echo             Download from: https://nodejs.org ^(LTS recommended^)
+) else (
+    for /f "tokens=*" %%i in ('node --version') do echo   [OK] node:   %%i
 )
 
+REM Python is optional — warn if missing but continue
 where python >nul 2>&1
 if errorlevel 1 (
     where python3 >nul 2>&1
     if errorlevel 1 (
-        echo [MISSING] python — https://python.org/downloads ^(check "Add to PATH" during install^)
-        set "MISSING=1"
+        echo   [MISSING] python — some skills use Python scripts
+        echo             Download from: https://python.org/downloads
+        echo             Check "Add Python to PATH" during install
+    ) else (
+        for /f "tokens=*" %%i in ('python3 --version 2^>^&1') do echo   [OK] python: %%i
     )
+) else (
+    for /f "tokens=*" %%i in ('python --version 2^>^&1') do echo   [OK] python: %%i
 )
 
-if "%MISSING%"=="1" (
-    echo.
-    echo Install the missing tools above and re-run this script.
-    exit /b 1
-)
-
-echo Prerequisites OK:
-for /f "tokens=*" %%i in ('git --version') do echo   git:    %%i
-for /f "tokens=*" %%i in ('node --version') do echo   node:   %%i
-for /f "tokens=*" %%i in ('python --version 2^>^&1') do echo   python: %%i
 echo.
 
 REM --- Check for Claude Code CLI ---

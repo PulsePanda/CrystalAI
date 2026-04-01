@@ -13,38 +13,38 @@ echo ""
 
 # --- Check prerequisites ---
 
-MISSING=()
-
+# Git is REQUIRED (needed to clone the repo)
 if ! command -v git &>/dev/null; then
-    MISSING+=("git — https://git-scm.com/downloads")
-fi
-
-if ! command -v node &>/dev/null; then
-    MISSING+=("node — https://nodejs.org (LTS recommended)")
-fi
-
-if ! command -v python3 &>/dev/null && ! command -v python &>/dev/null; then
-    MISSING+=("python3 — https://python.org/downloads")
-fi
-
-if [ ${#MISSING[@]} -gt 0 ]; then
-    echo "Missing prerequisites:"
-    for item in "${MISSING[@]}"; do
-        echo "  - $item"
-    done
+    echo "[REQUIRED] git is not installed."
     echo ""
-    echo "Install the missing tools above and re-run this script."
+    echo "  macOS:  brew install git  (or install Xcode Command Line Tools)"
+    echo "  Linux:  sudo apt install git  (or your distro's package manager)"
+    echo ""
+    echo "Install git, then re-run this script."
     exit 1
 fi
 
-echo "Prerequisites OK:"
-echo "  git:    $(git --version)"
-echo "  node:   $(node --version)"
-if command -v python3 &>/dev/null; then
-    echo "  python: $(python3 --version)"
+echo "Checking tools:"
+echo "  [OK] git:    $(git --version)"
+
+# Node — needed for Claude Code CLI and GWS, warn if missing but continue
+if ! command -v node &>/dev/null; then
+    echo "  [MISSING] node — needed for Claude Code CLI and email integration"
+    echo "            Download from: https://nodejs.org (LTS recommended)"
 else
-    echo "  python: $(python --version)"
+    echo "  [OK] node:   $(node --version)"
 fi
+
+# Python — optional, warn if missing but continue
+if command -v python3 &>/dev/null; then
+    echo "  [OK] python: $(python3 --version)"
+elif command -v python &>/dev/null; then
+    echo "  [OK] python: $(python --version)"
+else
+    echo "  [MISSING] python — some skills use Python scripts"
+    echo "            Download from: https://python.org/downloads"
+fi
+
 echo ""
 
 # --- Check for Claude Code CLI ---
