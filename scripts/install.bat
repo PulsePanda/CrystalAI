@@ -19,6 +19,7 @@ REM ================================================================
 set "NEED_GIT=0"
 set "NEED_NODE=0"
 set "NEED_PYTHON=0"
+set "NEED_CLAUDE_DESKTOP=0"
 
 where git >nul 2>&1
 if errorlevel 1 set "NEED_GIT=1"
@@ -32,8 +33,15 @@ if errorlevel 1 (
     if errorlevel 1 set "NEED_PYTHON=1"
 )
 
+REM Check for Claude desktop app
+if not exist "%LOCALAPPDATA%\AnthropicClaude\claude.exe" (
+    if not exist "%LOCALAPPDATA%\Programs\claude\claude.exe" (
+        set "NEED_CLAUDE_DESKTOP=1"
+    )
+)
+
 REM If everything is installed, skip to verification/setup
-if "!NEED_GIT!"=="0" if "!NEED_NODE!"=="0" if "!NEED_PYTHON!"=="0" goto :all_prereqs_present
+if "!NEED_GIT!"=="0" if "!NEED_NODE!"=="0" if "!NEED_PYTHON!"=="0" if "!NEED_CLAUDE_DESKTOP!"=="0" goto :all_prereqs_present
 
 REM ================================================================
 REM Step 2: Download missing installers
@@ -86,6 +94,20 @@ if "!NEED_PYTHON!"=="1" (
     echo.
 )
 
+if "!NEED_CLAUDE_DESKTOP!"=="1" (
+    echo [MISSING] Claude Desktop — downloading installer...
+    set "CLAUDE_INSTALLER=!DL_DIR!\Claude-Setup-x64.exe"
+    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://storage.googleapis.com/osprey-downloads-c02f6a0d-347c-492b-a752-3e0651722e97/nest-win-x64/Claude-Setup-x64.exe' -OutFile '!DL_DIR!\Claude-Setup-x64.exe' }" 2>nul
+    if not exist "!CLAUDE_INSTALLER!" (
+        echo [FAIL] Could not download Claude Desktop installer.
+        echo        Download manually from: https://claude.ai/download
+        set "DL_FAILED=1"
+    ) else (
+        echo [DONE] Claude Desktop installer downloaded.
+    )
+    echo.
+)
+
 if "!DL_FAILED!"=="1" (
     echo ---------------------------------------------------------------
     echo  Some downloads failed. Install the missing tools manually,
@@ -105,6 +127,7 @@ echo  The following tools need to be installed:
 if "!NEED_GIT!"=="1" echo    - Git
 if "!NEED_NODE!"=="1" echo    - Node.js
 if "!NEED_PYTHON!"=="1" echo    - Python
+if "!NEED_CLAUDE_DESKTOP!"=="1" echo    - Claude Desktop
 echo.
 echo  Each installer will open with its normal GUI.
 echo  Use the default settings unless noted otherwise.
@@ -136,6 +159,16 @@ if "!NEED_PYTHON!"=="1" (
     echo.
     start /wait "" "!DL_DIR!\python-3.12.8-amd64.exe"
     echo Python installer finished.
+    echo.
+)
+
+if "!NEED_CLAUDE_DESKTOP!"=="1" (
+    echo Installing Claude Desktop...
+    echo Please follow the installer prompts.
+    echo Sign in with your Anthropic account when it opens.
+    echo.
+    start /wait "" "!DL_DIR!\Claude-Setup-x64.exe"
+    echo Claude Desktop installer finished.
     echo.
 )
 
