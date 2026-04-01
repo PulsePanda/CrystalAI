@@ -344,14 +344,29 @@ echo ""
 
 # --- 4. Claude Code CLI ---
 
-if command -v claude >/dev/null 2>&1; then
-    ok "Claude Code: $(claude --version 2>&1 || echo 'installed')"
+# Verify that `claude` on PATH is actually the CLI (not a Desktop shim).
+# The real CLI prints a semver-like string for `claude --version`.
+is_claude_cli() {
+    command -v claude >/dev/null 2>&1 || return 1
+    local ver
+    ver="$(claude --version 2>&1)" || return 1
+    echo "$ver" | grep -qE '[0-9]+\.[0-9]+' || return 1
+    echo "$ver"
+    return 0
+}
+
+CLAUDE_CLI_VER=""
+CLAUDE_CLI_VER="$(is_claude_cli)" 2>/dev/null || true
+
+if [ -n "$CLAUDE_CLI_VER" ]; then
+    ok "Claude Code: $CLAUDE_CLI_VER"
 elif command -v node >/dev/null 2>&1; then
     if install_claude_code; then
-        if command -v claude >/dev/null 2>&1; then
-            ok "Claude Code: $(claude --version 2>&1 || echo 'installed')"
+        CLAUDE_CLI_VER="$(is_claude_cli)" 2>/dev/null || true
+        if [ -n "$CLAUDE_CLI_VER" ]; then
+            ok "Claude Code: $CLAUDE_CLI_VER"
         else
-            warn "Claude Code installed but 'claude' not found on PATH."
+            warn "Claude Code installed but 'claude' not found on PATH (or version check failed)."
             warn "You may need to restart your terminal or add npm global bin to PATH."
         fi
     fi
@@ -364,7 +379,17 @@ echo ""
 # --- 4b. Claude Desktop App ---
 
 if [ "$OS_TYPE" = "macOS" ]; then
+    # Check standard path first, then fall back to Spotlight index
+    CLAUDE_DESKTOP_FOUND=0
     if [ -d "/Applications/Claude.app" ]; then
+        CLAUDE_DESKTOP_FOUND=1
+    elif command -v mdfind >/dev/null 2>&1; then
+        if mdfind "kMDItemCFBundleIdentifier == 'com.anthropic.claudefordesktop'" 2>/dev/null | grep -q '.app'; then
+            CLAUDE_DESKTOP_FOUND=1
+        fi
+    fi
+
+    if [ "$CLAUDE_DESKTOP_FOUND" = "1" ]; then
         ok "Claude Desktop: installed"
     else
         info "Claude Desktop not found. Downloading..."

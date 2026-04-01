@@ -1,6 +1,6 @@
 ---
 name: docs
-description: This skill should be used when the user types "/docs", "update the docs", "update documentation", "document what we did", or wants to capture session learnings into the right permanent files. Scans session context and updates project files, skill files, memory, and behavioral rules as appropriate.
+description: "Mid-session documentation capture. Trigger when the user wants to PERSIST LEARNINGS from the current session into permanent files without ending the session: '/docs', 'update the docs', 'update documentation', 'document what we did', 'persist this', 'save what we learned', 'write this down permanently', 'update the references', 'capture this in the docs'. Scans session context and updates project files, skill files, memory, and behavioral rules as appropriate. Do NOT trigger for: end-of-session wrap-up (use compress), writing content to send to someone (use write), or weekly review consolidation (use weekly)."
 version: 1.0.0
 allowed-tools: Read, Write, Edit
 ---

@@ -1,6 +1,6 @@
 ---
 name: compress
-description: This skill should be used when the user asks to "compress this session", "save session log", "end session", "wrap up", or any time a working session is wrapping up and needs to be saved. Saves the session as a searchable log, extracts pending tasks, updates the daily note, and runs a hygiene pass. Use this at the end of any meaningful work session.
+description: "End-of-session wrap-up. Trigger when the user is DONE WORKING and wants to save the session: 'compress', 'compress this session', 'save session', 'end session', 'wrap up', 'I'm done', 'that's it for today', 'log this session', 'save and quit', 'goodnight', 'signing off', 'let's call it'. Saves a searchable session log, extracts pending tasks, updates the daily note, and runs a hygiene pass. Do NOT trigger for: mid-session documentation updates (use docs), or weekly review (use weekly). This is specifically for closing out a single working session."
 version: 2.0.0
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---

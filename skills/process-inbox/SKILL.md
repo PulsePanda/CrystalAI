@@ -1,6 +1,6 @@
 ---
 name: process-inbox
-description: This skill should be used when the user asks to "process my inbox", "organize inbox notes", "clean up inbox", "format inbox captures", or mentions wanting to organize their quick captures. Transforms rough inbox captures into structured notes and tasks.
+description: "Process and organize raw captures from the Obsidian +Inbox/ folder. Trigger on: '/process-inbox', 'process my inbox', 'organize inbox notes', 'clean up inbox', 'format inbox captures', 'what's in my inbox', 'triage inbox', 'sort the inbox', 'anything in the inbox to process'. Transforms rough captures into structured notes, routes meeting notes to the right folder, and creates tasks. Do NOT trigger for: email inbox processing, or creating new inbox captures (use note)."
 version: 2.0.0
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---

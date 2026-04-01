@@ -33,11 +33,16 @@ if errorlevel 1 (
     if errorlevel 1 set "NEED_PYTHON=1"
 )
 
-REM Check for Claude desktop app
-if not exist "%LOCALAPPDATA%\AnthropicClaude\claude.exe" (
-    if not exist "%LOCALAPPDATA%\Programs\claude\claude.exe" (
-        set "NEED_CLAUDE_DESKTOP=1"
-    )
+REM Check for Claude desktop app (MSIX or traditional install)
+set "NEED_CLAUDE_DESKTOP=1"
+if exist "%LOCALAPPDATA%\Microsoft\WindowsApps\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
+if exist "%LOCALAPPDATA%\AnthropicClaude\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
+if exist "%LOCALAPPDATA%\Programs\claude\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
+if exist "%PROGRAMFILES%\Claude\Claude.exe" set "NEED_CLAUDE_DESKTOP=0"
+REM Fallback: check if Claude.exe is anywhere on PATH
+if "!NEED_CLAUDE_DESKTOP!"=="1" (
+    where Claude.exe >nul 2>&1
+    if not errorlevel 1 set "NEED_CLAUDE_DESKTOP=0"
 )
 
 REM If everything is installed, skip to verification/setup
@@ -201,8 +206,18 @@ REM ================================================================
 REM Step 5: Check/install Claude Code CLI
 REM ================================================================
 
+REM Check for Claude Code CLI specifically (not Claude Desktop app).
+REM "claude --version" on the CLI prints a version string; the Desktop app won't.
+set "CLAUDE_CLI_FOUND=0"
 where claude >nul 2>&1
-if not errorlevel 1 goto :claude_found
+if not errorlevel 1 (
+    for /f "tokens=*" %%i in ('claude --version 2^>^&1') do (
+        echo %%i | findstr /r /c:"[0-9]\.[0-9]" >nul 2>&1
+        if not errorlevel 1 set "CLAUDE_CLI_FOUND=1"
+    )
+)
+
+if "!CLAUDE_CLI_FOUND!"=="1" goto :claude_found
 
 where npm >nul 2>&1
 if errorlevel 1 goto :no_npm_for_claude
@@ -211,9 +226,16 @@ echo Claude Code CLI not found. Installing via npm...
 call npm install -g @anthropic-ai/claude-code
 echo.
 
+set "CLAUDE_CLI_FOUND=0"
 where claude >nul 2>&1
-if errorlevel 1 goto :claude_install_warn
-goto :claude_found
+if not errorlevel 1 (
+    for /f "tokens=*" %%i in ('claude --version 2^>^&1') do (
+        echo %%i | findstr /r /c:"[0-9]\.[0-9]" >nul 2>&1
+        if not errorlevel 1 set "CLAUDE_CLI_FOUND=1"
+    )
+)
+if "!CLAUDE_CLI_FOUND!"=="1" goto :claude_found
+goto :claude_install_warn
 
 :claude_install_warn
 echo [WARN] Claude Code installed but 'claude' not found on PATH.

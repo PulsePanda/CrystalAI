@@ -1,6 +1,6 @@
 ---
 name: meeting
-description: This skill should be used when the user asks to "start a meeting note", "meeting with...", or types "/meeting". Creates a pre-filled meeting note in +Inbox/ with people and topic extracted from the command arguments, and opens it in Obsidian.
+description: "Trigger when the user wants to CREATE A MEETING NOTE for note-taking — not schedule a meeting (that's calendar-booking). Includes: '/meeting', 'start a meeting note', 'meeting with [person]', 'meeting note for...', 'I have a meeting with...', 'about to hop on a call with...', 'taking notes for a meeting', 'log a meeting with [person]', 'meeting about [topic]'. Creates a pre-filled note in +Inbox/ with people and topic extracted, then opens in Obsidian. Do NOT trigger for: scheduling or booking meetings ('set up a call', 'find a time' — use calendar-booking), or creating a generic note without meeting context (use note)."
 version: 1.0.0
 disable-model-invocation: true
 allowed-tools: Write, Bash, Read, Grep, Glob

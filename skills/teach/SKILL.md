@@ -1,6 +1,6 @@
 ---
 name: teach
-description: This skill should be used when the user asks to "/teach", "teach you my style", "here's an example of my writing", "learn from this email", or pastes writing examples for Claude to analyze. Analyzes writing samples to extract patterns, updates the style guide, and saves examples for future reference.
+description: "Learn the user's writing style from examples. Trigger when the user provides writing samples for analysis: '/teach', 'teach you my style', 'here's an example of my writing', 'learn from this email', 'here's how I write', 'learn my voice', 'study this style', 'analyze my writing', 'this is a good example of my tone', 'here's a sample of what I send'. Analyzes patterns, updates the style guide, and saves examples. Do NOT trigger for: writing new content in the user's voice (use write), or correcting a specific draft (use feedback if behavioral, or just iterate inline)."
 version: 1.0.0
 allowed-tools: Read, Write, Edit
 ---

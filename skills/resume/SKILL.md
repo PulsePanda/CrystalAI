@@ -1,6 +1,6 @@
 ---
 name: resume
-description: This skill should be used when the user asks to "resume memory", "load context", "check stored memory", "what was I working on", "restore previous context", or starts a session and wants to know where they left off. Also trigger on greetings that signal the start of a session — "good morning", "hello", "hey", "hi", "start my day", "let's get started", "what's up", "let's go". Reads recent session logs, checks today's calendar and tasks, reviews active projects, and checks the daily note. Use this at the start of any session to restore context.
+description: "Session start and context restoration. Trigger at the START of any session: '/resume', 'resume', 'load context', 'what was I working on', 'where were we', 'catch me up', 'what did I miss', 'morning briefing', 'start of day'. ALSO trigger on greetings that signal session start: 'good morning', 'hello', 'hey', 'hi', 'let's get started', 'what's up', 'let's go'. Reads recent session logs, queries tasks for today, checks today's calendar, reviews active projects, and checks the daily note. Do NOT trigger for: mid-session project loading (use project-load), or weekly review (use weekly)."
 version: 2.0.0
 allowed-tools: Read, Bash, Grep, Glob
 ---

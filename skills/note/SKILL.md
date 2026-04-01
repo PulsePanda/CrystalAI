@@ -1,6 +1,6 @@
 ---
 name: note
-description: This skill should be used when the user asks to "create a note", "new note", "start a note", or simply types "/note". Creates a timestamped note in +Inbox/ and opens it in Obsidian for immediate editing.
+description: "Create a quick capture note in the Obsidian inbox. Trigger on: '/note', 'create a note', 'new note', 'start a note', 'jot this down', 'quick note', 'capture this'. Creates a timestamped file in +Inbox/ and opens it in Obsidian. Do NOT trigger for: meeting notes (use meeting), writing content to send to someone (use write), or processing existing inbox notes (use process-inbox)."
 version: 1.0.0
 disable-model-invocation: true
 allowed-tools: Write, Bash

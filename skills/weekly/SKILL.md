@@ -1,6 +1,6 @@
 ---
 name: weekly
-description: "This skill should be used when the user asks to 'weekly review', 'run weekly review', 'end of week', or types '/weekly'. Synthesizes the week's session logs into permanent memory, consolidates and compresses state, writes weekly digest files, checks project hygiene, and surfaces upcoming commitments. Also runs a monthly rollup if it's the first weekly run of a new month."
+description: "Weekly review and state consolidation. Trigger on: '/weekly', 'weekly review', 'run weekly review', 'end of week', 'week in review', 'summarize this week', 'what happened this week', 'Friday wrap-up', 'Monday review'. Synthesizes the week's session logs into permanent memory, consolidates state, writes weekly digest files, checks project hygiene, and surfaces upcoming commitments. Runs a monthly rollup if it's the first weekly run of a new month. Do NOT trigger for: single-session wrap-up (use compress), or mid-session doc updates (use docs)."
 version: 2.0
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
