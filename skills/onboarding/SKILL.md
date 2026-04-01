@@ -166,6 +166,14 @@ Capture:
 - `comm_emojis` — yes / no / occasionally
 - `comm_autonomy` — act autonomously / check in at decision points / always ask first
 
+### Skill Moment: /feedback
+
+After capturing their communication preferences, demonstrate that corrections stick permanently. Say something like:
+
+"By the way — if I ever get your style wrong, just tell me. Watch this: the preferences I just recorded? They live in a file I'll update any time you correct me. You never have to repeat yourself. That's `/feedback` — it fires automatically whenever you say 'no, do it this way' or 'stop doing X.' Let me show you where your communication rules will end up."
+
+Briefly show the path (`~/.claude/state/behavioral/communication.md`) and explain that `/feedback` routes corrections to the right file. Keep it to 2-3 sentences — this is a teaser, not a tutorial.
+
 ### Topic 3: Notes
 
 "Where do you keep notes and documents?"
@@ -179,6 +187,29 @@ Capture:
 - `notes_app` — obsidian / notion / apple-notes / plain-files / none
 - `vault_path` — if Obsidian (validate the path exists)
 - `notes_details` — any specifics about their setup
+
+### Skill Moment: /note (if Obsidian)
+
+If the user confirmed they use Obsidian and provided a vault path, demo `/note` live right now:
+
+"Let me show you something. I'm going to drop a quick note into your inbox — watch."
+
+Actually run the `/note` skill: create a capture file in their `+Inbox/` folder with content like:
+
+```markdown
+---
+type: capture
+date: {today}
+time: "{now}"
+processed: false
+---
+
+CrystalAI onboarding — this note was created by /note to show how quick captures work. Delete me anytime.
+```
+
+Open it in Obsidian. Then say: "That's `/note`. One command, and it's in your inbox. `/process-inbox` organizes them later."
+
+If they don't use Obsidian, skip this and move on.
 
 ### Topic 4: Task Management
 
@@ -245,6 +276,14 @@ This is both practical (it becomes their first skill in Phase 5) and diagnostic 
 Capture:
 - `automation_idea` — their answer, verbatim
 - `automation_context` — any follow-up details
+
+### Skill Moment: /grill-me (teaser)
+
+After they describe their automation idea, briefly tease the grill-me skill as a natural follow-up:
+
+"That's a solid idea. If you ever want me to stress-test a plan before you build it — poke holes, ask the hard questions — just say `/grill-me`. I'll interrogate you until the plan is bulletproof. We won't do it now, but keep it in your back pocket."
+
+One sentence. Plant the seed and move on.
 
 ---
 
@@ -435,6 +474,18 @@ Read `~/.claude/CLAUDE.md`. Fill in any `<!-- CUSTOMIZE -->` placeholder section
 
 **Do NOT remove any existing rules or structure.** Only add to the customize sections.
 
+### Skill Moment: /compress (live demo)
+
+After all config files are written, demonstrate `/compress` by running a lightweight version of it on this onboarding session itself. Say:
+
+"Everything's saved. Let me show you one more thing — watch what happens when a session ends."
+
+Run the compress skill's core steps: generate a session log summarizing the onboarding (topics covered, config files created, integrations configured) and save it to `~/.claude/state/sessions/`. Use today's date and "onboarding" as the topic.
+
+Then show them the result: "That's `/compress`. At the end of any session, it saves a searchable log of what we did — decisions, files changed, tasks extracted. Next time you start a session, `/resume` reads these logs so I already know what happened. Nothing gets lost between sessions."
+
+This is the single most important skill demo in onboarding. It shows the user that CrystalAI has persistent memory — the thing that makes it feel fundamentally different from vanilla Claude.
+
 ---
 
 ## Phase 4: Validation (~1 min, automated)
@@ -569,6 +620,30 @@ If it works: "That's the pattern. Every skill is just a SKILL.md file that tells
 
 If it fails: Debug together. Fix the issue. This is a teaching moment — show them how skills are just instructions that can be edited.
 
+### 6e: Skills Tour
+
+After the first skill works (or after debugging it), transition naturally:
+
+"That's the skill system — trigger word, instructions, done. You've already seen a few skills in action during setup. Here are a few more you have access to right now:"
+
+Walk through these quickly. One sentence each, framed as "when you'd use it" — not feature descriptions:
+
+1. **`/write`** — "Need to draft an email, a message, a post? `/write` does it in your voice. It gets better over time as `/teach` learns your style from examples you show it."
+
+2. **`/note`** — "Need to get something out of your head? `/note` creates a quick capture in your inbox. This is a brain dump — unstructured, no goal, just capture. `/process-inbox` organizes it later."
+
+3. **`/deep-research`** — "Need to research something thoroughly — comparing vendors, understanding a technology, analyzing a market? `/deep-research` produces a cited report, not a guess. Great for feeding a brainstorm with real data."
+
+4. **`/grill-me`** — "Want to brainstorm or stress-test a plan before you commit? `/grill-me` interrogates you until every gap is found. This is structured ideation — goal-directed, not just dumping thoughts. Think of it as a devil's advocate on demand."
+
+5. **`/meeting`** — "About to hop on a call? `/meeting [person] [topic]` creates a pre-filled note and opens it in your notes app. You just start typing."
+
+6. **`/weekly`** — "At the end of the week, `/weekly` synthesizes everything into permanent memory and surfaces what's coming next week."
+
+End with: "There are more — you'll discover them as you go. The point is: if you find yourself doing something repetitive, there's probably a skill for it. And if there isn't, we build one."
+
+Do NOT linger. This should take under 60 seconds of reading. Move to Phase 7.
+
 ---
 
 ## Phase 7: Wrap-Up
@@ -597,25 +672,55 @@ Config files created:
   ~/.claude/skills/{first-skill}/SKILL.md
 ```
 
-### 7b: Quick Reference Card
+### 7b: Live /resume Demo
+
+Instead of telling them about `/resume`, show them. Say:
+
+"Let me show you what the start of your next session looks like."
+
+Run the `/resume` skill now. It will load the session log from the `/compress` demo in Phase 3, show today's calendar (if configured), surface any tasks, and present active projects. The user sees exactly what their daily kickoff experience will be — with real data from this onboarding session.
+
+After it runs: "That's what every session starts with. One command, full context. You never have to re-explain what you were working on."
+
+### 7c: How It Keeps Learning
+
+Mention the two skills that make the system get smarter over time:
+
+"Two more things worth knowing. `/teach` learns your writing style — show it a few emails or messages you've written, and `/write` starts producing drafts that sound like you, not like an AI. And `/feedback` — you already saw this during the interview — means any correction you make is permanent. Say 'stop doing X' once, and I stop doing X forever. The system adapts to you, not the other way around."
+
+### 7d: Quick Reference Card
 
 ```
-What you can do now:
+Your daily workflow:
 
-  /resume       — Start a session. Loads your context, tasks, and calendar.
-  /compress     — End a session. Saves a searchable log and extracts tasks.
-  /{first-skill} — Your custom skill.
+  /resume       — Start here. Loads context, tasks, calendar, active projects.
+  /compress     — End here. Saves a searchable session log.
+  /{first-skill} — Your custom skill from today.
 
-Coming soon (as you use the system):
-  /write        — Draft content in your voice (learns your style over time).
-  /note         — Quick capture to your notes.
-  /project      — Manage project tracking.
-  /feedback     — Tell me when I get something wrong (I'll remember).
+Create and communicate:
+  /write        — Draft emails, messages, posts in your voice.
+  /note         — Quick capture to your notes inbox.
+  /meeting      — Pre-filled meeting note, opened and ready.
+
+Think and plan:
+  /grill-me     — Stress-test any plan or idea.
+  /deep-research — Cited research reports.
+  /project      — Create and track projects.
+
+System learns from you:
+  /teach        — Show it your writing style.
+  /feedback     — Correct it once, it remembers forever.
+
+Two thinking patterns to know:
+  Brain dump  — "Get everything out of your head." Unstructured capture, no goal.
+                Use /note to capture, /process-inbox to organize later.
+  Brainstorm  — "Generate ideas toward a specific goal." Structured, goal-directed.
+                Use /grill-me to pressure-test, /deep-research for data-driven ideation.
 ```
 
-### 7c: Next Steps
+### 7e: Next Steps
 
-"Run `/resume` at the start of your next session to see the system in action. The more you use it, the more it learns — your preferences, your writing style, your workflows. Everything adapts."
+"Start your next session with `/resume`. That's all you need to remember — everything else you'll discover naturally."
 
 If anything failed in Phase 4:
 "A few integrations need manual setup. Here's what to do: [repeat the fix instructions from Phase 4]."
