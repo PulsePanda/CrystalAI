@@ -95,16 +95,9 @@ if "!NEED_PYTHON!"=="1" (
 )
 
 if "!NEED_CLAUDE_DESKTOP!"=="1" (
-    echo [MISSING] Claude Desktop — downloading installer...
-    set "CLAUDE_INSTALLER=!DL_DIR!\Claude-Setup-x64.exe"
-    powershell -Command "& { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri 'https://claude.ai/redirect/claudedotcom.v1.5f36ec2e-fc5d-4d33-911f-6e77d2fa6052/api/desktop/win32/x64/setup/latest/redirect' -OutFile '!DL_DIR!\Claude-Setup-x64.exe' }" 2>nul
-    if not exist "!CLAUDE_INSTALLER!" (
-        echo [FAIL] Could not download Claude Desktop installer.
-        echo        Download manually from: https://claude.ai/download
-        set "DL_FAILED=1"
-    ) else (
-        echo [DONE] Claude Desktop installer downloaded.
-    )
+    echo [MISSING] Claude Desktop — opening download page in your browser...
+    start "" "https://claude.ai/download"
+    echo          Install Claude Desktop from the page that just opened.
     echo.
 )
 
@@ -163,12 +156,9 @@ if "!NEED_PYTHON!"=="1" (
 )
 
 if "!NEED_CLAUDE_DESKTOP!"=="1" (
-    echo Installing Claude Desktop...
-    echo Please follow the installer prompts.
-    echo Sign in with your Anthropic account when it opens.
-    echo.
-    start /wait "" "!DL_DIR!\Claude-Setup-x64.exe"
-    echo Claude Desktop installer finished.
+    echo Waiting for you to install Claude Desktop from the browser...
+    echo Press any key once you've installed it.
+    pause >nul
     echo.
 )
 
