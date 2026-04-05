@@ -64,6 +64,43 @@ Parse the plan to extract:
 
 ---
 
+## Step 2b: Show What's New
+
+Read `{SOURCE}/CHANGELOG.md`. Find the entry for the NEW version (the one being upgraded to). Extract the highlights and present them in a user-friendly format.
+
+**Rules for the "What's New" summary:**
+- Lead with new capabilities the user can actually use (new skills, new commands, new features)
+- Skip internal refactors, manifest changes, and infrastructure details — users don't care about those
+- Group into: "New things you can do", "Things that got better", and optionally "Breaking changes" (if any)
+- Keep each item to one line
+- Max 10 items total — pick the most impactful ones if the changelog is long
+- Use plain language, not technical jargon
+
+**Format:**
+
+```
+## What's New in v{new}
+
+New things you can do:
+  - /brainstorm — structured brainstorming sessions with idea capture
+  - /dispatch — hand off complex multi-step tasks to run autonomously
+  - /core-skill-creator — design-first workflow for building core skills
+  - /project-archive — archive completed projects to Archive/YYYY/
+  - People files — your vault now tracks people you interact with (Areas/People/)
+  - Skill configs — customize core skills via ~/.claude/skill-configs/ without editing them
+
+Things that got better:
+  - /compress now saves session transcripts and updates people files
+  - /meeting and /process-inbox automatically maintain people files
+  - Updates are safer — core skills update cleanly, your customizations stay in skill-configs/
+```
+
+If upgrading across multiple versions (e.g., 1.0.0 → 1.2.0), show highlights from each version in order.
+
+If the current and new versions are the same (forced re-install), skip this step.
+
+---
+
 ## Step 3: Present the Plan
 
 Show the user a clear summary:
@@ -83,7 +120,7 @@ Protected (untouched):
   - skill-configs/, state/, crystal.local.yaml, crystal.secrets.yaml, plugins/
 ```
 
-If the user passed `--dry-run`, stop here. Report the plan and exit.
+If the user passed `--dry-run`, stop here. Report the "What's New" summary and the plan, then exit.
 
 ---
 
