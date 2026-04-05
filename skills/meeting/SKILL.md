@@ -103,7 +103,27 @@ notes:
 
 ---
 
-## Step 5: Open in Obsidian
+## Step 5: Update People Files
+
+After creating the meeting note, check attendees against `Areas/People/`:
+
+For each attendee mentioned in the meeting note (from the `people:` frontmatter field):
+
+1. **Search for existing person file:** Glob `${VAULT_PATH}/Areas/People/*.md` for a matching file (by name, case-insensitive). Also check `aliases` in frontmatter of existing person files.
+2. **If file exists:**
+   - Update `last-contact` in frontmatter to today's date
+   - Add an entry to the **Meeting History** section: `- YYYY-MM-DD — {meeting topic} — [[meeting note filename]]`
+3. **If no file exists:**
+   - Create a stub person file at `${VAULT_PATH}/Areas/People/{Name}.md` using the person template (`${VAULT_PATH}/_Templates/person.md`)
+   - Fill in what's known from the meeting context: name (required), role if mentioned, organization if known
+   - Add the meeting to Meeting History: `- YYYY-MM-DD — {meeting topic} — [[meeting note filename]]`
+   - Set `last-contact` to today's date
+
+After updating/creating person files, add wikilinks to each person in the meeting note body. Insert a `people:` line after the topic line if not already present, formatted as: `people: [[Person1]], [[Person2]]`
+
+---
+
+## Step 6: Open in Obsidian
 
 Requires `dangerouslyDisableSandbox: true` for this one call only.
 
@@ -117,12 +137,13 @@ The `vault_name` should be read from `${CONFIG_PATH}` or inferred from the vault
 
 ---
 
-## Step 6: Confirm
+## Step 7: Confirm
 
 ```
 Created: +Inbox/2026-02-04-0915.md
 Meeting: [People] about [Topic]
 Related: [[Previous Note]] (if found)
+People: Updated [[Person1]], created [[Person2]] (stub)
 Opened in Obsidian.
 ```
 
