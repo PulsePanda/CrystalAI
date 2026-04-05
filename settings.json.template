@@ -273,5 +273,62 @@
       "Bash(ufw *)",
       "Bash(firewall-cmd *)"
     ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/session-start.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/find-python.sh ~/.claude/scripts/classify-prompt.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/find-python.sh ~/.claude/scripts/validate-vault-write.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/pre-compact.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Session end checklist:\\n- Run /compress to save session log and reconcile Todoist tasks\\n- Check +Inbox/ for unfiled captures from this session\\n- Any decisions or project updates to file?'"
+          }
+        ]
+      }
+    ]
   }
 }
