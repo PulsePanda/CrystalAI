@@ -128,6 +128,17 @@ Write the file to `${STATE_PATH}/sessions/YYYY-MM-DD-HHmm-topic.md`. Confirm it 
 
 ---
 
+## Step 5b: Archive Session Transcript
+
+Check if a pre-compact backup exists for the current session in `${STATE_PATH}/sessions/pre-compact-backups/`.
+
+- **If a backup exists** (session hit context limit and triggered PreCompact): note the path in the session log under Quick Reference: `Full transcript archived at: [path]`
+- **If no backup exists** (session did not trigger PreCompact): this is best-effort. The current session transcript path may not be available to skills. If the transcript cannot be located, note in the session log: "No transcript backup found — session did not trigger PreCompact" and move on. This is not a blocking step.
+
+All transcript archives (from PreCompact and from /compress) should land in the same directory: `${STATE_PATH}/sessions/pre-compact-backups/`.
+
+---
+
 ## Step 6: Update Daily Note
 
 If the user has a notes app configured with daily notes, update the daily note. If no daily notes path is configured or the file doesn't exist, skip this step.
