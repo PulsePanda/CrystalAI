@@ -83,6 +83,21 @@ See [meeting-note-format.md](references/meeting-note-format.md) for template str
 
 ---
 
+## Step 4b: Update People Files
+
+When processing any inbox capture that names a person, check for people integration:
+
+1. **Identify named people** in the capture — from `people:` frontmatter, explicit mentions in body text, or sender/recipient context.
+2. **For each person identified:**
+   - Glob `${VAULT_PATH}/Areas/People/*.md` for a matching file (by name, case-insensitive). Also check `aliases` in frontmatter.
+   - **If file exists** and the capture contains person-relevant context (contact info, preferences, decisions, observations about them): update the person file with the new context in the appropriate section.
+   - **If no file exists** AND there's enough context (at least name + one other field such as role, organization, email, or a meaningful observation): create a stub person file at `${VAULT_PATH}/Areas/People/{Name}.md` using the person template (`${VAULT_PATH}/_Templates/person.md`). Fill in known fields.
+   - **If no file exists** and there's only a name with no additional context: skip — do not create a person file with only a name.
+3. **For meeting captures** (items with `meeting: true`): also update `last-contact` and add a Meeting History entry, same as `/meeting` Step 5.
+4. Add `[[Person Name]]` wikilinks in the processed note where people are mentioned.
+
+---
+
 ## Step 5: Create Tasks
 
 If the user has a task manager configured (check `${CONFIG_PATH}`):
