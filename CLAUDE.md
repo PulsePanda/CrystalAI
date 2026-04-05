@@ -62,10 +62,18 @@ Rules that apply in every session, every project, every context.
 
 Personal AI assistant — all user-specific context, skills, behavioral rules, state, and integrations. Lives directly in `~/.claude/`, not as a plugin.
 - **Root:** `~/.claude/`
-- **Skills:** All personal skills in `~/.claude/skills/`
+- **Skills:** Core skills + personal skills in `~/.claude/skills/`
+- **Agents:** `~/.claude/agents/` (170+ across 16 categories)
 - **State:** `~/.claude/state/` hierarchy (environments, integrations, entities, behavioral, patterns, memory, operational, sessions, feedback, glossary)
+- **Skill Configs:** `~/.claude/skill-configs/` — per-user YAML customization of core skills
 - **Config:** `~/.claude/crystal.local.yaml` (personal) + `~/.claude/crystal.secrets.yaml` (credential paths)
 - **Architecture:** See `~/.claude/ARCHITECTURE.md` for decision trees, growth protocols, anti-patterns
+
+## Core vs Personal Layer
+
+CrystalAI has two layers. Core files (skills, agents, scripts, commands in the manifest) are updated by the framework — do not edit them directly. Personal files (state/, skill-configs/, custom skills not in the manifest) are yours — never overwritten by updates.
+
+To customize a core skill, create `~/.claude/skill-configs/<skill-name>.yaml`. The core skill reads your config for settings and `post_steps`. See `docs/skill-configs.md` and `docs/core-personal-boundary.md` for full details.
 
 # Plugins
 
