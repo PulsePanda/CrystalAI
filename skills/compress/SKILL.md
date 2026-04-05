@@ -139,6 +139,23 @@ All transcript archives (from PreCompact and from /compress) should land in the 
 
 ---
 
+## Step 5c: Update People Files
+
+Scan the session log's Topics and content for named people. This step is best-effort — do not block compress completion if any people file operation fails.
+
+For each person identified:
+
+1. **Search for existing person file:** Glob `${VAULT_PATH}/Areas/People/*.md` for a matching filename (case-insensitive). If no match by filename, check `aliases` frontmatter in candidate files.
+2. **If file exists:**
+   - Update `last-contact` in frontmatter to today's date.
+   - If the session had significant content about this person (a decision, notable interaction, or new context — not just a passing name mention): append a brief dated note to their **Context** section: `- YYYY-MM-DD — [one-sentence summary] (from [[session-log-filename]])`
+3. **If no file exists AND there's sufficient context** (name + role, organization, or meaningful interaction): create a stub at `${VAULT_PATH}/Areas/People/{Name}.md` using the person template (`${VAULT_PATH}/_Templates/person.md`). Fill in what's known: name (required), role if mentioned, organization if known. Set `last-contact` to today's date.
+4. **If only a name with no additional context:** skip — do not create a stub.
+
+Include a one-line people summary in the compress output: `People: Updated [[Person1]], [[Person2]] — skipped Name (no context)`
+
+---
+
 ## Step 6: Update Daily Note
 
 If VAULT_PATH is set (check `crystal.local.yaml` — it is always set), proceed with this step.

@@ -58,10 +58,25 @@ Person files use the template at `vault/_Templates/person.md`.
 
 The classifier (in Branch 1) detects person-context signals and injects routing hints. Keywords: "told me", "said that", "feedback from", "met with", "talked to", "spoke with", "mentioned that". When detected, Claude receives a hint to check Areas/People/ for the relevant person.
 
-## Deferred: /compress integration
+## /compress integration
 
-/compress will be updated to check session mentions against Areas/People/ — but that change depends on Branch 1 (lifecycle hooks) merging first. After Branch 1 merges, add to compress: scan session for person names, update last-contact for mentioned people, add significant new context to person files.
+Implemented in Step 5c of /compress. Scans the session log for named people, updates `last-contact` on existing person files, and optionally appends a brief dated note to Context if the session had significant person-related content. Creates stubs only when name + role/org/meaningful interaction is present. Skips name-only mentions.
 
-## Deferred: /process-email integration
+## Process-Email Integration
 
-/process-email integration is documented here but should be implemented when the email processing skill is next modified. The integration: when processing emails, check sender/recipients against Areas/People/, update last-contact, add email context if significant.
+/process-email is a personal skill (not in the core CrystalAI manifest) and cannot be modified here. This section documents how it should integrate with people files when the skill is next updated.
+
+When processing an email or thread:
+
+1. **Identify sender and recipients** from email metadata. For each named person:
+   - Glob `${VAULT_PATH}/Areas/People/*.md` for a matching file (by name or `aliases` in frontmatter, case-insensitive).
+   - **If file exists:** update `last-contact` in frontmatter to the email date.
+   - **If file exists and the email contains significant person-relevant content** (decisions made, action items assigned to or from them, notable context about the relationship): add a brief timestamped note to the **Context** or **Notes** section of their person file.
+   - **If no file exists** and this person is a frequent correspondent with enough context (at least name + email address or organization): suggest creating a stub. Do not auto-create without user confirmation.
+   - **If no file exists** and there is minimal context (name only, one-off contact): skip — do not create a person file.
+
+2. **Significant content threshold:** An email qualifies for a Context/Notes update if it contains a decision, a commitment, a preference, or meaningful background about the person — not routine scheduling or acknowledgments.
+
+3. **Wikilinks:** Where the processed email output references people by name, add `[[Person Name]]` wikilinks.
+
+This behavior is implemented in the user's personal `/process-email` skill, not in core. The source-of-truth table above already reflects the intended behavior (`/process-email` → updates existing, does not create new).
