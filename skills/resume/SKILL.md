@@ -19,6 +19,17 @@ Restore context from the previous session and orient for today's work.
 
 ---
 
+## Configuration
+
+This skill reads from `~/.claude/skill-configs/resume.yaml` if present. Available options:
+- `calendars`: List of calendar names to query (default: all available calendars)
+- `lookahead_days`: How many days ahead to show (default: 1)
+- `post_steps`: Additional skills to run after resume completes (e.g., server health checks)
+
+If no config file exists, the skill queries all available calendars and skips post_steps.
+
+---
+
 ## Steps
 
 Run Steps 0-4 in parallel, then present the summary.
@@ -49,7 +60,7 @@ If no task manager is configured, skip this section silently.
 
 ### Step 3: Query Today's Calendar (if configured)
 
-Check `${CONFIG_PATH}` for calendar configuration. If calendar names or a calendar integration is configured:
+Read the calendar list from `skill-configs/resume.yaml` if it exists. If no config, query all available calendars. If calendar names or a calendar integration is configured:
 - Query only the user's configured calendars
 - Do NOT query without a calendar filter — respect the user's calendar whitelist
 - If a calendar returns no events, skip it silently
@@ -60,7 +71,7 @@ If no calendar is configured, skip this section silently.
 
 **Projects:** If a vault path is configured, glob `${VAULT_PATH}/Projects/*.md` and `${VAULT_PATH}/Projects/*/`, exclude templates and `Archive/`. If no vault is configured, check `${STATE_PATH}/` for any project tracking files, or skip this section. Read each project file with `limit: 5` to get frontmatter. **Only surface projects where `status` is `active`.** Skip `planned`, `on-hold`, `completed`, and `archived`.
 
-**Today's daily note:** Check if today's note exists at `${VAULT_PATH}/Daily Notes/YYYY-MM-DD.md`. If it exists, read it for context. If a daily note template is configured and the note doesn't exist, create it from the template. Get the day name via `date '+%A'` (never guess).
+**Today's daily note:** Check if today's note exists at `${VAULT_PATH}/Daily Notes/YYYY-MM-DD.md`. If it exists, read it for context. If it does not exist, create it: use `${VAULT_PATH}/_Templates/daily-note.md` if the template exists (substituting `{{date}}` → YYYY-MM-DD and `{{day}}` → day name from `date '+%A'`); otherwise create a minimal note with `# YYYY-MM-DD, Day` and a `## Session Summaries` section. Get the day name via `date '+%A'` (never guess).
 
 ---
 
@@ -101,3 +112,9 @@ If a search term was given, use the Grep tool to search `${STATE_PATH}/sessions/
 - **Task manager unavailable:** Note it, continue with vault context
 - **Calendar unavailable:** Note it, continue
 - **No active projects:** Skip the projects section
+
+---
+
+## Post Steps
+
+After all steps complete, check `skill-configs/resume.yaml` for `post_steps` and execute each listed skill.

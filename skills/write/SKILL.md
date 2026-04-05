@@ -20,11 +20,21 @@ Write emails, messages, or other content in the user's personal writing style. T
 - `/write a reply to the vendor about the pricing proposal`
 - `/write a message to the client following up on the demo`
 
+## Configuration
+
+This skill reads from `~/.claude/skill-configs/write.yaml` if present. Available options:
+- `writing_style_path`: Path to the writing style file (default: `~/.claude/state/behavioral/writing-style.md`)
+- `email_draft_method`: How to create email drafts — "apple_mail", "gmail_api", or "inline" (default: inline)
+- `substack_delivery`: How to deliver Substack posts — "safari_html" or "inline" (default: inline)
+- `post_steps`: Additional skills to run after writing completes
+
+---
+
 ## How It Works
 
 ### Step 1: Load Writing Style + Rules
 
-1. Read `state/behavioral/writing-style.md` for the user's voice patterns (populated by `/teach`)
+1. Read the writing style from the path specified in `skill-configs/write.yaml` (or default `~/.claude/state/behavioral/writing-style.md`). If the file doesn't exist, use basic style defaults. The style guide is populated by `/teach`.
 2. Read `references/writing-rules.md` for accumulated rules learned from previous corrections
 3. Identify which rules are relevant to this draft (by recipient, content type, context)
 

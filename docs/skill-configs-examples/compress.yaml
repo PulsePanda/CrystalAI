@@ -1,0 +1,11 @@
+# /compress skill configuration
+# Copy to ~/.claude/skill-configs/compress.yaml and customize
+
+# Where to save session transcripts
+transcript_path: "~/.claude/state/sessions/"
+
+# Whether to reconcile Todoist tasks during compress
+todoist_reconcile: true
+
+# Additional skills to run after compress completes
+post_steps: []
