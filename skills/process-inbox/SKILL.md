@@ -9,6 +9,15 @@ allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 
 Transform rough notes from the inbox into structured, properly categorized content with action items.
 
+## Configuration
+
+This skill reads from `~/.claude/skill-configs/process-inbox.yaml` if present. Available options:
+- `post_steps`: Additional skills to run after inbox processing (e.g., brag book detection, content idea scanning)
+
+If no config file exists, the skill processes inbox items without additional post-processing.
+
+---
+
 ## Steps
 
 1. List inbox files + check Siri captures (if configured)
@@ -123,6 +132,12 @@ Processed 2 items:
 
 Inbox is empty.
 ```
+
+---
+
+## Post Steps
+
+After Step 7, check `skill-configs/process-inbox.yaml` for `post_steps` and execute each listed skill, passing the list of processed items as context.
 
 ---
 

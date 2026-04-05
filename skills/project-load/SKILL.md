@@ -17,6 +17,15 @@ This skill handles both formats and is the bridge between ad-hoc work and persis
 
 ---
 
+## Configuration
+
+This skill reads from `~/.claude/skill-configs/project-load.yaml` if present. Available options:
+- `task_manager`: Integration to use for task pull (e.g., "todoist"). Default: none.
+- `todoist_task_pull`: Whether to search Todoist for matching project tasks (default: false)
+- `post_steps`: Additional skills to run after project load completes
+
+---
+
 ## Arguments
 
 - `/project-load` — list all projects with their format (file vs folder)
@@ -89,6 +98,12 @@ Loaded files:
 ```
 
 If there are more than 15 files, read only `_project.md` and list the others — then ask which ones to load. Large projects shouldn't blow up context.
+
+---
+
+## Step 3b: Todoist Task Pull (conditional)
+
+If `task_manager: todoist` is set in config, search Todoist for a matching project after presenting the Obsidian summary. Use `mcp__todoist__find-projects` with the project name, pull tasks grouped by section, and append to the summary.
 
 ---
 

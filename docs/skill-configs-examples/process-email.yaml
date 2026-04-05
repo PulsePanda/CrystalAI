@@ -1,0 +1,12 @@
+# /process-email skill configuration
+# Copy to ~/.claude/skill-configs/process-email.yaml and customize
+
+# Email accounts to process (in priority order)
+accounts:
+  - personal
+
+# Training mode (present all classifications for confirmation)
+training_mode: true
+
+# Additional skills to run after email processing
+post_steps: []

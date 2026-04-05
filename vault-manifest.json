@@ -1,6 +1,6 @@
 {
   "template": "crystalai",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "released": "2026-04-05",
   "classifications": {
     "infrastructure": [
@@ -206,20 +206,18 @@
       "plugins/README.md",
       "ARCHITECTURE.md",
       "LICENSE",
-      "README.md"
-    ],
-    "scaffold": [
-      "CLAUDE.md",
-      "settings.json.template",
-      "state/behavioral/communication.md.template",
-      "state/behavioral/user-preferences.md.template",
-      "scripts/install.sh",
-      "scripts/install.bat",
-      "scripts/gws-windows.bat",
-      "scripts/README.md"
-    ],
-    "merge_required": [
+      "README.md",
       "skills/auto-fix/SKILL.md",
+      "skills/dispatch/SKILL.md",
+      "skills/dispatch/references/agent-selection-guide.md",
+      "skills/dispatch/references/executor-prompt.md",
+      "skills/dispatch/references/feasibility-guide.md",
+      "skills/dispatch/references/judge-one-prompt.md",
+      "skills/dispatch/references/judge-two-prompt.md",
+      "skills/dispatch/references/planner-prompt.md",
+      "skills/dispatch/references/record-template.md",
+      "skills/dispatch/references/red-lines.md",
+      "skills/brainstorm/SKILL.md",
       "skills/calendar-booking/SKILL.md",
       "skills/calendar-booking/references/availability-rules.md",
       "skills/calendar-booking/references/scheduling-preferences.md",
@@ -227,6 +225,7 @@
       "skills/compress/examples/example-session.md",
       "skills/compress/references/session-format.md",
       "skills/compress/references/task-extraction.md",
+      "skills/core-skill-creator/SKILL.md",
       "skills/deep-research/README.md",
       "skills/deep-research/SKILL.md",
       "skills/deep-research/reference/continuation.md",
@@ -271,6 +270,16 @@
       "skills/write/SKILL.md",
       "skills/write/references/writing-rules.md"
     ],
+    "scaffold": [
+      "CLAUDE.md",
+      "settings.json.template",
+      "state/behavioral/communication.md.template",
+      "state/behavioral/user-preferences.md.template",
+      "scripts/install.sh",
+      "scripts/install.bat",
+      "scripts/gws-windows.bat",
+      "scripts/README.md"
+    ],
     "vault_structure": [
       "vault/README.md",
       "vault/_Templates/daily-note.md",
@@ -291,7 +300,8 @@
     "state/environments/*",
     "state/integrations/*",
     "state/patterns/*",
-    "plugins/*"
+    "plugins/*",
+    "skill-configs/*"
   ],
   "version_fingerprints": {
     "pre_manifest": {
@@ -311,5 +321,27 @@
       "vault/Projects",
       "vault/_Templates"
     ]
+  },
+  "layer_rules": {
+    "core": {
+      "description": "Framework files shipped by CrystalAI. Overwritten on update. Users must not edit these.",
+      "classifications": ["infrastructure"],
+      "update_behavior": "overwrite"
+    },
+    "core_template": {
+      "description": "Files that seed personal configuration on first install. Merged on update if user has customized.",
+      "classifications": ["scaffold"],
+      "update_behavior": "merge_if_customized"
+    },
+    "personal": {
+      "description": "User data and customizations. Never touched by updates.",
+      "paths": "protected_paths",
+      "update_behavior": "never_touch"
+    },
+    "vault": {
+      "description": "Vault directory structure and templates. Create if missing, skip if exists with content.",
+      "classifications": ["vault_structure"],
+      "update_behavior": "create_if_missing"
+    }
   }
 }

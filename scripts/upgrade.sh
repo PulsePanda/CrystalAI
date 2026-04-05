@@ -242,7 +242,7 @@ if [[ ! -d "$TARGET_DIR" ]]; then
     mkdir -p "$TARGET_DIR"
 fi
 
-# --- Phase 2: Backup ---
+# --- Phase 2: Backup (skip in dry-run mode) ---
 
 TS="$(timestamp)"
 if [[ "$TARGET_DIR" == "$HOME/.claude" ]]; then
@@ -251,12 +251,20 @@ else
     BACKUP_DIR="${TARGET_DIR}-backup-$TS"
 fi
 
-info "Creating backup: $BACKUP_DIR"
-cp -a "$TARGET_DIR" "$BACKUP_DIR"
-ok "Backup complete: $BACKUP_DIR"
-echo ""
+if [[ "$DRY_RUN" -eq 0 ]]; then
+    info "Creating backup: $BACKUP_DIR"
+    cp -a "$TARGET_DIR" "$BACKUP_DIR"
+    ok "Backup complete: $BACKUP_DIR"
+    echo ""
+else
+    BACKUP_DIR="(dry-run — no backup created)"
+fi
 
 if [[ "$BACKUP_ONLY" -eq 1 ]]; then
+    if [[ "$DRY_RUN" -eq 1 ]]; then
+        fail "Cannot use --backup-only with --dry-run"
+        exit 1
+    fi
     echo "BACKUP_PATH=$BACKUP_DIR"
     ok "Backup-only mode. Exiting."
     exit 0
@@ -267,13 +275,11 @@ fi
 # Counters
 INFRA_NEW=0; INFRA_UPDATE=0; INFRA_SKIP=0
 SCAFF_NEW=0; SCAFF_UPDATE=0; SCAFF_CUSTOM=0
-MERGE_COUNT=0
 VAULT_CREATE=0; VAULT_ADD=0; VAULT_SKIP=0
 
 # Plan lines (collected as arrays)
 declare -a PLAN_INFRA=()
 declare -a PLAN_SCAFFOLD=()
-declare -a PLAN_MERGE=()
 declare -a PLAN_VAULT=()
 
 # Track files for execution phase
@@ -362,44 +368,6 @@ while IFS= read -r relpath; do
     fi
 done <<< "$scaff_files"
 
-# --- Merge-required files ---
-
-merge_files="$(json_array "$MANIFEST" "merge_required")"
-while IFS= read -r relpath; do
-    [[ -z "$relpath" ]] && continue
-    src="$SOURCE_DIR/$relpath"
-    tgt="$TARGET_DIR/$relpath"
-
-    src_hash=""
-    tgt_hash=""
-    status="NEW"
-
-    if [[ -f "$src" ]]; then
-        src_hash="$(sha256_of "$src")"
-        VERSION_HASHES+=("\"$relpath\": \"sha256:$src_hash\"")
-    fi
-
-    if [[ -f "$tgt" ]]; then
-        tgt_hash="$(sha256_of "$tgt")"
-        if [[ "$src_hash" == "$tgt_hash" ]]; then
-            status="UNCHANGED"
-        else
-            status="MODIFIED_BOTH"
-        fi
-    fi
-
-    # Check for user-only files (exist in target but not in source manifest
-    # as a real file — handled by the AI agent)
-    src_display="${src_hash:0:12}"
-    tgt_display="${tgt_hash:0:12}"
-    [[ -z "$src_hash" ]] && src_display="—"
-    [[ -z "$tgt_hash" ]] && tgt_display="—"
-
-    PLAN_MERGE+=("| $relpath | $src_display | $tgt_display | $status |")
-    AI_MERGE_FILES+=("$relpath")
-    MERGE_COUNT=$((MERGE_COUNT + 1))
-done <<< "$merge_files"
-
 # --- Vault structure ---
 
 # Determine vault path: check crystal.local.yaml, fall back to target/vault/
@@ -445,8 +413,13 @@ while IFS= read -r relpath; do
     elif [[ -f "$src" ]]; then
         # It's a template file
         parent_dir="$(dirname "$tgt")"
+        src_basename="$(basename "$src")"
         if [[ -f "$tgt" ]]; then
             PLAN_VAULT+=("| $relpath | SKIP | Already exists |")
+            VAULT_SKIP=$((VAULT_SKIP + 1))
+        elif [[ "$src_basename" == ".gitkeep" && -d "$parent_dir" ]]; then
+            # .gitkeep is only needed to track empty dirs in git — skip if dir has content
+            PLAN_VAULT+=("| $relpath | SKIP | Directory exists with content |")
             VAULT_SKIP=$((VAULT_SKIP + 1))
         elif [[ -d "$parent_dir" ]]; then
             PLAN_VAULT+=("| $relpath | ADD_TEMPLATE | Directory exists, template missing |")
@@ -474,7 +447,7 @@ while IFS= read -r relpath; do
 done <<< "$vault_items"
 
 # --- Read protected list for display ---
-protected_files="$(json_array "$MANIFEST" "protected")"
+protected_files="$(json_array "$MANIFEST" "protected_paths")"
 
 # --- Phase 4: Generate Plan ---
 
@@ -494,7 +467,6 @@ PLAN_FILE="$TARGET_DIR/upgrade-plan.md"
     echo "## Summary"
     echo "- Infrastructure: $INFRA_NEW new, $INFRA_UPDATE updated, $INFRA_SKIP unchanged"
     echo "- Scaffold: $SCAFF_NEW new, $SCAFF_UPDATE updated, $SCAFF_CUSTOM customized (AI merge needed)"
-    echo "- Skills/Merge: $MERGE_COUNT files (AI merge)"
     echo "- Vault: $VAULT_CREATE directories to create, $VAULT_ADD templates to add, $VAULT_SKIP skipped"
     echo ""
 
@@ -519,18 +491,6 @@ PLAN_FILE="$TARGET_DIR/upgrade-plan.md"
         done
     else
         echo "| (none) | — | — |"
-    fi
-    echo ""
-
-    echo "## Skills / Merge Required (AI merge required)"
-    echo "| File | Source SHA | Target SHA | Status |"
-    echo "|------|-----------|------------|--------|"
-    if [[ ${#PLAN_MERGE[@]} -gt 0 ]]; then
-        for line in "${PLAN_MERGE[@]}"; do
-            echo "$line"
-        done
-    else
-        echo "| (none) | — | — | — |"
     fi
     echo ""
 
@@ -574,6 +534,13 @@ fi
 COPIED=0
 UPDATED=0
 DIRS_CREATED=0
+
+# Ensure skill-configs directory exists (personal layer, never overwritten)
+SKILL_CONFIGS_DIR="$TARGET_DIR/skill-configs"
+if [[ ! -d "$SKILL_CONFIGS_DIR" ]]; then
+    mkdir -p "$SKILL_CONFIGS_DIR"
+    info "Created skill-configs directory: $SKILL_CONFIGS_DIR"
+fi
 
 # Create directories
 for dir in "${EXEC_MKDIR[@]+"${EXEC_MKDIR[@]}"}"; do
@@ -653,7 +620,7 @@ echo "  Backup:       $BACKUP_DIR"
 echo ""
 
 if [[ ${#AI_MERGE_FILES[@]} -gt 0 ]]; then
-    echo "Run /vault-upgrade to complete AI-assisted merges."
+    echo "Run /vault-upgrade to complete AI-assisted merges for customized scaffold files (CLAUDE.md, settings.json, etc.)."
 else
     ok "Upgrade complete. No AI merges needed."
 fi

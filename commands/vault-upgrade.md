@@ -59,7 +59,7 @@ cat "$HOME/.claude/upgrade-plan.md"
 Parse the plan to extract:
 - Current version and new version
 - Counts per classification: infrastructure, scaffold (unmodified), scaffold (customized), new templates
-- List of files classified as `merge_required` or `customized`
+- List of scaffold files classified as `customized` (settings.json, CLAUDE.md)
 - List of protected paths
 
 ---
@@ -72,19 +72,15 @@ Show the user a clear summary:
 CrystalAI Upgrade: v{current} -> v{new}
 
 Auto-updates (safe):
-  - {N} infrastructure files (agents, schemas, docs)
+  - {N} infrastructure files (agents, skills, schemas, docs, scripts)
   - {N} unmodified scaffold files
   - {N} new vault templates
 
 AI-assisted merges needed:
-  - {list each file that needs merge}
-
-Customized files (your review):
-  - CLAUDE.md -- you've customized this; I'll show the diff
-  - {other customized scaffold files}
+  - {list each customized scaffold file, e.g. settings.json, CLAUDE.md}
 
 Protected (untouched):
-  - state/, crystal.local.yaml, crystal.secrets.yaml, plugins/
+  - skill-configs/, state/, crystal.local.yaml, crystal.secrets.yaml, plugins/
 ```
 
 If the user passed `--dry-run`, stop here. Report the plan and exit.
@@ -113,7 +109,7 @@ bash "{SOURCE}/scripts/upgrade.sh" --source "{SOURCE}" --target "$HOME/.claude"
 
 This handles:
 - Backup creation (timestamped in `~/.claude/.backups/`)
-- Infrastructure file copies (always safe to overwrite)
+- Infrastructure file copies (agents, skills, schemas, docs, scripts — always safe to overwrite)
 - Unmodified scaffold file copies (user hasn't changed them)
 - Vault directory creation
 - New template file additions
@@ -130,7 +126,7 @@ If the script exits non-zero, report the error and stop. Do not proceed to merge
 
 ## Step 6: AI-Assisted Merges
 
-For each file the dry-run classified as `merge_required` or `customized`, handle it with AI judgment. The categories below cover the known file types.
+For each scaffold file the dry-run classified as `customized`, handle it with AI judgment. The only files that require AI-assisted merges are settings.json and CLAUDE.md — all other files (skills, scripts, agents, schemas, docs) are core infrastructure and are overwritten deterministically by the script.
 
 ### 6a: settings.json
 
@@ -196,54 +192,43 @@ Keep yours or take the update? (keep/update)
 5. Apply only the approved changes using Edit tool operations
 6. For sections the user wants to keep, leave them untouched
 
-### 6c: Skills
+### 6c: Skill Config Migration (one-time, pre-1.1.0 upgrades only)
 
-For each skill appearing in the merge list:
+This step only runs when the user's installed version (from `.crystal-version.json`) is < 1.1.0. Starting in 1.1.0, skills are core files that get overwritten on every upgrade. Users customize core skills via `~/.claude/skill-configs/<name>.yaml` instead of editing skill files directly.
 
-**New skill (exists only in repo):**
-- Copy the entire skill directory to `~/.claude/skills/{name}/`
-- Tell the user: "Added new skill: {name} -- {description}"
+1. Check the installed version from `~/.claude/.crystal-version.json`
+2. If the version is >= 1.1.0, skip this step entirely — skill configs are already the expected mechanism
+3. If the version is < 1.1.0 (or no version file exists), this is a first-time migration:
 
-**User-created skill (exists only in user's installation):**
-- Leave it completely alone
-- Note: "Keeping your custom skill: {name} (not in repo)"
+   a. Spawn the vault-upgrader agent:
 
-**Both versions exist:**
-1. Compare the installed skill files against the repo skill files
-2. For each file in the skill:
-   - If SHA-256 hashes match -> skip (identical)
-   - If different -> this needs merge attention
-3. For skills with differences, spawn the vault-upgrader agent:
+   ```
+   Scan the user's installed skills at ~/.claude/skills/ against the repo skills at {SOURCE}/skills/.
+   For each skill, compare the installed version to the repo version.
+   Identify any skills where the user has made meaningful customizations
+   (changed references, examples, prompts, or behavioral rules).
+   Ignore whitespace-only or formatting-only differences.
+   Report a list of skills with customizations and what was customized.
+   ```
 
-```
-Analyze both versions of the {name} skill and propose a merge.
+   b. If the agent finds customizations, present them to the user:
 
-Installed version: {path to installed skill}
-Repo version: {path to repo skill}
+   ```
+   Skill Config Migration (one-time)
 
-The user may have customized references, examples, or the SKILL.md itself.
-Propose a merged version that preserves user customizations while incorporating
-new features or fixes from the repo.
-```
+   Starting in v1.1.0, skills are core files updated automatically.
+   Your customizations now go in skill-configs/ instead.
 
-4. Present the agent's proposed merge to the user for approval
-5. Apply only if approved
+   I found customizations in these skills:
+     - {skill-name}: {brief description of what was customized}
+     - ...
 
-### 6d: Scripts
+   I can create skill-config files to preserve your customizations.
+   Proceed? (yes/no)
+   ```
 
-For each script in the repo's `scripts/` directory:
-
-**Not installed:** Copy it to `~/.claude/scripts/`. Tell the user.
-
-**Installed and identical (SHA-256 match):** Skip silently.
-
-**Installed and different:**
-1. Show the diff:
-```bash
-diff "$HOME/.claude/scripts/{filename}" "{SOURCE}/scripts/{filename}"
-```
-2. Ask: "Your {filename} differs from the repo. Keep yours, take the update, or merge? (keep/update/merge)"
-3. If merge, show both versions and propose a combined version for approval
+   c. If approved, create `~/.claude/skill-configs/<name>.yaml` for each customized skill, extracting the user's customizations into the config format
+   d. If no customizations are found, report: "No skill customizations detected. Skills will update cleanly going forward."
 
 ---
 
@@ -287,19 +272,19 @@ Confirm it contains the new version number and a timestamp.
 Upgrade complete: v{old} -> v{new}
 
 Updated:
-  - {N} infrastructure files
+  - {N} infrastructure files (agents, skills, schemas, docs, scripts)
   - {N} scaffold files (auto)
-  - {list of AI-merged files}
+  - {list of AI-merged files, if any}
 
 New:
   - {N} new files added
-  - {list of new skills/templates}
+  - {list of new templates}
 
 Skipped:
   - {list of files user chose to keep}
 
 Protected:
-  - state/, crystal.local.yaml, crystal.secrets.yaml, plugins/
+  - skill-configs/, state/, crystal.local.yaml, crystal.secrets.yaml, plugins/
 
 Backup: {backup_path}
 ```
@@ -328,7 +313,7 @@ Then append:
 ## Upgrade: v{old} -> v{new} -- {YYYY-MM-DD}
 - Infrastructure: {N} updated, {N} new
 - Scaffold: {N} updated, {N} customized (AI merged)
-- Skills: {N} merged, {N} new, {N} user-only
+- Skill configs migrated: {yes/no/N/A}
 - Vault: {N} dirs created, {N} templates added
 - Backup: {backup_path}
 ```
@@ -350,6 +335,7 @@ Then append:
 
 - This command never modifies `crystal.secrets.yaml` or any file containing credential paths
 - The `state/` directory is never overwritten -- it contains user data
+- The `skill-configs/` directory is personal -- never overwritten by updates
 - Plugins are never touched -- they have their own update mechanisms
 - All changes are previewed before execution
 - A timestamped backup is always created before any modifications

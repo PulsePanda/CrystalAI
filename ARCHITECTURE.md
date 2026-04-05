@@ -34,6 +34,8 @@ Is this human-authored content that exists without an AI agent?
     Is it general reference that doesn't fit above? -> state/memory/
 ```
 
+> **Note:** CrystalAI includes a built-in `vault/` folder (`~/.claude/vault/`) for users who don't have an existing notes app. This is a supported location for daily notes, projects, and area content. The decision tree above describes the conceptual boundary — not a hard filesystem rule.
+
 ---
 
 ## State Hierarchy
@@ -131,6 +133,21 @@ my-plugin/
 ### When to create a plugin vs. adding to base:
 - **Base**: Personal productivity, general-purpose skills, universal behavioral rules
 - **Plugin**: Domain-specific workflows (business ops, specific project tooling, team conventions)
+
+---
+
+## Vault
+
+`vault/` is CrystalAI's built-in memory layer for long-term, human-readable content. It ships with the repo and lives at `~/.claude/vault/` after install. It is a first-class component alongside `skills/`, `state/`, and `agents/`.
+
+Structure:
+- `vault/+Inbox/` — quick captures
+- `vault/Daily Notes/` — one file per day, auto-created by `/resume` and `/compress`
+- `vault/Projects/` — project tracking files
+- `vault/Areas/` — life and work area notes
+- `vault/_Templates/` — note templates (`daily-note.md` is used automatically)
+
+Users who prefer a different notes app (Obsidian, Notion, etc.) can point `vault_path` in `crystal.local.yaml` to their existing folder. The built-in vault is always available as the default.
 
 ---
 

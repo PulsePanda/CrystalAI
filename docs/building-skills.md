@@ -158,3 +158,75 @@ Claude reads these files at runtime when the skill tells it to.
 **Error handling:** Include a section on what to do when things fail. At minimum: "If [operation] fails, report the error and continue with the remaining steps."
 
 **Composing with other skills:** Skills can invoke other skills. For example, `/compress` invokes `/docs` at the end. Reference them by name: "Invoke the `/docs` skill to update documentation."
+
+---
+
+## Making a Skill Config-Aware
+
+If your skill ships as part of CrystalAI core, it gets overwritten on update. Users customize its behavior through a config file in `~/.claude/skill-configs/`. Here's how to wire that up.
+
+### 1. Check for a Config File
+
+At the start of your skill instructions, add a step that reads the config:
+
+```markdown
+### Step 0: Load Config
+
+Read `~/.claude/skill-configs/<skill-name>.yaml` if it exists. If the file is missing, use these defaults:
+
+- `some_setting`: "default_value"
+- `another_setting`: true
+- `pre_steps`: []
+- `post_steps`: []
+```
+
+List every config field and its default value. The skill must work identically whether or not the config file exists.
+
+### 2. Process `pre_steps`
+
+Before your skill's main logic, check if the config defines `pre_steps`. If it does, invoke each skill in order:
+
+```markdown
+### Step 1: Pre-Steps
+
+If the config defines `pre_steps`, invoke each skill in order before continuing. Each entry has a `skill` name and an optional `description`.
+```
+
+### 3. Do Your Thing
+
+The rest of your skill runs as normal, using config values wherever the user might want to customize behavior.
+
+### 4. Process `post_steps`
+
+After your skill's main logic completes, check for `post_steps` and invoke each one:
+
+```markdown
+### Step N: Post-Steps
+
+If the config defines `post_steps`, invoke each skill in order. Each entry has a `skill` name and an optional `description`.
+```
+
+### 5. Document Your Config Fields
+
+Create an example config in `docs/skill-configs-examples/<skill-name>.yaml` with every field, its default value, and a comment explaining what it does. Users copy this file to `~/.claude/skill-configs/` and edit it.
+
+### Full Pattern
+
+```markdown
+### Step 0: Load Config
+Read `~/.claude/skill-configs/my-skill.yaml` if it exists. Defaults:
+- `format`: "markdown"
+- `pre_steps`: []
+- `post_steps`: []
+
+### Step 1: Pre-Steps
+If config defines `pre_steps`, invoke each skill in order.
+
+### Step 2: Main Logic
+... your skill's actual work, using config values ...
+
+### Step 3: Post-Steps
+If config defines `post_steps`, invoke each skill in order.
+```
+
+See `docs/skill-configs.md` for the full system design and `docs/skill-configs-examples/` for real examples.

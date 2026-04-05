@@ -1,0 +1,15 @@
+# /resume skill configuration
+# Copy to ~/.claude/skill-configs/resume.yaml and customize
+
+# Which calendars to check (names as they appear in your calendar app)
+calendars:
+  - personal
+  - work
+
+# How many days ahead to show
+lookahead_days: 1
+
+# Additional skills to run after resume completes
+post_steps: []
+#  - skill: jobs
+#    description: "Check job board status"

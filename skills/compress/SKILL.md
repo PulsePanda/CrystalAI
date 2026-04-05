@@ -130,9 +130,21 @@ Write the file to `${STATE_PATH}/sessions/YYYY-MM-DD-HHmm-topic.md`. Confirm it 
 
 ## Step 6: Update Daily Note
 
-If the user has a notes app configured with daily notes, update the daily note. If no daily notes path is configured or the file doesn't exist, skip this step.
+If VAULT_PATH is set (check `crystal.local.yaml` — it is always set), proceed with this step.
 
-Check for today's daily note at `${VAULT_PATH}/Daily Notes/YYYY-MM-DD.md`. If it exists, append to the Session Summaries section:
+Check for today's daily note at `${VAULT_PATH}/Daily Notes/YYYY-MM-DD.md`.
+
+If the daily note does NOT exist, create it first:
+1. Check if `${VAULT_PATH}/_Templates/daily-note.md` exists.
+2. If the template exists: copy it, substituting `{{date}}` → today's date (YYYY-MM-DD) and `{{day}}` → day name from `date '+%A'`.
+3. If the template does not exist: create a minimal note:
+   ```markdown
+   # YYYY-MM-DD, Day
+
+   ## Session Summaries
+   ```
+
+Then append to the Session Summaries section:
 
 ```markdown
 ### HH:MM - Session Topic
@@ -144,8 +156,6 @@ Brief summary (1-2 sentences).
 **Tasks created:** X
 **Key outcome:** One sentence
 ```
-
-If the daily note doesn't exist, skip this step — don't create it automatically.
 
 ---
 
