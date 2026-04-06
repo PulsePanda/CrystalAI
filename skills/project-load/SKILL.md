@@ -40,22 +40,29 @@ This skill reads from `~/.claude/skill-configs/project-load.yaml` if present. Av
 
 Given a project name (or partial match):
 
-1. Glob `${VAULT_PATH}/Projects/` for both `*name*.md` files and `*name*/` directories
-2. If **exact match** on folder name → use folder format
-3. If **exact match** on file name → use single-file format
-4. If **multiple matches** → present options and ask which one
-5. If **no match** → tell the user, suggest creating one with `/project`
+1. Run **two Glob calls in parallel:**
+   - `Projects/*name*.md` — finds single-file projects
+   - `Projects/*name*/_project.md` — finds folder projects (by their tracker file)
+2. **Important:** Never use `Projects/*/` to find directories — Glob doesn't reliably match directories. Always glob for `_project.md` inside project folders instead.
+3. If **exact match** on folder name (from `_project.md` path) → use folder format
+4. If **exact match** on file name → use single-file format
+5. If **multiple matches** → present options and ask which one
+6. If **no match** → tell the user, suggest creating one with `/project`
 
 ---
 
 ## Step 2: List Mode (no argument)
 
-If invoked with no project name, scan `${VAULT_PATH}/Projects/` and present a table:
+If invoked with no project name, discover all projects with **two parallel Glob calls:**
+- `Projects/*.md` — single-file projects (exclude `_template*.md`)
+- `Projects/*/_project.md` — folder projects (derive folder name from path; exclude `Archive/`)
+
+Present a table:
 
 | Project | Format | Status |
 |---------|--------|--------|
 
-- Skip template files and the `Archive/` directory
+- Skip template files (`_template*.md`) and the `Archive/` directory
 - **Format:** "file" or "folder"
 - **Status:** read from frontmatter `status:` field (from the `.md` file or `_project.md`)
 - Sort by status: active → planned → on-hold → other

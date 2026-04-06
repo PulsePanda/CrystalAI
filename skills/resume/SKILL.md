@@ -69,7 +69,13 @@ If no calendar is configured, skip this section silently.
 
 ### Step 4: Check Active Projects + Daily Note
 
-**Projects:** If a vault path is configured, glob `${VAULT_PATH}/Projects/*.md` and `${VAULT_PATH}/Projects/*/`, exclude templates and `Archive/`. If no vault is configured, check `${STATE_PATH}/` for any project tracking files, or skip this section. Read each project file with `limit: 5` to get frontmatter. **Only surface projects where `status` is `active`.** Skip `planned`, `on-hold`, `completed`, and `archived`.
+**Projects:** If a vault path is configured, run **two parallel Glob calls:**
+- `${VAULT_PATH}/Projects/*.md` — single-file projects (exclude `_template*.md`)
+- `${VAULT_PATH}/Projects/*/_project.md` — folder projects (derive project name from parent directory; exclude `Archive/`)
+
+**Important:** Never use `Projects/*/` to find directories — Glob doesn't reliably match directories. Always glob for `_project.md` inside project folders instead.
+
+If no vault is configured, check `${STATE_PATH}/` for any project tracking files, or skip this section. Read each project file with `limit: 5` to get frontmatter. **Only surface projects where `status` is `active`.** Skip `planned`, `on-hold`, `completed`, and `archived`.
 
 **Today's daily note:** Check if today's note exists at `${VAULT_PATH}/Daily Notes/YYYY-MM-DD.md`. If it exists, read it for context. If it does not exist, create it: use `${VAULT_PATH}/_Templates/daily-note.md` if the template exists (substituting `{{date}}` → YYYY-MM-DD and `{{day}}` → day name from `date '+%A'`); otherwise create a minimal note with `# YYYY-MM-DD, Day` and a `## Session Summaries` section. Get the day name via `date '+%A'` (never guess).
 
