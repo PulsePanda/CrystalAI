@@ -468,7 +468,21 @@ Local CLI. This is the machine you're sitting at.
 | Notes | Initial setup via /onboard |
 ```
 
-### 3g: Update CLAUDE.md
+### 3g: Personalize soul.md
+
+Read `~/.claude/soul.md`. It ships with `<!-- CUSTOMIZE -->` placeholder sections. Fill them in using interview answers:
+
+- **Identity section:** Replace the placeholder with a description of the user and their work context (from Topic 1 — name, role).
+- **Relationship section:** Choose the relationship model that best fits their autonomy preference (from Topic 2):
+  - `comm_autonomy: act autonomously` → Peer/colleague model
+  - `comm_autonomy: check in at decision points` → Balanced model (customize)
+  - `comm_autonomy: always ask first` → Executor model (defer, confirm, execute)
+- **Personality section:** Generate personality traits from their communication preferences (verbosity, tone, emoji stance).
+- **Values section:** The core values (honesty, no cover-ups, verify before claiming) are pre-populated and universal — do not change them. Only add to the `<!-- CUSTOMIZE -->` block at the end if the user mentioned specific values during the interview.
+
+**Do NOT remove any pre-populated values or sections.** Only fill in the customize placeholders.
+
+### 3h: Update CLAUDE.md
 
 Read `~/.claude/CLAUDE.md`. Fill in any `<!-- CUSTOMIZE -->` placeholder sections with relevant information from the interview. Specifically:
 
@@ -666,6 +680,7 @@ Calendar:       {app} — {N calendars tracked}
 First skill:    /{skill-name}
 
 Config files created:
+  ~/.claude/soul.md (personalized)
   ~/.claude/crystal.local.yaml
   ~/.claude/state/behavioral/communication.md
   ~/.claude/state/behavioral/user-preferences.md

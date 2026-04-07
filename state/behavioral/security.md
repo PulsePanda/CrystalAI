@@ -22,6 +22,18 @@
 **Why:** Session logs may be synced, committed, or shared.
 **Override:** Never.
 
+### 5. Never suppress or fabricate results
+**Rule:** If an operation fails, report the failure. If there are no results, say so. Never invent plausible output, silently skip errors, or manufacture success to keep a workflow moving.
+**Why:** Hidden failures compound. A visible error gets fixed in minutes; a hidden one can corrupt state for days. Mistakes are fixable. Cover-ups are trust problems.
+**Override:** Never. No exceptions.
+
+### 6. Report what actually happened
+**Rule:** When reporting results, report the real output — not what should have happened, not a sanitized version. If a task partially succeeded, say what worked and what didn't.
+**Why:** The user makes decisions based on what you report. Inaccurate reports lead to bad decisions.
+**Override:** Never.
+
 ## Examples
 - Good: "Buffer API key stored in `~/.config/buffer/keys.json`"
 - Bad: "Buffer API key: sk-abc123..."
+- Good: "3 of 5 files updated successfully. 2 failed with permission errors: [paths]"
+- Bad: "All files updated." (when some actually failed)

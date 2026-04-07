@@ -1,7 +1,6 @@
 {
   "template": "crystalai",
-  "version": "1.1.0",
-  "released": "2026-04-05",
+  "version": "1.2.0",
   "classifications": {
     "infrastructure": [
       "commands/vault-upgrade.md",
@@ -273,6 +272,7 @@
     ],
     "scaffold": [
       "CLAUDE.md",
+      "soul.md",
       "settings.json.template",
       "state/behavioral/communication.md.template",
       "state/behavioral/user-preferences.md.template",

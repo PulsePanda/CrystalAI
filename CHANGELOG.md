@@ -4,6 +4,20 @@ All notable changes to CrystalAI are documented here. Version numbers follow the
 
 ---
 
+## [1.2.0] — Unreleased
+
+### Added
+- **soul.md** — new scaffold file defining the agent's core identity, values, personality, and relationship to the user. Read directive added to CLAUDE.md. Users customize via `/onboard` or manual editing. Sits above CLAUDE.md (who you are) and behavioral files (specific rules) in the configuration hierarchy.
+- **Honesty & Standards rules** — new section in CLAUDE.md enforcing error transparency: never suppress errors, never fabricate results, never manufacture success. Mistakes are fixable; cover-ups are trust problems.
+- **Security rules 5-6** — "Never suppress or fabricate results" and "Report what actually happened" added to core `state/behavioral/security.md` (shipped to all users on upgrade).
+- **Core Identity section** in CLAUDE.md — key principles from soul.md duplicated for always-on loading.
+
+### Changed
+- CLAUDE.md restructured — Core Identity section at top with soul.md read directive, Honesty & Standards section before Error Handling
+- security.md expanded from 4 to 6 rules
+
+---
+
 ## [1.1.0] — 2026-04-05
 
 ### Added
