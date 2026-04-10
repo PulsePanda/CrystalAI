@@ -133,6 +133,7 @@ def main():
     if warnings:
         output = {
             "hookSpecificOutput": {
+                "hookEventName": "PostToolUse",
                 "additionalContext": "Vault frontmatter warnings:\n" + "\n".join(f"- {w}" for w in warnings)
             }
         }

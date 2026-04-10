@@ -40,21 +40,24 @@ if [ -s "$HOME/.claude/state/operational/heart-queue" ]; then
     echo ""
 fi
 
-# List active projects (if in a vault directory)
-for vpath in "${VAULT_PATHS[@]}"; do
-    if [ -n "$vpath" ] && [ -d "$vpath/Projects" ]; then
-        ACTIVE=$(find "$vpath/Projects" -maxdepth 2 -name "*.md" -not -path "*/Archive/*" -not -name "_template*" -exec grep -l "status:.*active" {} \; 2>/dev/null | head -10)
-        if [ -n "$ACTIVE" ]; then
-            echo "### Active Projects"
-            echo "$ACTIVE" | while read -r f; do
-                basename "$f" .md | sed 's/_project$//'
-            done
-            echo ""
-            echo "---"
-            echo ""
-        fi
-        break
+# List active projects from ~/Documents/Projects
+PROJECTS_DIR="$HOME/Documents/Projects"
+if [ -d "$PROJECTS_DIR" ]; then
+    ACTIVE=$(find "$PROJECTS_DIR" -maxdepth 3 \( -name "*.md" -o -name "_project.md" \) -not -path "*/archive/*" -not -path "*/_archive/*" -not -path "*/_template/*" -exec grep -l "status:.*active" {} \; 2>/dev/null | head -10)
+    if [ -n "$ACTIVE" ]; then
+        echo "### Active Projects"
+        echo "$ACTIVE" | while read -r f; do
+            name=$(basename "$f" .md)
+            if [ "$name" = "_project" ]; then
+                basename "$(dirname "$f")"
+            else
+                echo "$name"
+            fi
+        done
+        echo ""
+        echo "---"
+        echo ""
     fi
-done
+fi
 
 echo "Run /resume to load full session context (Todoist tasks, behavioral state, integrations)."

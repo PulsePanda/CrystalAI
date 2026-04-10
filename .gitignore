@@ -7,3 +7,14 @@ old/
 **/credentials*.json
 **/token*.json
 *.secret
+
+# Project management (local only)
+_project.md
+_meta/
+
+# Keep the shipped project template (un-ignore template files that would
+# otherwise match the project-management patterns above)
+!vault/Projects/_template/_project.md
+!vault/Projects/_template/_meta/
+!vault/Projects/_template/_meta/*/
+!vault/Projects/_template/_meta/*/.gitkeep

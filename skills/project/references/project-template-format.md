@@ -6,33 +6,27 @@ Reference guide for the structure and sections of project files.
 
 All project files live in:
 ```
-${VAULT_PATH}/Projects/
+~/Documents/Projects/
 ```
 
-## Two Formats
+## Format
 
-### Single-file
-```
-Projects/project-name.md
-```
-A standalone tracking doc for simple initiatives — skill builds, one-off tasks, planning documents.
+Every project uses folder format. No single-file projects.
 
-### Folder
 ```
 Projects/project-name/
-├── _project.md        ← tracker (same structure as single-file)
+├── _project.md        ← tracker
 ├── reference/         Research, specs, background docs
 ├── deliverables/      Outputs, proposals, reports
 └── notes/             Meeting notes, call notes, working notes
 ```
-For projects that accumulate material over time — client engagements, multi-phase initiatives.
 
 ## Filename Convention
 
 - Lowercase project name
 - Spaces replaced with hyphens
 - No special characters
-- `.md` extension (single-file) or directory name (folder)
+- Directory name matches the project name
 
 Examples:
 - "Website Redesign" → `website-redesign`

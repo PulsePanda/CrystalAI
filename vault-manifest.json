@@ -268,7 +268,12 @@
       "skills/teach/SKILL.md",
       "skills/weekly/SKILL.md",
       "skills/write/SKILL.md",
-      "skills/write/references/writing-rules.md"
+      "skills/write/references/writing-rules.md",
+      "scripts/classify-prompt.py",
+      "scripts/find-python.sh",
+      "scripts/pre-compact.sh",
+      "scripts/session-start.sh",
+      "scripts/validate-vault-write.py"
     ],
     "scaffold": [
       "CLAUDE.md",
@@ -286,8 +291,7 @@
       "vault/_Templates/daily-note.md",
       "vault/+Inbox/.gitkeep",
       "vault/Areas/.gitkeep",
-      "vault/Daily Notes/.gitkeep",
-      "vault/Projects/.gitkeep"
+      "vault/Daily Notes/.gitkeep"
     ]
   },
   "protected_paths": [
@@ -319,7 +323,6 @@
       "vault/+Inbox",
       "vault/Areas",
       "vault/Daily Notes",
-      "vault/Projects",
       "vault/_Templates"
     ]
   },

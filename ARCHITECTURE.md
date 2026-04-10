@@ -143,9 +143,10 @@ my-plugin/
 Structure:
 - `vault/+Inbox/` — quick captures
 - `vault/Daily Notes/` — one file per day, auto-created by `/resume` and `/compress`
-- `vault/Projects/` — project tracking files
 - `vault/Areas/` — life and work area notes
 - `vault/_Templates/` — note templates (`daily-note.md` is used automatically)
+
+Projects no longer live inside the vault. They are tracked at `~/Documents/Projects/`, seeded from the `_template/` in that directory. See the `project` and `project-load` skills for the current folder layout (`_project.md` tracker, `CLAUDE.md` for session context, and a `_meta/` directory holding `reference/`, `deliverables/`, and `notes/`). This lets a project directory double as a working code repo with its own git history while keeping project-management files gitignored.
 
 Users who prefer a different notes app (Obsidian, Notion, etc.) can point `vault_path` in `crystal.local.yaml` to their existing folder. The built-in vault is always available as the default.
 

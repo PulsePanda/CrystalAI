@@ -103,6 +103,7 @@ def main():
 
     output = {
         "hookSpecificOutput": {
+            "hookEventName": "UserPromptSubmit",
             "additionalContext": "Prompt classification:\n" + "\n".join(f"- {line}" for line in context_lines)
         }
     }

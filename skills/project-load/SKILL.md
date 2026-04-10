@@ -11,7 +11,7 @@ Load all context for a project into the current session, or file documents into 
 
 Projects in the vault come in two formats:
 - **Single-file:** `project-name.md` — a standalone tracking doc
-- **Folder:** `project-name/` — a directory with `_project.md` tracker plus `reference/`, `deliverables/`, and `notes/` subdirectories for accumulated material
+- **Folder:** `project-name/` — a directory with `_project.md` tracker plus a `_meta/` directory containing `reference/`, `deliverables/`, and `notes/` subdirectories for accumulated material. Some older projects may have `reference/`, `deliverables/`, and `notes/` at the project root instead of under `_meta/` — handle both layouts.
 
 This skill handles both formats and is the bridge between ad-hoc work and persistent project context.
 
@@ -28,11 +28,23 @@ This skill reads from `~/.claude/skill-configs/project-load.yaml` if present. Av
 
 ## Arguments
 
-- `/project-load` — list all projects with their format (file vs folder)
+- `/project-load` — auto-detect local project, or list all projects if not in one
 - `/project-load [name]` — load all context for a specific project
 - `/project-load [name] file [subdir]` — file content into a project folder
   - `subdir` is one of: `reference`, `deliverables`, `notes`
   - If subdir is omitted, ask which one
+
+---
+
+## Step 0: Check Current Working Directory
+
+**Always run this step first, before anything else.**
+
+1. Check if `_project.md` exists in the current working directory (CWD).
+2. If it **does exist** → this is a local project. Skip Step 1/Step 2 entirely and go straight to **Step 3: Load Mode** using the CWD as the project folder. The project name is derived from the CWD folder name.
+3. If it **does not exist** → fall through to Step 1 (named project) or Step 2 (list mode) as before.
+
+This supports the workflow of `cd`-ing into a project directory, launching Claude, and running `/project-load` to immediately load local context without needing to specify a name.
 
 ---
 
@@ -51,21 +63,24 @@ Given a project name (or partial match):
 
 ---
 
-## Step 2: List Mode (no argument)
+## Step 2: List Mode (no argument, no local project)
 
-If invoked with no project name, discover all projects with **two parallel Glob calls:**
+If invoked with no project name **and Step 0 did not find a local `_project.md`**, discover all projects with **two parallel Glob calls:**
 - `Projects/*.md` — single-file projects (exclude `_template*.md`)
 - `Projects/*/_project.md` — folder projects (derive folder name from path; exclude `Archive/`)
 
+Then **read the first ~30 lines of each project file** (the `.md` or `_project.md`) to extract:
+- **Status:** from frontmatter `status:` field
+- **Where we're at:** a 1-sentence summary of current state, pulled from the project's content (look for "Current State", "Status", "Done/In Progress/Next", or the most recent updates section — summarize what's actually happening, not just the frontmatter status)
+
 Present a table:
 
-| Project | Format | Status |
-|---------|--------|--------|
+| Project | Status | Where We're At |
+|---------|--------|----------------|
 
 - Skip template files (`_template*.md`) and the `Archive/` directory
-- **Format:** "file" or "folder"
-- **Status:** read from frontmatter `status:` field (from the `.md` file or `_project.md`)
 - Sort by status: active → planned → on-hold → other
+- The "Where We're At" column is the key value — give a concise, plain-language snapshot of progress
 
 ---
 
@@ -133,9 +148,9 @@ When the user wants to file content into a project folder:
    - If it's research/reference: `descriptive-name.md` (lowercase, hyphenated)
    - If it's a deliverable: `descriptive-name.md`
    - Ask the user to confirm the filename before writing
-5. **Write the file** to `${VAULT_PATH}/Projects/[project-name]/[subdir]/[filename]`
+5. **Write the file** — check if `_meta/` exists in the project. If yes, write to `~/Documents/Projects/[project-name]/_meta/[subdir]/[filename]`. If no `_meta/` (legacy layout), write to `~/Documents/Projects/[project-name]/[subdir]/[filename]`.
 6. **Create subdirectory** if it doesn't exist yet
-7. **Confirm:** "Filed `filename` into `project-name/subdir/`."
+7. **Confirm:** "Filed `filename` into `project-name/_meta/subdir/`." (or `project-name/subdir/` for legacy)
 
 ---
 
@@ -144,7 +159,7 @@ When the user wants to file content into a project folder:
 When a user wants to file something into a single-file project, or explicitly asks to convert:
 
 1. Read the existing `project-name.md`
-2. Create `${VAULT_PATH}/Projects/project-name/` directory
+2. Create `~/Documents/Projects/project-name/` directory
 3. Create subdirectories: `reference/`, `deliverables/`, `notes/`
 4. Move the original `.md` content into `project-name/_project.md`
 5. Delete the original `project-name.md`

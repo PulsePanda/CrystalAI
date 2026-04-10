@@ -11,8 +11,23 @@ All notable changes to CrystalAI are documented here. Version numbers follow the
 - **Honesty & Standards rules** — new section in CLAUDE.md enforcing error transparency: never suppress errors, never fabricate results, never manufacture success. Mistakes are fixable; cover-ups are trust problems.
 - **Security rules 5-6** — "Never suppress or fabricate results" and "Report what actually happened" added to core `state/behavioral/security.md` (shipped to all users on upgrade).
 - **Core Identity section** in CLAUDE.md — key principles from soul.md duplicated for always-on loading.
+- **Project template** — `_template/` directory shipped with `_project.md` tracker, `CLAUDE.md` (project context for Claude sessions), `.gitignore.template` (excludes `_project.md` and `_meta/`), and a `_meta/` directory containing `reference/`, `deliverables/`, and `notes/` subdirectories. Every new project is scaffolded from this template.
+- **Project CLAUDE.md generation** — `/project` now writes a project-local `CLAUDE.md` so any Claude session opened in the project directory immediately understands its context, structure, and key files.
+- **`/project-load` local detection** — Step 0 now checks the current working directory for a `_project.md` first. `cd` into a project folder, launch Claude, run `/project-load`, and it auto-loads local context without a name argument.
+- **Active project discovery in session-start.sh** — now scans `~/Documents/Projects/` and surfaces active projects by reading `_project.md` or top-level `.md` trackers.
 
 ### Changed
+- **Projects moved out of the vault** — tracked at `~/Documents/Projects/` rather than `vault/Projects/`. Rationale: a project directory can double as a working code repo with its own git history. Project-management files (`_project.md`, `_meta/`) are gitignored so they never pollute committed code. `vault/Projects/` removed from `vault_structure` and `directories` in `vault-manifest.json`; `session-start.sh` updated to read from `~/Documents/Projects/`. ARCHITECTURE.md updated.
+- **Every project is folder-format** — single-file projects are gone. `/project` always scaffolds a folder with `_project.md`, `CLAUDE.md`, `.gitignore`, and `_meta/{reference,deliverables,notes}/`. Keeps the layout consistent and means every project is ready to receive material from day one. `/project-load` handles both the new `_meta/` layout and the legacy layout where `reference/`, `deliverables/`, `notes/` sat at the project root.
+- **`/project-load` list mode** — now reads each project's `_project.md` and summarizes "where we're at" in a single sentence, instead of just printing format + frontmatter status.
+- **`/resume` runs silently** — no intermediate narration while gathering data; the Summary Format is the only user-facing output.
+- **`/resume` calendar and briefing steps are config-driven** — `skill-configs/resume.yaml` now supports `calendars` (list of shell commands), `calendar_whitelist`, and `briefing_file`. When any of these are unset the corresponding step is skipped silently, so the core skill ships with no personal calendars or email source baked in.
+
+### Fixed
+- **UserPromptSubmit hook was broken** — `scripts/classify-prompt.py` was emitting `hookSpecificOutput` without the required `hookEventName` field, which failed Claude Code's hook schema validation and caused the on-user-message hook to error out. Both `classify-prompt.py` and `validate-vault-write.py` now include `hookEventName` in their output.
+- **`Bash(type *)` duplicated in `settings.json.template`** — the rule appeared twice (once in the Unix section, once in the Windows section). Duplicate removed; the single rule covers both platforms.
+- **Project CLAUDE.md template had a hardcoded owner name** — `vault/Projects/_template/CLAUDE.md` and the `/project` skill both used a hardcoded "Austin VanAlstyne" value. Replaced with a `PROJECT_OWNER` placeholder and a Step 1 instruction that reads owner from `soul.md` / `crystal.local.yaml` / `git config` before falling back to "TBD".
+- **Hook scripts missing from manifest** — `classify-prompt.py`, `find-python.sh`, `pre-compact.sh`, `session-start.sh`, and `validate-vault-write.py` were present in the repo but absent from `vault-manifest.json`. Fresh installs picked them up via the initial `git clone`, but existing installs on the manifest-driven `upgrade.sh` path never received them, so any user who enabled hooks from `settings.json.template` ended up pointing at nonexistent scripts. All five are now listed under `classifications.infrastructure` and will be shipped on upgrade.
 - CLAUDE.md restructured — Core Identity section at top with soul.md read directive, Honesty & Standards section before Error Handling
 - security.md expanded from 4 to 6 rules
 

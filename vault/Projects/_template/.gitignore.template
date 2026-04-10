@@ -1,0 +1,10 @@
+# Project management (local only)
+_project.md
+_meta/
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.local

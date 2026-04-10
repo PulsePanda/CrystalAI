@@ -11,7 +11,7 @@ Key sections to read during resume:
 
 ## Project Files
 
-**Location:** `${VAULT_PATH}/Projects/project-name.md` or `${VAULT_PATH}/Projects/project-name/_project.md`
+**Location:** `~/Documents/Projects/project-name.md` or `~/Documents/Projects/project-name/_project.md`
 
 Frontmatter `status` field is the source of truth:
 - `active` — show in resume summary

@@ -166,7 +166,6 @@
       "Bash(systeminfo)",
       "Bash(ver)",
       "Bash(reg query *)",
-      "Bash(type *)",
       "Bash(copy *)",
       "Bash(move *)",
       "Bash(del *)",
