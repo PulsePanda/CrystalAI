@@ -1,0 +1,113 @@
+# Default exclusion list for project-handoff skill.
+# One pattern per line. Blank lines and lines starting with # are ignored.
+# Format is rsync-compatible: trailing slash means directory.
+# Pass to rsync via --exclude-from=<this-file>.
+
+# ─── Version control ───
+.git/
+.gitignore.bak
+.hg/
+.svn/
+
+# ─── macOS / editor junk ───
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.cursor/
+.fleet/
+*.swp
+*.swo
+.netrwhist
+
+# ─── Environment files ───
+# (NEVER ship these — they contain secrets)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*.local
+
+# ─── Logs and caches ───
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.cache/
+.parcel-cache/
+.turbo/
+.eslintcache
+.stylelintcache
+
+# ─── Node / JavaScript / TypeScript ───
+node_modules/
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+.astro/
+.vercel/
+.netlify/
+.firebase/
+.wrangler/
+.output/
+coverage/
+.nyc_output/
+.vitest-cache/
+tsconfig.tsbuildinfo
+
+# ─── Python ───
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+.venv/
+venv/
+env/
+.Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.tox/
+.hypothesis/
+.ipynb_checkpoints/
+.pdm-python
+.pdm-build/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ─── Rust ───
+target/
+
+# ─── Go ───
+# vendor/ is intentionally NOT excluded — many Go projects commit it
+
+# ─── Ruby ───
+.bundle/
+vendor/bundle/
+tmp/
+
+# ─── Java / JVM ───
+target/
+*.class
+
+# ─── PHP ───
+vendor/
+composer.phar
+
+# ─── CrystalAI local project tracking ───
+# (Austin-specific: these are personal trackers that should not be shipped)
+_project.md
+_meta/
+
+# ─── Generated archive artifacts ───
+*.zip
+*.tar.gz
+*.tgz
