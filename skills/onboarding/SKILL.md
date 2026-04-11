@@ -562,9 +562,9 @@ For each failure, provide a **specific, actionable fix instruction**. Don't just
 
 ---
 
-## Phase 5: Tool Installation (~5-10 min, instructor-led)
+## Phase 5: Tool Installation (~5-10 min, mixed AI + instructor)
 
-Phase 4 identified which integrations are working and which need setup. This phase hands off to the instructor for tool installation — many tools (GWS, MCP servers, auth flows) require navigating external UIs, managing credentials, and troubleshooting in ways that the AI cannot reliably guide.
+Phase 4 identified which integrations are working and which need setup. Some of this phase the AI can guide directly — notably Google Workspace auth via `crystal-auth`. Some still needs the instructor — MCP servers, platform-specific auth flows, anything that requires navigating external UIs the AI cannot see.
 
 ### 5a: Identify What's Needed
 
@@ -584,25 +584,60 @@ Prioritize:
 2. **Tools needed for core daily workflow** — email, calendar, task manager (whichever they mentioned in the interview).
 3. **Everything else** — can be set up after the session.
 
-### 5b: Hand Off to Instructor
+### 5b: Google Workspace via crystal-auth (AI-led)
 
-**Stop and wait.** Say:
+If the user needs Gmail, Google Calendar, Google Drive, or anything else the `gws` CLI wraps, you can walk them through this directly. The auth server at `auth.buildcrystal.ai` handles the OAuth client_secret on the server side — the student never touches a GCP console, never creates an OAuth client, never downloads credentials.json.
 
-"These tools need to be set up before we can build your first skill. [Instructor name] is going to walk you through this part — I'll be here when you're ready to continue."
+**Pick an account label.** Ask the user what Google account they want to connect. Good labels are short, lowercase, single-word: `personal`, `work`, `school`, etc. If they have multiple accounts they want to connect (common for people with a personal Gmail plus a Google Workspace work account), run this subsection once per account.
 
-**Do NOT attempt to guide the user through tool installation yourself.** Tool setup often involves:
-- External web UIs (Google Cloud Console, OAuth consent screens, etc.)
-- Credential file management that requires human judgment
-- Platform-specific troubleshooting that changes frequently
-- Auth flows that the AI cannot see or interact with
+**Run `crystal-auth login <label>`.** Ask the user to run this command in their terminal:
 
-The instructor handles this. Your job is to clearly identify what needs to be installed and to validate it once it's done.
+```bash
+python3 ~/.claude/scripts/crystal-auth.py login <label>
+```
 
-> **Future:** A dedicated guided setup skill (`/setup`) is planned that will use deep research to build verified, up-to-date step-by-step guides for each tool — and can either walk the user through interactively or execute the setup autonomously. Once that skill exists, Phase 5 can invoke it instead of handing off to the instructor. Until then, this is a human-led step.
+(On Windows, substitute `python` for `python3` and `%USERPROFILE%\.claude\scripts\crystal-auth.py` for the path.)
 
-### 5c: Validate After Installation
+**What they should see:**
+1. Terminal prints "opening your browser to authorize..."
+2. Their default browser opens to `accounts.google.com` with a Google sign-in page
+3. They pick the account they want to connect (or sign in if they're not already)
+4. A consent screen lists the scopes CrystalAI needs: Gmail, Calendar, Drive, Contacts, profile info
+5. They click "Allow"
 
-Once the instructor signals that tools are set up, re-run the relevant Phase 4 validation tests:
+**The unverified-app warning.** The CrystalOS GCP project hasn't been through Google verification (pilot scale doesn't justify the CASA audit yet), so they'll see a "This app isn't verified" screen. Tell them this is expected — click "Advanced," then "Go to crystalos (unsafe)." The "unsafe" wording is Google's default and does not mean anything is actually unsafe; it's the standard unverified-app screen that everyone running a new OAuth app sees.
+
+**Completion.** After they click Allow, the browser shows a success page ("You can close this tab and return to your terminal"). They close the tab. The terminal prints "logged in as '<label>'." If they see anything else — an error on the success page, a terminal timeout, a stalled browser — stop and diagnose before proceeding.
+
+**Smoke test.** Verify the flow worked by having them run:
+
+```bash
+python3 ~/.claude/scripts/crystal-auth.py get-token <label>
+```
+
+That should print a long string starting with `ya29.` — a real Google access token. If it prints an error instead, the login did not fully complete.
+
+**Repeat for each account they want.** Each account gets its own label and its own `crystal-auth login` call. Refresh tokens stored at `~/.config/crystal-auth/accounts/<label>/credentials.json` (mode 0600).
+
+### 5c: Hand Off Remaining Items to Instructor
+
+For anything that isn't Google Workspace — MCP servers, platform-specific integrations, auth flows that require external UIs — stop and hand off to the instructor:
+
+"The rest of these tools need to be set up before we can build your first skill. [Instructor name] is going to walk you through this part — I'll be here when you're ready to continue."
+
+**Do NOT attempt to guide the user through non-Google tool installation yourself.** Tool setup often involves:
+- Platform-specific MCP server installation
+- Credential file management for non-OAuth systems
+- Troubleshooting that changes frequently
+- Auth flows the AI cannot see or interact with
+
+Your job for these items is to identify what's needed clearly and to validate it once the instructor is done.
+
+> **Future:** A dedicated guided setup skill (`/setup`) is planned that will use deep research to build verified, up-to-date step-by-step guides for each tool — and can either walk the user through interactively or execute the setup autonomously. Once that skill exists, 5c can invoke it instead of handing off to the instructor. Until then, non-Google tools are a human-led step.
+
+### 5d: Validate After Installation
+
+Once Google Workspace is connected (5b) and the instructor signals remaining tools are set up (5c), re-run the relevant Phase 4 validation tests:
 
 "Let me verify everything is working..."
 
