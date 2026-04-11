@@ -141,15 +141,21 @@ Capture:
 
 ### Topic 2: Communication Style
 
-Ask this as a single opening question, then follow up one sub-question at a time based on their answer. Do NOT dump all the questions at once.
+Ask these questions **one at a time**, waiting for the user's answer before moving to the next. Do NOT combine them into a single paragraph or run-on question. Do NOT dump the whole list at once. Each question is its own turn in the conversation.
 
-Opening: "How do you want me to talk to you? Some people want short, direct answers. Others want more explanation. What feels right to you?"
+Start with the opening, wait for the answer, acknowledge briefly, then ask the next one:
 
-Then ask follow-ups one at a time, only as needed to fill in gaps:
-- "Formal or more casual?"
-- "Do you want me to explain my reasoning, or just give you the answer?"
-- "Emojis — yes, no, or doesn't matter?"
-- "When I'm working on something, should I just do it and tell you when it's done, or check in with you along the way?"
+1. Opening: "How do you want me to talk to you? Some people want short, direct answers. Others want more explanation. What feels right to you?"
+
+2. Then: "Formal or more casual?"
+
+3. Then: "Do you want me to explain my reasoning, or just give you the answer?"
+
+4. Then: "Emojis — yes, no, or doesn't matter?"
+
+5. Then: "When I'm working on something, should I just do it and tell you when it's done, or check in with you along the way?"
+
+Skip any follow-up the user has already answered in an earlier response. The goal is a conversation, not an interrogation — but each question gets its own moment.
 
 Capture:
 - `comm_verbosity` — terse / balanced / detailed
@@ -161,22 +167,25 @@ Capture:
 
 After capturing their communication preferences, say:
 
-"By the way — if I ever get your style wrong, just tell me. Any correction you make sticks permanently. You'll never have to say it twice. That's `/feedback` — it fires automatically whenever you say 'no, do it this way' or 'stop doing X.'"
+"If I ever get your style wrong, just tell me. The feedback skill routes any correction automatically — you'll never have to repeat yourself."
 
 Then move on to the next topic.
 
 ### Topic 3: Notes
 
-vault_path always defaults to `~/.claude/vault` (internal: this is the built-in inbox, always set, always available).
+**Internal:** `vault_path` always defaults to `~/.claude/vault`. This is the built-in inbox — it is ALWAYS on, ALWAYS used, and is never replaced by the user's notes app. If the user has their own notes app, that app is pointed to IN ADDITION — never INSTEAD. Do NOT mention the vault, the vault folder, `~/.claude/vault`, or any internal path to the user at any point in this topic.
 
-Ask: "Do you use a notes app — something like Obsidian, Notion, or Apple Notes? If you do, I can connect to it so notes land in the right place."
+**Ask the question — platform-aware.** Check `detected_os`:
 
-**Note for Windows users (detected_os == windows):** Do NOT include Apple Notes in the list of suggested options. Suggest Obsidian, Notion, or plain text files instead.
+- **If `detected_os == macos` or `linux`:** "Do you use a notes app — something like Obsidian, Notion, or Apple Notes? If you do, I can point notes at it too so things land where you already look."
+- **If `detected_os == windows`:** "Do you use a notes app — something like Obsidian, Notion, or just plain text files? If you do, I can point notes at it too so things land where you already look." (Do NOT mention Apple Notes on Windows.)
 
 Adapt follow-up based on their answer:
 
-- **If they use a notes app:** "What's the path to your notes folder?" Capture it as the external_notes_path. The built-in vault still exists and is still used for internal captures — the external path is used IN ADDITION for notes that belong in their app.
-- **If they don't use a notes app** (pen and paper, nothing digital, etc.): Explain: "There's a built-in inbox you can throw anything into — meeting notes, ideas, random thoughts, things you want to remember. To add something, just type `/note`. It opens a text file so you can write freely. Later, `/process-inbox` organizes everything into the right place."
+- **If they use a notes app:** "What's the path to your notes folder?" Capture it as the `external_notes_path`. Frame it as an ADDITION — their notes app is now a second destination, not a replacement. Example acknowledgment: "Got it — I'll point notes at your [app] folder so new notes show up there alongside everything else."
+- **If they don't use a notes app** (pen and paper, nothing digital, etc.): Do NOT mention the vault, folders, or paths. Explain the inbox using this exact wording:
+
+  > "There's a built-in inbox you can throw anything into — meeting notes, ideas, things you want to remember. To add something, type `/note`. It opens in your text editor so you can write freely. Later, `/process-inbox` organizes everything into the right place."
 
 After capturing their notes app answer, ask about their preferred editor for opening notes. Use the detection results from Phase 1 to tailor the question:
 
@@ -209,9 +218,9 @@ processed: false
 CrystalAI onboarding — this note was created by /note to show how quick captures work. Delete me anytime.
 ```
 
-Do this silently. Then say: "Done — I just created a note in your inbox to show you how it works. That's `/note`. One command, lands in your inbox, ready to be organized whenever you want."
+Do this silently. Then say: "I just dropped a quick note in your inbox to show you how `/note` works. One command, it lands in your inbox, and you can organize it whenever you want."
 
-Do NOT mention the vault path or folder name to the user.
+Do NOT mention the vault, vault path, folder name, or any internal path to the user. The word "vault" must never appear in anything you say to the user.
 
 <!-- TODO: /note must actually open the default text editor for the user visually (not just create the file silently). Verify the /note skill implementation does this. If it does not, fix the /note skill so it opens the system's default text editor after creating the file (e.g., `open` on macOS, `xdg-open` on Linux, `start` on Windows). Until that fix is in place, the demo here creates the file silently — which works but misses the "watch this" visual moment. -->
 
@@ -234,7 +243,7 @@ Capture:
 
 Adapt based on detection:
 - If Apple Mail detected (macOS): "I see Apple Mail. Want me to help triage and draft emails there?"
-- If Gmail MCP is available: "Gmail integration is available. Want to set that up?"
+- If Gmail MCP is available: "I can connect to Gmail if you'd like. Want to set that up?"
 
 Capture:
 - `email_enabled` — yes / no / maybe later
@@ -249,7 +258,7 @@ If they say no or maybe later, move on. Don't push.
 
 Adapt based on detection:
 - If Apple Calendar detected: "I see Apple Calendar. Want me to check your schedule when planning your day?"
-- If Google Calendar MCP available: "Google Calendar integration is available."
+- If Google Calendar MCP available: "I can connect to Google Calendar if you'd like."
 
 If yes:
 - "Which calendars should I pay attention to? Most people have more calendars than they care about — I only want to show you the ones that matter."
@@ -476,7 +485,7 @@ Local CLI. This is the machine you're sitting at.
 
 Read `~/.claude/soul.md`. It ships with `<!-- CUSTOMIZE -->` placeholder sections. Fill them in using interview answers.
 
-Say to the user (user-facing): "Now I'm shaping my personality around how you work — your communication style, what kind of help you want, and how we'll work together best."
+Say to the user (user-facing): "Now I'm building my personality around how you work — how direct you like me to be, what kind of help you want, and how we'll work together best."
 
 Internal instructions (do NOT surface these file names or paths to the user):
 - **Identity section:** Replace the placeholder with a description of the user and their work context (from Topic 1 — name, role).
@@ -506,7 +515,7 @@ After all config files are written, demonstrate `/compress` by running a lightwe
 
 Say: "I've saved what I learned about you and updated how I think and communicate. Going forward, I'll remember your preferences, your tools, and how you like to work — even after we close this conversation.
 
-Two habits worth building now: at the start of each day, say 'good morning' or type `/resume` — I'll load everything and pick up where we left off. At the end of a session, type `/compress` — I'll save what happened so nothing gets lost."
+Two habits worth building now: at the start of each day, type `/resume` — I'll load everything and pick up where we left off. At the end of a session, type `/compress` — I'll save what happened so nothing gets lost."
 
 Then internally: run the compress skill's core steps — generate a session log summarizing the onboarding (topics covered, integrations configured) and save it to `~/.claude/state/sessions/`. Use today's date and "onboarding" as the topic. Do NOT list the file paths or session log location to the user.
 
@@ -554,7 +563,7 @@ Here's what's connected and working:
   Things3:         Connected — 12 projects found
   Apple Calendar:  Connected — 8 calendars found
   Apple Mail:      Needs setup
-    → To fix: Add the Apple Mail integration to your Claude Code config.
+    → To fix: Apple Mail needs to be connected before I can read or send from it.
       See: https://github.com/user/apple-mail-mcp (or relevant link)
 ```
 
@@ -780,7 +789,7 @@ Two thinking patterns to know:
 "Start your next session with `/resume`. That's all you need to remember — everything else you'll discover naturally."
 
 If anything failed in Phase 4:
-"A few integrations still need manual setup. Here's what to do: [repeat the fix instructions from Phase 4 in plain English]."
+"A few things still need to be hooked up before they'll work. Here's what to do: [repeat the fix instructions from Phase 4 in plain English]."
 
 ---
 

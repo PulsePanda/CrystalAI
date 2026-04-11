@@ -14,7 +14,13 @@ Creates a timestamped file in `${VAULT_PATH}/+Inbox/` and opens it in the user's
 
 Read `notes_editor` from `crystal.local.yaml` to determine how to open the file. Valid values: `obsidian`, `vscode`, `system`. If the key is absent, treat it as `system`.
 
-Detect the operating system by running `uname -s` (returns `Darwin` for macOS, `Linux` for Linux, `MINGW*` or `CYGWIN*` for Windows/Git Bash). Use the result to pick the correct open command in Step 3.
+Detect the operating system using the following priority order:
+1. Run `uname -s`. Returns `Darwin` (macOS), `Linux`, or `MINGW*`/`CYGWIN*` (Windows/Git Bash).
+2. If `uname` fails or returns unrecognized output, check `$OS` environment variable — if it equals `Windows_NT`, treat as Windows.
+3. If both fail, check `$OSTYPE` bash built-in — `msys` or `cygwin` indicates Windows/Git Bash.
+4. As a last resort, use the `Platform:` value from the session context (e.g. `darwin`, `win32`, `linux`).
+
+Use the detected OS to pick the correct open command in Step 3.
 
 If `notes_editor` is `obsidian`, also read `vault_name` from `crystal.local.yaml` or infer it from the vault directory name. If no vault is configured, fall back to `system` behavior.
 
@@ -60,7 +66,11 @@ URL-encode the path: `+` → `%2B`, `/` → `%2F` (or leave `/` as-is after the 
   ```bash
   open "obsidian://open?vault={vault_name}&file=%2BInbox%2FFILENAME.md"
   ```
-- **Windows (Git Bash)**:
+- **Windows (CMD or PowerShell)** — preferred:
+  ```
+  start "" "obsidian://open?vault={vault_name}&file=%2BInbox%2FFILENAME.md"
+  ```
+- **Windows (Git Bash fallback)**:
   ```bash
   cmd //c start "" "obsidian://open?vault={vault_name}&file=%2BInbox%2FFILENAME.md"
   ```
@@ -81,16 +91,24 @@ code "{full_file_path}"
   ```bash
   open "{full_file_path}"
   ```
-- **Windows (Git Bash)** — convert the Unix path to a Windows path first if `cygpath` or `wslpath` is available, otherwise use the raw path:
+- **Windows (CMD or PowerShell)** — preferred, works on any Windows shell:
+  ```
+  start "" "{windows_file_path}"
+  ```
+  Where `{windows_file_path}` is the Windows-native path (e.g. `C:\Users\Austin\...`). Run via Bash as:
   ```bash
-  cmd //c start "" "$(cygpath -w '{full_file_path}' 2>/dev/null || echo '{full_file_path}')"
+  start "" "{windows_file_path}"
+  ```
+- **Windows (Git Bash fallback)** — if in Git Bash context, convert the path first:
+  ```bash
+  cmd //c start "" "$(cygpath -w '{full_file_path}')"
   ```
 - **Linux**:
   ```bash
   xdg-open "{full_file_path}"
   ```
 
-If the open command fails, the file is still created — report the full path so the user can open it manually.
+**This step is REQUIRED.** The file MUST be opened visually in an editor window so the user can start typing immediately. If the first open command fails, retry with the alternate Windows form before giving up. Only report the path as a last resort if both attempts fail.
 
 ---
 
