@@ -6,36 +6,50 @@ allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Agent, AskUserQuestion
 
 # /crystalai-upgrade — CrystalAI Upgrade Command
 
-Upgrade an installed CrystalAI (`~/.claude/`) from the source repo. Runs the deterministic shell script for safe operations, then uses AI judgment for merges and customization decisions.
+Upgrade an installed CrystalAI (`~/.claude/`) by automatically fetching the latest source from GitHub. Runs the deterministic shell script for safe operations, then uses AI judgment for merges and customization decisions.
 
 ## Usage
 
 ```
-/crystalai-upgrade                        # Full upgrade (dry-run first, then execute with approval)
-/crystalai-upgrade --dry-run              # Only show what would change
-/crystalai-upgrade --source /path/to/repo # Specify repo location
+/crystalai-upgrade                        # Auto-fetch latest from GitHub, dry-run, then execute with approval
+/crystalai-upgrade --dry-run              # Auto-fetch and only show what would change
+/crystalai-upgrade --source /path/to/repo # Use a local working copy instead of fetching (dev testing)
 ```
 
 ---
 
-## Step 1: Locate the Source Repo
+## Step 1: Fetch the Source Repo
 
-Determine the CrystalAI source repo path. Check in order:
+The repo is downloaded from GitHub automatically — the user does not need a local clone. Cache it under `~/.claude/.upgrade-cache/CrystalAI` so subsequent upgrades are fast.
 
-1. If the user passed `--source /path/to/repo`, use that path
-2. If `~/.claude/.crystal-version.json` exists, read it and use the `source_path` field (if present)
-3. Check `~/Documents/GitHub/CrystalAI/` — verify it exists and contains `vault-manifest.json`
-4. If none found, ask the user:
+Constants:
 
-```
-I can't find the CrystalAI source repo. Where is it located?
+```bash
+REPO_URL="https://github.com/PulsePanda/CrystalAI.git"
+CACHE_DIR="$HOME/.claude/.upgrade-cache/CrystalAI"
 ```
 
-Once located, verify the repo contains `vault-manifest.json` and `scripts/upgrade.sh`. If either is missing, stop:
+Resolve `SOURCE`:
+
+1. If the user passed `--source /path/to/repo`, set `SOURCE` to that path and skip the clone/fetch entirely. This override is for local dev testing against an uncommitted working copy.
+2. Otherwise, if `$CACHE_DIR` does not exist, clone it fresh:
+   ```bash
+   mkdir -p "$HOME/.claude/.upgrade-cache"
+   git clone "$REPO_URL" "$CACHE_DIR"
+   ```
+3. If `$CACHE_DIR` already exists, fetch the latest `main` and hard-reset the cache to it (the cache is owned by this command — any local drift is discarded):
+   ```bash
+   git -C "$CACHE_DIR" fetch origin main
+   git -C "$CACHE_DIR" reset --hard origin/main
+   ```
+4. Set `SOURCE="$CACHE_DIR"`.
+
+If git is not installed, the clone/fetch fails (network, auth, permissions), or the reset fails, report the full error output and stop. Do not proceed to any upgrade steps.
+
+Verify the resolved `SOURCE` contains `vault-manifest.json` and `scripts/upgrade.sh`. If either is missing, stop:
 
 ```
-The source repo at {path} is missing required files (vault-manifest.json or scripts/upgrade.sh).
-Make sure you're pointing to a valid CrystalAI repo.
+The source repo at {SOURCE} is missing required files (vault-manifest.json or scripts/upgrade.sh).
 ```
 
 Store the resolved path as `SOURCE` for all subsequent steps.
@@ -359,6 +373,7 @@ Then append:
 
 ## Error Handling
 
+- **Git clone/fetch fails**: Report the full git error output and stop. Do not proceed without a valid `SOURCE`.
 - **Script not found**: Report the missing file path and stop
 - **Script fails**: Show the full error output, report the backup location (if created), and stop before merges
 - **Merge conflicts**: Never force a resolution. Always show both versions and ask the user
