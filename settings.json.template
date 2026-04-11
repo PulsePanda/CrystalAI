@@ -196,8 +196,6 @@
       "Bash(del /s /q C:\\*)",
       "Bash(rd /s /q *)",
       "Bash(format *)",
-      "Bash(:(){:|:&};:*)",
-
       "Bash(sudo *)",
       "Bash(su *)",
       "Bash(doas *)",
