@@ -4,6 +4,13 @@ All notable changes to CrystalAI are documented here. Version numbers follow the
 
 ---
 
+## [1.2.2] — 2026-04-11
+
+### Changed
+- **Forced version bump for Tristan pilot debugging.** Pushing a fresh version so any installed copy will detect a new release on `/crystalai-upgrade`. No code changes from 1.2.1.
+
+---
+
 ## [1.2.1] — 2026-04-11
 
 ### Changed
