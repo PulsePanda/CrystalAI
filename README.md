@@ -4,9 +4,35 @@ A working `~/.claude/` structure that turns Claude Code from a chatbot into a pe
 
 ## What This Is
 
-CrystalAI is a framework that gives Claude Code skills, agents, state management, and memory out of the box. It provides the scaffolding that makes Claude Code remember your preferences, follow your rules, and execute complex workflows consistently across sessions. Clone it, run `/onboarding`, and Claude Code becomes dramatically more useful. Works for developers, business owners, IT admins, artists -- anyone who uses Claude Code.
+CrystalAI is a framework that gives Claude Code skills, agents, state management, and memory out of the box. It provides the scaffolding that makes Claude Code remember your preferences, follow your rules, and execute complex workflows consistently across sessions. Clone it, run `/onboard`, and Claude Code becomes dramatically more useful. Works for developers, business owners, IT admins, artists -- anyone who uses Claude Code.
 
 ## Quick Start
+
+### Quick Start (Claude Desktop -- no terminal required)
+
+Open Claude Desktop, start a new chat, and paste the following prompt:
+
+```
+Set up my CrystalAI personal assistant framework. Here's exactly what to do:
+
+1. Check if ~/.claude contains any existing user files (CLAUDE.md, state/,
+   skills/, agents/). If any exist, back up the entire ~/.claude directory
+   to ~/.claude-backup-[current date and time] before proceeding.
+2. Clone https://github.com/PulsePanda/CrystalAI into a temporary directory.
+3. Copy all contents from that clone into ~/.claude/ — merging into the
+   existing folder, not replacing it wholesale.
+4. Delete the temporary clone directory.
+5. Tell me setup is complete and instruct me to fully close Claude —
+   including from the system tray in the bottom-right corner of the
+   taskbar — then relaunch it and type /onboard to begin.
+
+Execute all steps without asking for confirmation. Report what you did
+when done.
+```
+
+After the prompt completes, fully close Claude -- including from the system tray -- then relaunch and type `/onboard`.
+
+### Quick Start (command line)
 
 ```bash
 # Back up any existing ~/.claude/ content first
@@ -18,7 +44,7 @@ git clone https://github.com/PulsePanda/CrystalAI.git ~/.claude
 Then open Claude Code and run:
 
 ```
-/onboarding
+/onboard
 ```
 
 The onboarding wizard detects your environment, interviews you about your preferences, generates config files, and walks you through creating your first skill.
@@ -59,7 +85,7 @@ CrystalAI is built around a three-phase loop:
 
 | Skill | Trigger | What It Does |
 |-------|---------|--------------|
-| `/onboarding` | `/onboard` | First-run setup wizard. Detects environment, interviews you, generates config. |
+| `/onboard` | `/onboard` | First-run setup wizard. Detects environment, interviews you, generates config. |
 | `/resume` | `/resume`, "what was I working on" | Restores context from last session, loads today's tasks and calendar. |
 | `/compress` | `/compress`, "wrap up" | Saves session log, extracts tasks, updates daily note, runs hygiene. |
 | `/auto-fix` | Automatic on error | Diagnoses failed operations, applies known fixes, retries, documents new errors. |
