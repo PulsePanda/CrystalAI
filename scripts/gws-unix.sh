@@ -33,12 +33,34 @@ if [[ ! -f "$CRYSTAL_AUTH" ]]; then
     exit 2
 fi
 
+# Resolve the Python interpreter via find-python.sh (cross-platform: python3 on
+# macOS/Linux, python on Windows Git Bash). Keeps this wrapper working on any
+# machine that has either interpreter on PATH.
+PYTHON_WRAPPER="$HOME/.claude/scripts/find-python.sh"
+if [[ ! -x "$PYTHON_WRAPPER" ]]; then
+    PYTHON_WRAPPER="$(dirname "$0")/find-python.sh"
+fi
+if [[ ! -x "$PYTHON_WRAPPER" ]]; then
+    # Absolute last resort: pick python3 or python directly.
+    if command -v python3 >/dev/null 2>&1; then
+        PYTHON_CMD="python3"
+    elif command -v python >/dev/null 2>&1; then
+        PYTHON_CMD="python"
+    else
+        echo "gws-unix.sh: no Python interpreter found on PATH (checked python3, python)" >&2
+        echo "             Install Python 3 and try again." >&2
+        exit 2
+    fi
+else
+    PYTHON_CMD="$PYTHON_WRAPPER"
+fi
+
 # gws still uses this dir for API discovery caches, so set it per-account.
 export GOOGLE_WORKSPACE_CLI_CONFIG_DIR="$HOME/.config/gws/accounts/${ACCOUNT}"
 mkdir -p "$GOOGLE_WORKSPACE_CLI_CONFIG_DIR"
 
 # Fetch a fresh access token. crystal-auth handles caching + refresh via auth server.
-TOKEN="$(python3 "$CRYSTAL_AUTH" get-token "$ACCOUNT")" || {
+TOKEN="$("$PYTHON_CMD" "$CRYSTAL_AUTH" get-token "$ACCOUNT")" || {
     rc=$?
     if [[ $rc -eq 1 ]]; then
         echo "gws-unix.sh: no valid credentials for '$ACCOUNT'" >&2
