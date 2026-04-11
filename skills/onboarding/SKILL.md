@@ -1,7 +1,7 @@
 ---
 name: onboard
 description: First-run setup wizard for CrystalAI. Detects the user's environment, conducts a conversational interview to learn preferences, generates configuration files, validates integrations, and guides the user through creating their first skill. Run this once after installing CrystalAI. Safe to re-run — updates existing config without overwriting manual edits.
-version: 1.0.0
+version: 1.1.0
 allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
@@ -26,7 +26,7 @@ If this is a re-run (existing config detected in Phase 1), acknowledge what's al
 
 ## Phase 1: Environment Detection (~2 min, automated)
 
-Run all detection steps in parallel. Do not ask the user for any of this — detect it.
+Run all detection steps in parallel. Do not ask the user for any of this — detect it. **Do NOT print anything to the user during Phase 1.** Run all detection silently and proceed directly to Phase 2.
 
 ### 1a: Operating System and Shell
 
@@ -41,7 +41,7 @@ Map results:
 - `Linux` → Linux (check for WSL: `grep -qi microsoft /proc/version 2>/dev/null`)
 - `MINGW*` / `CYGWIN*` → Windows (Git Bash / Cygwin)
 
-Also detect shell: zsh, bash, fish, PowerShell, cmd.
+Also detect shell: zsh, bash, fish, PowerShell, cmd. Store OS type in `detected_os` (macos / linux / windows) for use in later phases.
 
 ### 1b: Installed Development Tools
 
@@ -56,7 +56,7 @@ Check for each tool's presence and version. Use `which` (or `where` on Windows c
 | code (VS Code) | `code --version` |
 | cursor | `cursor --version` |
 
-Record what's present. Don't warn about missing tools unless they're needed later. **Do NOT attempt to install missing tools.** Detection only — report what's there and what isn't.
+Record what's present. Don't warn about missing tools unless they're needed later. **Do NOT attempt to install missing tools.** Detection only.
 
 ### 1c: Existing CrystalAI Configuration
 
@@ -115,21 +115,9 @@ This ships a conservative permissions config that auto-allows safe read operatio
 
 If `settings.json` already exists, leave it alone — the user may have customized it.
 
-### 1f: Report Findings
+### 1f: Silent Completion
 
-Present a concise summary:
-
-```
-Environment detected:
-  OS:       macOS 14.2 (arm64)
-  Shell:    zsh
-  Tools:    git 2.43, node 20.11, python 3.12, uv 0.1.24
-  Editor:   VS Code
-  Apps:     Obsidian, Things3, Apple Mail, Apple Calendar
-  Existing: No prior CrystalAI config found
-```
-
-Then transition: "Now I need to learn a few things about how you work. This takes about 5-10 minutes."
+All detection is now complete. Store all findings internally. Do NOT output any summary, report, or status message. Proceed immediately and silently to Phase 2, beginning with the first question.
 
 ---
 
@@ -145,20 +133,23 @@ Ask these topics **one at a time**. After each answer, acknowledge briefly (no f
 
 "What's your name, and what do you do? (Developer, designer, business owner, student, content creator — whatever describes your day-to-day.)"
 
+After they answer, respond: "Nice to meet you, [name]. My name is Crystal, and I am your personal AI assistant."
+
 Capture:
 - `user_name` — their name
 - `user_role` — what they do (free text, don't force categories)
 
 ### Topic 2: Communication Style
 
-"How do you want me to talk to you? Some people want terse, technical answers. Others want more explanation. Some like casual, some like formal. Any strong preferences?"
+Ask this as a single opening question, then follow up one sub-question at a time based on their answer. Do NOT dump all the questions at once.
 
-Probe if needed:
-- Verbose or terse?
-- Formal or casual?
-- Emojis or no emojis?
-- Should I explain my reasoning or just give the answer?
-- How much should I check in vs just do things?
+Opening: "How do you want me to talk to you? Some people want short, direct answers. Others want more explanation. What feels right to you?"
+
+Then ask follow-ups one at a time, only as needed to fill in gaps:
+- "Formal or more casual?"
+- "Do you want me to explain my reasoning, or just give you the answer?"
+- "Emojis — yes, no, or doesn't matter?"
+- "When I'm working on something, should I just do it and tell you when it's done, or check in with you along the way?"
 
 Capture:
 - `comm_verbosity` — terse / balanced / detailed
@@ -168,36 +159,44 @@ Capture:
 
 ### Skill Moment: /feedback
 
-After capturing their communication preferences, demonstrate that corrections stick permanently. Say something like:
+After capturing their communication preferences, say:
 
-"By the way — if I ever get your style wrong, just tell me. Watch this: the preferences I just recorded? They live in a file I'll update any time you correct me. You never have to repeat yourself. That's `/feedback` — it fires automatically whenever you say 'no, do it this way' or 'stop doing X.' Let me show you where your communication rules will end up."
+"By the way — if I ever get your style wrong, just tell me. Any correction you make sticks permanently. You'll never have to say it twice. That's `/feedback` — it fires automatically whenever you say 'no, do it this way' or 'stop doing X.'"
 
-Briefly show the path (`~/.claude/state/behavioral/communication.md`) and explain that `/feedback` routes corrections to the right file. Keep it to 2-3 sentences — this is a teaser, not a tutorial.
+Then move on to the next topic.
 
 ### Topic 3: Notes
 
-vault_path always defaults to `~/.claude/vault` — it is always set, regardless of whether the user has a notes app.
+vault_path always defaults to `~/.claude/vault` (internal: this is the built-in inbox, always set, always available).
 
-Ask: "CrystalAI includes a built-in vault folder at `~/.claude/vault/` for daily notes, projects, and captures — it's ready to use. Do you also use a notes app like Obsidian, Notion, or Apple Notes? If so, I can point to that instead."
+Ask: "Do you use a notes app — something like Obsidian, Notion, or Apple Notes? If you do, I can connect to it so notes land in the right place."
+
+**Note for Windows users (detected_os == windows):** Do NOT include Apple Notes in the list of suggested options. Suggest Obsidian, Notion, or plain text files instead.
 
 Adapt follow-up based on their answer:
-- If they want to use their own notes app: "What's the path to your notes folder?" Capture the path and use it as vault_path.
-- If not: Keep vault_path as `~/.claude/vault`.
 
-Also note which app they use (if any) for integration setup later.
+- **If they use a notes app:** "What's the path to your notes folder?" Capture it as the external_notes_path. The built-in vault still exists and is still used for internal captures — the external path is used IN ADDITION for notes that belong in their app.
+- **If they don't use a notes app** (pen and paper, nothing digital, etc.): Explain: "There's a built-in inbox you can throw anything into — meeting notes, ideas, random thoughts, things you want to remember. To add something, just type `/note`. It opens a text file so you can write freely. Later, `/process-inbox` organizes everything into the right place."
+
+After capturing their notes app answer, ask about their preferred editor for opening notes. Use the detection results from Phase 1 to tailor the question:
+
+- **If both Obsidian and VS Code were detected:** "I see you have both Obsidian and VS Code installed. Would you like me to open notes in Obsidian, or would you prefer VS Code?"
+- **If only Obsidian was detected:** "I see you have Obsidian installed. Would you like me to open notes in Obsidian, or would you prefer something else?"
+- **If only VS Code was detected (but not Obsidian):** "I see you have VS Code installed. Would you like me to open notes there, or use your system default?"
+- **If neither was detected:** "I'll open notes in your system's default text editor. That's usually Notepad on Windows or TextEdit on Mac — totally fine if you'd rather use something else."
 
 Capture:
 - `notes_app` — obsidian / notion / apple-notes / plain-files / none
-- `vault_path` — their notes app path if provided, otherwise `~/.claude/vault`
+- `notes_editor` — obsidian / vscode / system
+- `vault_path` — always `~/.claude/vault` (the built-in vault; never changes)
+- `external_notes_path` — their notes app folder path, if they have one (may be empty)
 - `notes_details` — any specifics about their setup
 
-### Skill Moment: /note (if notes app configured)
+### Skill Moment: /note (run for ALL users)
 
-If the user confirmed they use a notes app and provided a path, demo `/note` live right now:
+Run this demo for every user, regardless of whether they have a notes app. Use the built-in inbox (`~/.claude/vault/+Inbox/`).
 
-"Let me show you something. I'm going to drop a quick note into your inbox — watch."
-
-Actually run the `/note` skill: create a capture file in their `+Inbox/` folder with content like:
+Actually create a capture file in `~/.claude/vault/+Inbox/` with content like:
 
 ```markdown
 ---
@@ -210,9 +209,11 @@ processed: false
 CrystalAI onboarding — this note was created by /note to show how quick captures work. Delete me anytime.
 ```
 
-Then say: "That's `/note`. One command, and it's in your inbox. `/process-inbox` organizes them later."
+Do this silently. Then say: "Done — I just created a note in your inbox to show you how it works. That's `/note`. One command, lands in your inbox, ready to be organized whenever you want."
 
-If they're using the built-in vault, demo `/note` against `~/.claude/vault/+Inbox/` instead. The demo still applies — the vault is always there.
+Do NOT mention the vault path or folder name to the user.
+
+<!-- TODO: /note must actually open the default text editor for the user visually (not just create the file silently). Verify the /note skill implementation does this. If it does not, fix the /note skill so it opens the system's default text editor after creating the file (e.g., `open` on macOS, `xdg-open` on Linux, `start` on Windows). Until that fix is in place, the demo here creates the file silently — which works but misses the "watch this" visual moment. -->
 
 ### Topic 4: Task Management
 
@@ -259,22 +260,22 @@ Capture:
 - `calendar_include` — list of calendar names to include
 - `calendar_exclude` — list to explicitly ignore (optional)
 
-### Topic 7: Privacy Boundaries
+### Topic 7: Red Lines
 
-"Is there anything I should never access or modify? Specific directories, apps, files — anything off-limits."
+"Is there anything I should never access or modify? Specific apps, files, folders — anything off-limits."
 
-Also ask: "Any types of content I should avoid generating? Things you'd rather do yourself?"
+Also ask: "Any types of content I should avoid generating? Things you'd rather handle yourself?"
 
 Capture:
-- `privacy_no_access` — list of paths/apps that are off-limits
-- `privacy_no_generate` — types of content to avoid
-- `privacy_notes` — any other boundary rules
+- `redlines_no_access` — list of paths/apps that are off-limits
+- `redlines_no_generate` — types of content to avoid
+- `redlines_notes` — any other boundary rules
 
-### Topic 8: Automation Seed
+### Topic 8: Your First Skill
 
 "Last one: What's the most repetitive or annoying part of your day? The thing you wish just happened automatically."
 
-This is both practical (it becomes their first skill in Phase 5) and diagnostic (it reveals their workflow pain points).
+This is both practical (it becomes their first skill in Phase 6) and diagnostic (it reveals their workflow pain points).
 
 Capture:
 - `automation_idea` — their answer, verbatim
@@ -282,7 +283,7 @@ Capture:
 
 ### Skill Moment: /grill-me (teaser)
 
-After they describe their automation idea, briefly tease the grill-me skill as a natural follow-up:
+After they describe their idea, briefly tease the grill-me skill as a natural follow-up:
 
 "That's a solid idea. If you ever want me to stress-test a plan before you build it — poke holes, ask the hard questions — just say `/grill-me`. I'll interrogate you until the plan is bulletproof. We won't do it now, but keep it in your back pocket."
 
@@ -305,7 +306,9 @@ Write to `~/.claude/crystal.local.yaml` using the template structure. Fill in de
 # Generated by /onboard on YYYY-MM-DD
 
 # --- Paths ---
-vault_path: "{vault_path}"  # Default built-in vault — change to your notes app path if preferred
+vault_path: "~/.claude/vault"  # Built-in vault — always present
+external_notes_path: "{external_notes_path or empty}"  # Their notes app path, if configured
+notes_editor: "{notes_editor}"  # obsidian / vscode / system
 scripts_path: "${CLAUDE_PLUGIN_ROOT}/scripts"
 
 # --- Identity ---
@@ -449,7 +452,8 @@ Primary development machine. This is where CrystalAI runs.
 | Location | Path |
 |----------|------|
 | CrystalAI root | ~/.claude/ |
-| Vault | {vault_path or "not configured"} |
+| Vault | ~/.claude/vault |
+| External notes | {external_notes_path or "not configured"} |
 | Scripts | ~/.claude/scripts/ |
 
 ## Services
@@ -468,10 +472,13 @@ Local CLI. This is the machine you're sitting at.
 | Notes | Initial setup via /onboard |
 ```
 
-### 3g: Personalize soul.md
+### 3g: Personalize Personality and Communication Rules
 
-Read `~/.claude/soul.md`. It ships with `<!-- CUSTOMIZE -->` placeholder sections. Fill them in using interview answers:
+Read `~/.claude/soul.md`. It ships with `<!-- CUSTOMIZE -->` placeholder sections. Fill them in using interview answers.
 
+Say to the user (user-facing): "Now I'm shaping my personality around how you work — your communication style, what kind of help you want, and how we'll work together best."
+
+Internal instructions (do NOT surface these file names or paths to the user):
 - **Identity section:** Replace the placeholder with a description of the user and their work context (from Topic 1 — name, role).
 - **Relationship section:** Choose the relationship model that best fits their autonomy preference (from Topic 2):
   - `comm_autonomy: act autonomously` → Peer/colleague model
@@ -482,7 +489,7 @@ Read `~/.claude/soul.md`. It ships with `<!-- CUSTOMIZE -->` placeholder section
 
 **Do NOT remove any pre-populated values or sections.** Only fill in the customize placeholders.
 
-### 3h: Update CLAUDE.md
+### 3h: Update Main Configuration
 
 Read `~/.claude/CLAUDE.md`. Fill in any `<!-- CUSTOMIZE -->` placeholder sections with relevant information from the interview. Specifically:
 
@@ -491,15 +498,17 @@ Read `~/.claude/CLAUDE.md`. Fill in any `<!-- CUSTOMIZE -->` placeholder section
 
 **Do NOT remove any existing rules or structure.** Only add to the customize sections.
 
+Do NOT mention CLAUDE.md or any file name to the user during this step.
+
 ### Skill Moment: /compress (live demo)
 
-After all config files are written, demonstrate `/compress` by running a lightweight version of it on this onboarding session itself. Say:
+After all config files are written, demonstrate `/compress` by running a lightweight version of it on this onboarding session itself.
 
-"Everything's saved. Let me show you one more thing — watch what happens when a session ends."
+Say: "I've saved what I learned about you and updated how I think and communicate. Going forward, I'll remember your preferences, your tools, and how you like to work — even after we close this conversation.
 
-Run the compress skill's core steps: generate a session log summarizing the onboarding (topics covered, config files created, integrations configured) and save it to `~/.claude/state/sessions/`. Use today's date and "onboarding" as the topic.
+Two habits worth building now: at the start of each day, say 'good morning' or type `/resume` — I'll load everything and pick up where we left off. At the end of a session, type `/compress` — I'll save what happened so nothing gets lost."
 
-Then show them the result: "That's `/compress`. At the end of any session, it saves a searchable log of what we did — decisions, files changed, tasks extracted. Next time you start a session, `/resume` reads these logs so I already know what happened. Nothing gets lost between sessions."
+Then internally: run the compress skill's core steps — generate a session log summarizing the onboarding (topics covered, integrations configured) and save it to `~/.claude/state/sessions/`. Use today's date and "onboarding" as the topic. Do NOT list the file paths or session log location to the user.
 
 This is the single most important skill demo in onboarding. It shows the user that CrystalAI has persistent memory — the thing that makes it feel fundamentally different from vanilla Claude.
 
@@ -507,15 +516,15 @@ This is the single most important skill demo in onboarding. It shows the user th
 
 ## Phase 4: Validation (~1 min, automated)
 
-Test each configured integration to verify it actually works. Run tests in parallel.
+Test each configured integration to verify it actually works. Run tests in parallel. **Run all validation silently — do not narrate the tests as they run.** Only output the final results once all tests complete.
 
 **IMPORTANT: Do NOT install, download, or configure any tools, packages, MCP servers, or dependencies during onboarding.** This skill detects and validates only. If something is missing or fails validation, report the issue with a specific fix instruction and move on. Tool installation happens separately — either via the install script, the instructor, or the user after the session. Never run `npm install`, `pip install`, `brew install`, or any package manager commands as part of onboarding.
 
 ### 4a: File System Access
 
 ```bash
-# Can we read the vault? (vault_path is always set — defaults to ~/.claude/vault)
-ls "{vault_path}" 2>/dev/null && echo "OK" || echo "FAIL"
+# Can we read the vault? (vault_path always defaults to ~/.claude/vault)
+ls "~/.claude/vault" 2>/dev/null && echo "OK" || echo "FAIL"
 
 # Can we write to state?
 touch ~/.claude/state/.onboard-test && rm ~/.claude/state/.onboard-test && echo "OK" || echo "FAIL"
@@ -527,7 +536,7 @@ For each configured integration, run a lightweight smoke test:
 
 | Integration | Test |
 |-------------|------|
-| Vault | `ls "{vault_path}"` — can we read the directory? (always validated — built-in vault ships with the repo) |
+| Vault | `ls ~/.claude/vault` — can we read the directory? (always validated — built-in vault ships with the repo) |
 | Things3 | Attempt to use the Things3 MCP tool to list projects (read-only) |
 | Apple Mail | Attempt to list mailboxes via MCP (read-only) |
 | Apple Calendar | Attempt to list calendars via MCP (read-only) |
@@ -536,13 +545,16 @@ For each configured integration, run a lightweight smoke test:
 
 ### 4c: Report Results
 
+Output only the final results block. Use plain English — no internal file names or paths in the results shown to the user:
+
 ```
-Validation results:
-  File system:     OK — vault readable, state writable
-  Things3:         OK — 12 projects found
-  Apple Calendar:  OK — 8 calendars found
-  Apple Mail:      FAIL — MCP server not configured
-    → To fix: Add the apple-mail MCP server to your Claude Code config.
+Here's what's connected and working:
+
+  Notes inbox:     Ready
+  Things3:         Connected — 12 projects found
+  Apple Calendar:  Connected — 8 calendars found
+  Apple Mail:      Needs setup
+    → To fix: Add the Apple Mail integration to your Claude Code config.
       See: https://github.com/user/apple-mail-mcp (or relevant link)
 ```
 
@@ -556,19 +568,19 @@ Phase 4 identified which integrations are working and which need setup. This pha
 
 ### 5a: Identify What's Needed
 
-Review Phase 4 validation results and the user's Topic 8 answer (their biggest daily annoyance / first skill idea). Present a prioritized list:
+Review Phase 4 validation results and the user's Topic 8 answer (their biggest daily annoyance / first skill idea). Present a prioritized list in plain language:
 
 ```
-Tools needed before we can build your first skill:
+Before we can build your first skill, a couple of things need to be set up:
   1. [tool] — needed for [pain point feature]
   2. [tool] — needed for [core workflow feature]
 
-Also recommended (can be set up later):
+These can be set up later if you prefer:
   3. [tool] — for [feature]
 ```
 
 Prioritize:
-1. **Tools needed for the first skill** — highest priority. If their pain point is morning calendar notifications, they need calendar access working before we build the skill.
+1. **Tools needed for the first skill** — highest priority.
 2. **Tools needed for core daily workflow** — email, calendar, task manager (whichever they mentioned in the interview).
 3. **Everything else** — can be set up after the session.
 
@@ -594,7 +606,7 @@ Once the instructor signals that tools are set up, re-run the relevant Phase 4 v
 
 "Let me verify everything is working..."
 
-Re-run the smoke tests for each newly installed tool. Report results.
+Re-run the smoke tests for each newly installed tool. Report results in the same plain-English format as 4c.
 
 If everything passes: "All good. Let's build your first skill."
 
@@ -633,7 +645,7 @@ Based on their answers, write a SKILL.md for their first skill:
 
 "Try running `/{skill-name}` right now. Let's see if it works."
 
-If it works: "That's the pattern. Every skill is just a SKILL.md file that tells me what to do when you say a trigger word. You can create more anytime."
+If it works: "That's the pattern. Every skill is just a set of instructions that tells me what to do when you say a trigger word. You can create more anytime."
 
 If it fails: Debug together. Fix the issue. This is a teaching moment — show them how skills are just instructions that can be edited.
 
@@ -667,28 +679,20 @@ Do NOT linger. This should take under 60 seconds of reading. Move to Phase 7.
 
 ### 7a: Configuration Summary
 
-Present a clean summary of everything that was configured:
+Present a clean summary of everything that was configured — use plain English, no file paths:
 
 ```
 Setup complete. Here's what's configured:
 
-Identity:       {name} ({role})
-Notes:          {app} — {path or "configured"}
-Tasks:          {app} — {status}
-Email:          {app} — {N accounts}
-Calendar:       {app} — {N calendars tracked}
-First skill:    /{skill-name}
-
-Config files created:
-  ~/.claude/soul.md (personalized)
-  ~/.claude/crystal.local.yaml
-  ~/.claude/state/behavioral/communication.md
-  ~/.claude/state/behavioral/user-preferences.md
-  ~/.claude/state/behavioral/writing-style.md
-  ~/.claude/state/environments/workstation.md
-  ~/.claude/state/integrations/{each integration}.md
-  ~/.claude/skills/{first-skill}/SKILL.md
+  Your name:      {name} ({role})
+  Notes:          {app or "built-in inbox"} — ready
+  Tasks:          {app} — {status}
+  Email:          {app} — {N accounts}
+  Calendar:       {app} — {N calendars tracked}
+  First skill:    /{skill-name}
 ```
+
+Do NOT list config file paths, directory names, or technical file names in this summary.
 
 ### 7b: Live /resume Demo
 
@@ -704,7 +708,7 @@ After it runs: "That's what every session starts with. One command, full context
 
 Mention the two skills that make the system get smarter over time:
 
-"Two more things worth knowing. `/teach` learns your writing style — show it a few emails or messages you've written, and `/write` starts producing drafts that sound like you, not like an AI. And `/feedback` — you already saw this during the interview — means any correction you make is permanent. Say 'stop doing X' once, and I stop doing X forever. The system adapts to you, not the other way around."
+"Two more things worth knowing. `/teach` learns your writing style — show it a few emails or messages you've written, and `/write` starts producing drafts that sound like you, not like an AI. And `/feedback` — you already saw this during setup — means any correction you make is permanent. Say 'stop doing X' once, and I stop doing X forever. The system adapts to you, not the other way around."
 
 ### 7d: Quick Reference Card
 
@@ -741,7 +745,7 @@ Two thinking patterns to know:
 "Start your next session with `/resume`. That's all you need to remember — everything else you'll discover naturally."
 
 If anything failed in Phase 4:
-"A few integrations need manual setup. Here's what to do: [repeat the fix instructions from Phase 4]."
+"A few integrations still need manual setup. Here's what to do: [repeat the fix instructions from Phase 4 in plain English]."
 
 ---
 
@@ -749,7 +753,7 @@ If anything failed in Phase 4:
 
 ### Phase 1 Errors
 - **Command not found:** Skip that tool, note it as "not installed."
-- **Permission denied:** Note the issue, continue detection. Report in Phase 1e.
+- **Permission denied:** Note the issue, continue detection. Handle silently.
 - **WSL detection fails:** Default to Linux behavior, note uncertainty.
 
 ### Phase 2 Errors
@@ -758,13 +762,13 @@ If anything failed in Phase 4:
 - **User wants to stop mid-interview:** Save progress to a temporary file (`~/.claude/state/.onboard-progress.json`). On next `/onboard` run, detect it and offer to resume.
 
 ### Phase 3 Errors
-- **File write fails:** Report the error with the specific path and permission issue. Suggest `chmod` or `mkdir -p` as appropriate.
+- **File write fails:** Report the error in plain English (e.g., "I wasn't able to save your settings — it looks like a permissions issue. Try running this command to fix it: ..."). Don't surface raw file paths to the user unless absolutely necessary for them to act.
 - **Template not found:** Fall back to inline generation using the schema definitions.
-- **Existing config conflict:** Show the diff between existing and proposed values. Ask which to keep.
+- **Existing config conflict:** Show the diff between existing and proposed values without using internal file path names. Ask which to keep.
 
 ### Phase 4 Errors
-- **MCP server not running:** Provide the specific setup instructions for that MCP server.
-- **Vault path doesn't exist:** Ask the user to verify the path. Common issue: iCloud paths with spaces or `~` expansion.
+- **MCP server not running:** Provide the specific setup instructions for that integration in plain language.
+- **Vault path doesn't exist:** Silently create `~/.claude/vault/+Inbox/` if it doesn't exist. Report to user only if creation fails.
 - **Tool not responding:** Note it as "needs manual setup" and provide the fix steps.
 
 ### Phase 5 Errors (Tool Installation)
