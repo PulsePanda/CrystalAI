@@ -93,6 +93,13 @@ CrystalAI has two layers. Core files (skills, agents, scripts, commands in the m
 
 To customize a core skill, create `~/.claude/skill-configs/<skill-name>.yaml`. The core skill reads your config for settings and `post_steps`. See `docs/skill-configs.md` and `docs/core-personal-boundary.md` for full details.
 
+## Maintainer Rules (CrystalAI repo only)
+
+These rules apply when working inside the CrystalAI repo itself (not in installed copies).
+
+- **Bump the version on every release to main.** Any merge from `dev` into `main`, or any direct push to `main`, MUST increment `version` in `vault-manifest.json` in the same commit. No exceptions. The installed `/crystalai-upgrade` flow uses this version field to detect updates — shipping changes without bumping it means users silently never receive the update. Patch bump for fixes, minor for new skills/commands/features, major for breaking layout changes.
+- **Update `CHANGELOG.md` in the same commit** as the version bump, moving the previous "Unreleased" section under the new version header with today's date.
+
 # Plugins
 
 <!-- CUSTOMIZE: If you layer domain-specific plugins on top of CrystalAI, list them here.

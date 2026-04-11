@@ -4,7 +4,15 @@ All notable changes to CrystalAI are documented here. Version numbers follow the
 
 ---
 
-## [1.2.0] — Unreleased
+## [1.2.1] — 2026-04-11
+
+### Changed
+- **Forced version bump** to ensure installed users pick up the 1.2.0 changes. Several commits shipped on top of 1.2.0 without bumping the manifest version, so `/crystalai-upgrade` never flagged them as an update. No code changes — pure version push.
+- **CLAUDE.md maintainer rules** — added a "Maintainer Rules (CrystalAI repo only)" section requiring `vault-manifest.json` version increment on every merge to `main` or direct push to `main`, plus a same-commit `CHANGELOG.md` update. Prevents silent shipping in the future.
+
+---
+
+## [1.2.0] — 2026-04-11
 
 ### Added
 - **soul.md** — new scaffold file defining the agent's core identity, values, personality, and relationship to the user. Read directive added to CLAUDE.md. Users customize via `/onboard` or manual editing. Sits above CLAUDE.md (who you are) and behavioral files (specific rules) in the configuration hierarchy.
