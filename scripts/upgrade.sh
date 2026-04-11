@@ -3,7 +3,7 @@
 # Deterministic shell portion of the hybrid upgrade system.
 # Handles version checking, backups, file inventory, plan generation,
 # and copying infrastructure files. AI-assisted merges are deferred
-# to the /vault-upgrade skill.
+# to the /crystalai-upgrade skill.
 
 set -euo pipefail
 
@@ -620,7 +620,7 @@ echo "  Backup:       $BACKUP_DIR"
 echo ""
 
 if [[ ${#AI_MERGE_FILES[@]} -gt 0 ]]; then
-    echo "Run /vault-upgrade to complete AI-assisted merges for customized scaffold files (CLAUDE.md, settings.json, etc.)."
+    echo "Run /crystalai-upgrade to complete AI-assisted merges for customized scaffold files (CLAUDE.md, settings.json, etc.)."
 else
     ok "Upgrade complete. No AI merges needed."
 fi

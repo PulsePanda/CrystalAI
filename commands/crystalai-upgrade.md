@@ -1,19 +1,19 @@
 ---
-name: vault-upgrade
+name: crystalai-upgrade
 description: Upgrade CrystalAI installation from the repo. Diffs repo against installed ~/.claude/, backs up, applies safe updates, and guides AI-assisted merges for customized files.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, Agent, AskUserQuestion
 ---
 
-# /vault-upgrade — CrystalAI Upgrade Command
+# /crystalai-upgrade — CrystalAI Upgrade Command
 
 Upgrade an installed CrystalAI (`~/.claude/`) from the source repo. Runs the deterministic shell script for safe operations, then uses AI judgment for merges and customization decisions.
 
 ## Usage
 
 ```
-/vault-upgrade                        # Full upgrade (dry-run first, then execute with approval)
-/vault-upgrade --dry-run              # Only show what would change
-/vault-upgrade --source /path/to/repo # Specify repo location
+/crystalai-upgrade                        # Full upgrade (dry-run first, then execute with approval)
+/crystalai-upgrade --dry-run              # Only show what would change
+/crystalai-upgrade --source /path/to/repo # Specify repo location
 ```
 
 ---
@@ -237,7 +237,7 @@ This step only runs when the user's installed version (from `.crystal-version.js
 2. If the version is >= 1.1.0, skip this step entirely — skill configs are already the expected mechanism
 3. If the version is < 1.1.0 (or no version file exists), this is a first-time migration:
 
-   a. Spawn the vault-upgrader agent:
+   a. Spawn the crystalai-upgrader agent:
 
    ```
    Scan the user's installed skills at ~/.claude/skills/ against the repo skills at {SOURCE}/skills/.

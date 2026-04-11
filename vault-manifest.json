@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "classifications": {
     "infrastructure": [
-      "commands/vault-upgrade.md",
+      "commands/crystalai-upgrade.md",
       "agents/README.md",
       "agents/design/design-brand-guardian.md",
       "agents/design/design-image-prompt-engineer.md",

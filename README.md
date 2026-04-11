@@ -41,7 +41,7 @@ See [docs/core-personal-boundary.md](docs/core-personal-boundary.md) for the ful
 - **3 vault maintenance agents** -- vault-librarian, cross-linker, people-profiler
 - **Lifecycle hooks** -- SessionStart, PreCompact, PostToolUse, UserPromptSubmit, Stop
 - **State management** -- behavioral rules, integrations, entities, patterns, memory, sessions, feedback, and a glossary
-- **Upgrade system** -- `/vault-upgrade` diffs, backs up, and applies updates with AI-assisted merges
+- **Upgrade system** -- `/crystalai-upgrade` diffs, backs up, and applies updates with AI-assisted merges
 - **People schema** -- first-class person files in your vault, auto-maintained by skills
 - **Skill configs** -- per-user customization of core skills via YAML config files
 - **Onboarding wizard** -- configures everything through a guided conversation
@@ -111,7 +111,7 @@ Three agents keep your vault healthy:
 
 ```bash
 cd ~/.claude
-/vault-upgrade
+/crystalai-upgrade
 ```
 
 The upgrade system diffs the repo against your installation, backs up everything, applies core updates, and walks you through merging customized files (settings.json, CLAUDE.md). Your personal data is never touched.
