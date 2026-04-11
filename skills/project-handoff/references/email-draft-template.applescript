@@ -1,18 +1,16 @@
--- Project handoff email draft template.
--- Placeholders: {{SUBJECT}}, {{BODY}}, {{SENDER}}, {{RECIPIENT}}, {{ATTACHMENT_PATH}}
+-- Project handoff email draft template (link-in-body variant).
+-- Placeholders: {{SUBJECT}}, {{BODY}}, {{SENDER}}, {{RECIPIENT}}
 --
--- Fill placeholders via shell substitution before running. Example:
---   sed -e "s|{{SUBJECT}}|$SUBJECT|" \
---       -e "s|{{SENDER}}|$SENDER|" \
---       -e "s|{{RECIPIENT}}|$RECIPIENT|" \
---       -e "s|{{ATTACHMENT_PATH}}|$ZIP_PATH|" \
---       email-draft-template.applescript > /tmp/handoff-draft.applescript
+-- Since the switch to Drive-hosted handoffs in skill v1.1, the Drive link lives
+-- inside {{BODY}} — there's no attachment. Embedding the link directly avoids
+-- Gmail's attachment scanner, which reliably flags zipped code projects even
+-- when they're clean.
 --
--- BODY is trickier because it's multi-line. Write the body text to a temp file,
--- read it in the shell, then embed with a heredoc-style replacement OR write the
--- full applescript from scratch in the skill rather than using sed substitution
--- for the body. Multi-line AppleScript strings work fine — literal newlines
--- inside the quoted string are preserved.
+-- Fill placeholders before running. SUBJECT/SENDER/RECIPIENT are single-line
+-- strings safe for sed substitution. BODY is multi-line — simpler to write
+-- the full filled-in AppleScript from the skill rather than trying to sed a
+-- multi-line string in. Literal newlines inside an AppleScript double-quoted
+-- string are preserved as-is by Apple Mail.
 --
 -- The draft opens visible in Apple Mail and is saved to Drafts. The user
 -- reviews and clicks send — this script NEVER sends automatically.
@@ -25,8 +23,21 @@ tell application "Mail"
     set sender to "{{SENDER}}"
     make new to recipient with properties {address:"{{RECIPIENT}}"}
   end tell
-  tell content of m
-    make new attachment with properties {file name:(POSIX file "{{ATTACHMENT_PATH}}")} at after last paragraph
-  end tell
   save m
 end tell
+
+-- ── Fallback: attachment-based variant (if Drive upload fails) ─────────
+--
+-- If you need the old attachment behavior (e.g., Drive API is down, network
+-- issue, or user explicitly wants an attachment), uncomment the block below
+-- and replace the `save m` line above with the attachment-aware version.
+--
+-- Add inside the `tell application "Mail"` block, after the recipient is set
+-- but before `save m`:
+--
+--   tell content of m
+--     make new attachment with properties {file name:(POSIX file "{{ATTACHMENT_PATH}}")} at after last paragraph
+--   end tell
+--
+-- Gmail will likely flag this in the web UI and ask the sender to "send with
+-- Drive instead." This is why the default workflow uses Drive upfront.
